@@ -1,5 +1,5 @@
-import { Button } from '@company/ui';
-import { logger } from '@company/utils';
+import { Button } from '@/components/ui/button';
+import { logger } from '@/lib/logger';
 
 const Index = () => {
   const handleGetStarted = () => {
@@ -10,15 +10,15 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-surface">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
-        <div className="absolute inset-0 bg-gradient-enterprise opacity-5"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5"></div>
         
         <div className="container mx-auto max-w-4xl relative z-10">
           <div className="text-center space-y-8">
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-enterprise-primary to-enterprise-secondary bg-clip-text text-transparent">
+              <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Enterprise React Starter
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
@@ -29,7 +29,7 @@ const Index = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
-                variant="enterprise" 
+                variant="default" 
                 size="lg" 
                 className="min-w-[160px]"
                 onClick={handleGetStarted}
@@ -39,7 +39,7 @@ const Index = () => {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="min-w-[160px] border-enterprise-primary/20 hover:bg-enterprise-primary/5"
+                className="min-w-[160px]"
               >
                 View Docs
               </Button>
@@ -59,9 +59,9 @@ const Index = () => {
             {features.map((feature, index) => (
               <div 
                 key={index}
-                className="p-6 bg-card rounded-xl shadow-elegant border border-border hover:shadow-enterprise transition-all duration-300 hover:-translate-y-1"
+                className="p-6 bg-card rounded-xl shadow-lg border border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="w-12 h-12 bg-gradient-enterprise rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center mb-4">
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>

@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from 'react';
-import { logger } from '@company/utils';
-import { Button } from '@company/ui';
+import { logger } from '@/lib/logger';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   children: ReactNode;
