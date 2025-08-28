@@ -1,10 +1,10 @@
 import {
   Card,
+  CardTitle,
+  CardHeader,
   CardContent,
   CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
+} from "@/shared/ui/card";
 
 export default function InternalPortal() {
   return (

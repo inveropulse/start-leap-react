@@ -23,7 +23,10 @@
 
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/app/*": ["./src/app/*"],
+      "@/shared/ui/*": ["./src/shared/ui/*"],
+      "@/shared/utils/*": ["./src/shared/utils/*"]
     }
   },
   "include": ["src"]
