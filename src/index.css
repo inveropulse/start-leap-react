@@ -46,16 +46,8 @@ All colors MUST be HSL.
     --enterprise-surface-dark: 220 23% 11%;
 
     /* Gradients */
-    --gradient-enterprise: linear-gradient(
-      135deg,
-      hsl(var(--enterprise-primary)),
-      hsl(var(--enterprise-secondary))
-    );
-    --gradient-surface: linear-gradient(
-      180deg,
-      hsl(var(--enterprise-surface)),
-      hsl(var(--background))
-    );
+    --gradient-enterprise: linear-gradient(135deg, hsl(var(--enterprise-primary)), hsl(var(--enterprise-secondary)));
+    --gradient-surface: linear-gradient(180deg, hsl(var(--enterprise-surface)), hsl(var(--background)));
 
     /* Shadows */
     --shadow-enterprise: 0 4px 20px hsl(var(--enterprise-primary) / 0.15);
