@@ -1,11 +1,11 @@
+import { Button } from "../../components/ui/button";
 import {
   Card,
-  CardTitle,
-  CardHeader,
   CardContent,
   CardDescription,
-} from "@/shared/ui/card";
-import { Button } from "@/shared/ui/button";
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 
 export default function LoginPage() {
   return (

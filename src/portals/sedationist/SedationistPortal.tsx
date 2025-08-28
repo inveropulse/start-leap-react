@@ -1,10 +1,10 @@
 import {
   Card,
-  CardTitle,
-  CardHeader,
   CardContent,
   CardDescription,
-} from "@/shared/ui/card";
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 
 export default function SedationistPortal() {
   return (

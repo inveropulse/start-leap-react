@@ -5,11 +5,11 @@ import {
   Navigate,
   BrowserRouter as Router,
 } from "react-router-dom";
-import LoginPage from "@/app/auth/LoginPage";
-import ClinicPortal from "@/app/clinic/ClinicPortal";
-import PatientPortal from "@/app/patient/PatientPortal";
-import InternalPortal from "@/app/internal/InternalPortal";
-import SedationistPortal from "@/app/sedationist/SedationistPortal";
+import LoginPage from "./portals/auth/LoginPage";
+import ClinicPortal from "./portals/clinic/ClinicPortal";
+import PatientPortal from "./portals/patient/PatientPortal";
+import InternalPortal from "./portals/internal/InternalPortal";
+import SedationistPortal from "./portals/sedationist/SedationistPortal";
 
 export default function App() {
   return (
