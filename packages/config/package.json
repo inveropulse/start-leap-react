@@ -1,0 +1,19 @@
+{
+  "name": "@company/config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint": "./eslint.config.js",
+    "./tailwind": "./tailwind.config.ts",
+    "./typescript": "./tsconfig.base.json",
+    "./vite": "./vite.config.base.ts"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "tailwindcss": "^4.0.0",
+    "vite": "^5.0.0"
+  }
+}

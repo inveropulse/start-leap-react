@@ -52,6 +52,13 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				enterprise: {
+					primary: 'hsl(var(--enterprise-primary))',
+					secondary: 'hsl(var(--enterprise-secondary))',
+					accent: 'hsl(var(--enterprise-accent))',
+					surface: 'hsl(var(--enterprise-surface))',
+					'surface-dark': 'hsl(var(--enterprise-surface-dark))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -62,6 +69,19 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				}
+			},
+			backgroundImage: {
+				'gradient-enterprise': 'var(--gradient-enterprise)',
+				'gradient-surface': 'var(--gradient-surface)'
+			},
+			boxShadow: {
+				'enterprise': 'var(--shadow-enterprise)',
+				'enterprise-lg': 'var(--shadow-enterprise-lg)',
+				'elegant': 'var(--shadow-elegant)'
+			},
+			transitionTimingFunction: {
+				'smooth': 'var(--transition-smooth)',
+				'bounce': 'var(--transition-bounce)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
