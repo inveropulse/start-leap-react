@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import TanstackProvider from "./TanstackProvider";
-import { ErrorBoundary } from "../components/Error";
 import AxiosClientProvider from "./AxiosClientProvider";
+import { ErrorBoundary } from "@/shared//components/Error/ErrorBoundary";
 
 export default function WithProviders(props: PropsWithChildren) {
   return (
