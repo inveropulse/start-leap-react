@@ -16,8 +16,3 @@ export interface ErrorBoundaryConfig {
   level?: "page" | "section" | "component";
 }
 
-export interface ErrorContextType {
-  reportError: (error: Error, context?: Record<string, any>) => void;
-  clearError: () => void;
-  errorCount: number;
-}
