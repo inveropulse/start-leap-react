@@ -55,9 +55,9 @@ function setupLogging() {
 
   // Log initialization - ExternalApiLogDestination is now automatically included
   logger.info("🔧 Logging system initialized", {
-    services: [
-      "console destination",
-      "external api destination", // API destination now works in all environments
-    ],
+    services:
+      APP_CONFIG.environment == Environment.Production
+        ? ["external api destination"]
+        : ["console destination"],
   });
 }
