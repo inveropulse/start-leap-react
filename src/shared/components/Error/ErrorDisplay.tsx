@@ -17,6 +17,7 @@ interface ErrorDisplayProps {
   onRetry?: () => void;
   showRetry?: boolean;
   showReload?: boolean;
+  showBack?: boolean;
   className?: string;
 }
 
@@ -32,6 +33,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   onRetry,
   showRetry = true,
   showReload = true,
+  showBack = true,
   className = "",
 }) => {
   const defaultClassName =
@@ -69,6 +71,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
           onRetry={onRetry}
           showRetry={showRetry}
           showReload={showReload}
+          showBack={showBack}
           errorId={errorId}
           severity={severity}
         />
