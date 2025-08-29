@@ -1,4 +1,4 @@
-import { APP_CONFIG } from "../AppConfig";
+import { APP_CONFIG } from "@/shared/AppConfig";
 import baseAxios, { AxiosInstance } from "axios";
 import { request } from "@/api/generated/core/request";
 import { ApiClient, CancelablePromise } from "@/api/generated";
