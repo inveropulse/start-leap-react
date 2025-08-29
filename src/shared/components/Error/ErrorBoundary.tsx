@@ -20,7 +20,7 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     const errorId = `error_${Date.now()}_${Math.random()
       .toString(36)
-      .substr(2, 9)}`;
+      .substring(2, 9)}`;
     const timestamp = new Date().toISOString();
 
     return {
@@ -32,18 +32,14 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Update state with error info
     this.setState({
       errorInfo,
     });
-
-    // Log error to console
     console.error("React Error Boundary caught an error", error, {
       componentStack: errorInfo.componentStack,
       errorId: this.state.errorId,
     });
 
-    // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
@@ -53,7 +49,6 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
     const { resetKeys, resetOnPropsChange } = this.props;
     const { hasError } = this.state;
 
-    // Reset error state if resetKeys have changed
     if (hasError && prevProps.resetKeys !== resetKeys) {
       if (resetKeys && resetKeys.length > 0) {
         const hasResetKeyChanged = resetKeys.some(
@@ -66,7 +61,6 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
       }
     }
 
-    // Reset on any prop change if configured
     if (
       hasError &&
       resetOnPropsChange &&
@@ -102,16 +96,16 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
 
   render() {
     if (this.state.hasError) {
-      // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      // Simple fallback UI
       return (
         <div className="flex min-h-screen items-center justify-center bg-background">
           <div className="text-center space-y-4 p-8">
-            <h1 className="text-2xl font-bold text-destructive">Something went wrong</h1>
+            <h1 className="text-2xl font-bold text-destructive">
+              Something went wrong
+            </h1>
             <p className="text-muted-foreground">
               An unexpected error occurred. Please try refreshing the page.
             </p>

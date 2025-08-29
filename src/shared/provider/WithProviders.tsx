@@ -5,7 +5,7 @@ import AxiosClientProvider from "./AxiosClientProvider";
 
 export default function WithProviders(props: PropsWithChildren) {
   return (
-    <ErrorBoundary level="page">
+    <ErrorBoundary>
       <TanstackProvider>
         <AxiosClientProvider>{props.children}</AxiosClientProvider>
       </TanstackProvider>

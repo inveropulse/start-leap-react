@@ -1,4 +1,3 @@
-// src/shared/components/Error/types.ts
 export interface ErrorBoundaryState {
   hasError: boolean;
   error?: Error;
@@ -15,4 +14,3 @@ export interface ErrorBoundaryConfig {
   isolate?: boolean;
   level?: "page" | "section" | "component";
 }
-
