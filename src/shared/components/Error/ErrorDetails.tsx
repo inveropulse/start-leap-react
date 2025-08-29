@@ -26,10 +26,12 @@ export const ErrorDetails: React.FC<ErrorDetailsProps> = ({
     <div className="mt-4">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="text-sm text-gray-600 hover:text-gray-800 cursor-pointer flex items-center space-x-1 focus:outline-none focus:underline"
+        className="text-sm text-muted-foreground hover:text-foreground cursor-pointer flex items-center space-x-2 focus:outline-none focus:underline transition-smooth w-full justify-center"
         type="button"
       >
-        <span>{isExpanded ? "▼" : "▶"}</span>
+        <span className="transition-transform duration-200" style={{ transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}>
+          ▶
+        </span>
         <span>Technical Details</span>
       </button>
 
@@ -37,8 +39,8 @@ export const ErrorDetails: React.FC<ErrorDetailsProps> = ({
         <div className="mt-2 space-y-3">
           {errorId && (
             <div>
-              <h4 className="text-xs font-medium text-gray-700">Error ID:</h4>
-              <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+              <h4 className="text-xs font-medium text-muted-foreground">Error ID:</h4>
+              <code className="text-xs bg-muted px-2 py-1 rounded font-mono">
                 {errorId}
               </code>
             </div>
@@ -46,8 +48,8 @@ export const ErrorDetails: React.FC<ErrorDetailsProps> = ({
 
           {timestamp && (
             <div>
-              <h4 className="text-xs font-medium text-gray-700">Timestamp:</h4>
-              <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+              <h4 className="text-xs font-medium text-muted-foreground">Timestamp:</h4>
+              <code className="text-xs bg-muted px-2 py-1 rounded font-mono">
                 {new Date(timestamp).toLocaleString()}
               </code>
             </div>
@@ -55,8 +57,8 @@ export const ErrorDetails: React.FC<ErrorDetailsProps> = ({
 
           {error.message && (
             <div>
-              <h4 className="text-xs font-medium text-gray-700">Message:</h4>
-              <pre className="text-xs bg-gray-100 p-2 rounded overflow-x-auto whitespace-pre-wrap">
+              <h4 className="text-xs font-medium text-muted-foreground">Message:</h4>
+              <pre className="text-xs bg-muted p-3 rounded border overflow-x-auto whitespace-pre-wrap font-mono">
                 {error.message}
               </pre>
             </div>
@@ -64,10 +66,10 @@ export const ErrorDetails: React.FC<ErrorDetailsProps> = ({
 
           {error.stack && (
             <div>
-              <h4 className="text-xs font-medium text-gray-700">
+              <h4 className="text-xs font-medium text-muted-foreground">
                 Stack Trace:
               </h4>
-              <pre className="text-xs bg-gray-100 p-2 rounded overflow-x-auto max-h-40 overflow-y-auto">
+              <pre className="text-xs bg-muted p-3 rounded border overflow-x-auto max-h-40 overflow-y-auto font-mono">
                 {error.stack}
               </pre>
             </div>
@@ -75,10 +77,10 @@ export const ErrorDetails: React.FC<ErrorDetailsProps> = ({
 
           {errorInfo?.componentStack && (
             <div>
-              <h4 className="text-xs font-medium text-gray-700">
+              <h4 className="text-xs font-medium text-muted-foreground">
                 Component Stack:
               </h4>
-              <pre className="text-xs bg-gray-100 p-2 rounded overflow-x-auto max-h-32 overflow-y-auto">
+              <pre className="text-xs bg-muted p-3 rounded border overflow-x-auto max-h-32 overflow-y-auto font-mono">
                 {errorInfo.componentStack}
               </pre>
             </div>

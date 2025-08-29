@@ -1,6 +1,6 @@
 // src/shared/components/Error/ErrorActions.tsx
 import React from "react";
-import { logger } from "../../../lib/logger";
+import { RefreshCw, RotateCcw } from "lucide-react";
 
 interface ErrorActionsProps {
   onReload?: () => void;
@@ -8,6 +8,7 @@ interface ErrorActionsProps {
   showRetry?: boolean;
   showReload?: boolean;
   errorId?: string;
+  severity?: "error" | "warning" | "info";
 }
 
 export const ErrorActions: React.FC<ErrorActionsProps> = ({
@@ -16,13 +17,10 @@ export const ErrorActions: React.FC<ErrorActionsProps> = ({
   showRetry = true,
   showReload = true,
   errorId,
+  severity = "error",
 }) => {
   const handleReload = () => {
-    logger.info("User initiated page reload", {
-      source: "error-boundary-action",
-      errorId,
-    });
-
+    console.info("User initiated page reload", { errorId });
     if (onReload) {
       onReload();
     } else {
@@ -31,35 +29,55 @@ export const ErrorActions: React.FC<ErrorActionsProps> = ({
   };
 
   const handleRetry = () => {
-    logger.info("User initiated error retry", {
-      source: "error-boundary-action",
-      errorId,
-    });
-
+    console.info("User initiated error retry", { errorId });
     if (onRetry) {
       onRetry();
     }
   };
 
-  return (
-    <div className="flex space-x-2">
-      {showReload && (
-        <button
-          onClick={handleReload}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-          type="button"
-        >
-          Reload Page
-        </button>
-      )}
+  const primaryButton = severity === "error" ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground" 
+    : severity === "warning" ? "bg-enterprise-secondary hover:bg-enterprise-secondary/90 text-white"
+    : "bg-enterprise-accent hover:bg-enterprise-accent/90 text-white";
 
+  return (
+    <div className="flex flex-col sm:flex-row gap-3 justify-center">
       {showRetry && (
         <button
           onClick={handleRetry}
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+          className={`
+            ${primaryButton}
+            inline-flex items-center gap-2 
+            px-6 py-3 
+            rounded-lg 
+            text-sm font-medium 
+            focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 
+            transition-smooth
+            shadow-sm hover:shadow-md
+          `}
           type="button"
         >
+          <RotateCcw className="h-4 w-4" />
           Try Again
+        </button>
+      )}
+
+      {showReload && (
+        <button
+          onClick={handleReload}
+          className="
+            bg-secondary hover:bg-secondary/80 text-secondary-foreground
+            inline-flex items-center gap-2 
+            px-6 py-3 
+            rounded-lg 
+            text-sm font-medium 
+            focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 
+            transition-smooth
+            shadow-sm hover:shadow-md
+          "
+          type="button"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Reload Page
         </button>
       )}
     </div>

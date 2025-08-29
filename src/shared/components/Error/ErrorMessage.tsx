@@ -9,16 +9,16 @@ interface ErrorMessageProps {
 
 const severityStyles = {
   error: {
-    title: "text-red-900",
-    message: "text-red-700",
+    title: "text-destructive",
+    message: "text-destructive/80",
   },
   warning: {
-    title: "text-yellow-900",
-    message: "text-yellow-700",
+    title: "text-enterprise-secondary", 
+    message: "text-enterprise-secondary/80",
   },
   info: {
-    title: "text-blue-900",
-    message: "text-blue-700",
+    title: "text-enterprise-accent",
+    message: "text-enterprise-accent/80",
   },
 };
 
@@ -30,11 +30,13 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
   const styles = severityStyles[severity];
 
   return (
-    <div>
-      <h3 className={`text-lg font-medium ${styles.title} mb-2`}>{title}</h3>
-      <div className={`text-sm ${styles.message} mb-4 leading-relaxed`}>
+    <div className="space-y-3">
+      <h3 className={`text-xl font-semibold ${styles.title} leading-tight`}>
+        {title}
+      </h3>
+      <p className={`text-sm ${styles.message} leading-relaxed max-w-sm mx-auto`}>
         {message}
-      </div>
+      </p>
     </div>
   );
 };

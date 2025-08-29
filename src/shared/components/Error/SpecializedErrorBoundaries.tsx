@@ -19,11 +19,11 @@ export const SectionErrorBoundary: React.FC<Props> = ({
 }) => {
   const sectionFallback = (
     <ErrorDisplay
-      title="Section Error"
+      title="Section Unavailable"
       message="This section encountered an error. You can try refreshing or continue using other parts of the application."
       severity="warning"
       showReload={false}
-      className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg"
+      className="flex items-center justify-center p-8 border border-enterprise-secondary/20 bg-enterprise-secondary/5 rounded-xl"
     />
   );
 
@@ -41,11 +41,12 @@ export const ComponentErrorBoundary: React.FC<Props> = ({
 }) => {
   const componentFallback = (
     <ErrorDisplay
-      title="Component Error"
+      title="Component Unavailable"
       message="This component failed to load."
       severity="info"
       showReload={false}
-      className="p-3 bg-blue-50 border border-blue-200 rounded text-center"
+      showRetry={false}
+      className="flex items-center justify-center p-6 border border-enterprise-accent/20 bg-enterprise-accent/5 rounded-lg"
     />
   );
 
