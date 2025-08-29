@@ -62,16 +62,3 @@ export const ComponentErrorBoundary: React.FC<Props> = ({
   );
 };
 
-// Async boundary for handling async component errors
-export const AsyncErrorBoundary: React.FC<
-  Props & {
-    pendingFallback?: React.ReactNode;
-    isLoading?: boolean;
-  }
-> = ({ children, pendingFallback, isLoading, ...props }) => {
-  if (isLoading && pendingFallback) {
-    return <>{pendingFallback}</>;
-  }
-
-  return <ErrorBoundary {...props}>{children}</ErrorBoundary>;
-};

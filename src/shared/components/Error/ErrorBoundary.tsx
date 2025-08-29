@@ -1,5 +1,4 @@
 import { Component, ErrorInfo, PropsWithChildren } from "react";
-import { logger } from "../../../lib/logger";
 import { ErrorDisplay } from "./ErrorDisplay";
 import { ErrorBoundaryState, ErrorBoundaryConfig } from "./types";
 
@@ -39,13 +38,9 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
       errorInfo,
     });
 
-    // Log error to our centralized logging system
-    logger.error("React Error Boundary caught an error", error, {
+    // Log error to console
+    console.error("React Error Boundary caught an error", error, {
       componentStack: errorInfo.componentStack,
-      errorBoundary: true,
-      source: "error-boundary",
-      level: this.props.level || "component",
-      isolate: this.props.isolate || false,
       errorId: this.state.errorId,
     });
 
@@ -89,11 +84,6 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
   }
 
   resetErrorBoundary = () => {
-    logger.info("Error boundary reset triggered", {
-      source: "error-boundary",
-      errorId: this.state.errorId,
-    });
-
     this.setState({
       hasError: false,
       error: undefined,
@@ -108,10 +98,6 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
   };
 
   handleReload = () => {
-    logger.info("Page reload initiated from error boundary", {
-      source: "error-boundary",
-      errorId: this.state.errorId,
-    });
     window.location.reload();
   };
 

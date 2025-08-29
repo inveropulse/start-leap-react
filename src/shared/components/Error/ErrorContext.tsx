@@ -1,7 +1,6 @@
 // src/shared/components/Error/ErrorContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ErrorContextType } from "./types";
-import { logger } from "../../../lib/logger";
 
 const ErrorContext = createContext<ErrorContextType | null>(null);
 
@@ -14,11 +13,7 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
 
   const reportError = (error: Error, context?: Record<string, any>) => {
     setErrorCount((prev) => prev + 1);
-    logger.error("Manual error report", error, {
-      source: "error-context",
-      manualReport: true,
-      ...context,
-    });
+    console.error("Manual error report", error, context);
   };
 
   const clearError = () => {

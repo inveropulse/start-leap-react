@@ -14,7 +14,6 @@ export {
   PageErrorBoundary,
   SectionErrorBoundary,
   ComponentErrorBoundary,
-  AsyncErrorBoundary,
 } from "./SpecializedErrorBoundaries";
 export type {
   ErrorBoundaryState,
