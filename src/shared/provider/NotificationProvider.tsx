@@ -143,7 +143,7 @@ const generateId = () => (++toastCount).toString();
 export default function NotificationProvider({ children }: PropsWithChildren) {
   const [state, dispatch] = useReducer(toastReducer, { toasts: [] });
   const logger = useLogging({ feature: "notifications" });
-  const timeoutsRef = React.useRef(new Map<string, NodeJS.Timeout>());
+  const timeoutsRef = React.useRef(new Map<string, number>());
 
   // Auto-dismiss logic
   useEffect(() => {
@@ -184,7 +184,7 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
   const createToast = (
     message: string,
     description?: string,
-    variant: string = TOAST_CONFIG.VARIANTS.INFO,
+    variant: "default" | "destructive" | "success" | "warning" = "default",
     duration: number | null = TOAST_CONFIG.DURATIONS.MEDIUM
   ): string => {
     const id = generateId();
