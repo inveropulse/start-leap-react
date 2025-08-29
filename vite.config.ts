@@ -1,4 +1,3 @@
-import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { componentTagger } from "lovable-tagger";
@@ -14,10 +13,10 @@ export default defineConfig(({ mode }) => ({
   ),
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@/app": path.resolve(__dirname, "./src/app"),
-      "@/shared/ui": path.resolve(__dirname, "./src/shared/ui"),
-      "@/shared/utils": path.resolve(__dirname, "./src/shared/utils"),
+      "@": "/src",
+      "@/app": "/src/app",
+      "@/shared/ui": "/src/shared/ui",
+      "@/shared/utils": "/src/shared/utils",
     },
   },
 }));
