@@ -6,12 +6,12 @@ import { ErrorBoundary } from "@/shared//components/Error/ErrorBoundary";
 
 export default function WithProviders(props: PropsWithChildren) {
   return (
-    <TanstackProvider>
-      <AxiosClientProvider>
-        <LoggingProvider>
-          <ErrorBoundary>{props.children}</ErrorBoundary>
-        </LoggingProvider>
-      </AxiosClientProvider>
-    </TanstackProvider>
+    <ErrorBoundary>
+      <LoggingProvider>
+        <TanstackProvider>
+          <AxiosClientProvider>{props.children}</AxiosClientProvider>
+        </TanstackProvider>
+      </LoggingProvider>
+    </ErrorBoundary>
   );
 }

@@ -32,7 +32,6 @@ export interface IDestinationService {
 export interface ILogger {
   resetContext(context: Partial<LogContext>): void;
   addContext(context: Partial<LogContext>): void;
-  addExternalService(service: IDestinationService): void;
   child(additionalContext: Partial<LogContext>): ILogger;
   debug(message: string, data?: any): void;
   info(message: string, data?: any): void;

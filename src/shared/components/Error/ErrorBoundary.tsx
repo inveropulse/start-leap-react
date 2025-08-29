@@ -1,10 +1,12 @@
 import { Component, ErrorInfo, PropsWithChildren } from "react";
 import { ErrorBoundaryState, ErrorBoundaryConfig } from "./types";
+import { logger } from "@/shared/logging/logger";
 
 export interface Props extends PropsWithChildren, ErrorBoundaryConfig {}
 
 export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
   private resetTimeoutId: number | null = null;
+  private globalErrorHandlersSetup = false;
 
   constructor(props: Props) {
     super(props);
@@ -31,13 +33,20 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
     };
   }
 
+  componentDidMount() {
+    this.setupGlobalErrorHandlers();
+  }
+
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({
       errorInfo,
     });
-    console.error("React Error Boundary caught an error", error, {
+
+    // Log the React error
+    logger.error("React Error Boundary caught an error", error, {
       componentStack: errorInfo.componentStack,
       errorId: this.state.errorId,
+      source: "react-error-boundary",
     });
 
     if (this.props.onError) {
@@ -74,7 +83,90 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
     if (this.resetTimeoutId) {
       clearTimeout(this.resetTimeoutId);
     }
+    this.removeGlobalErrorHandlers();
   }
+
+  setupGlobalErrorHandlers = () => {
+    if (this.globalErrorHandlersSetup || typeof window === "undefined") {
+      return;
+    }
+
+    window.addEventListener("error", this.handleUncaughtError);
+    window.addEventListener(
+      "unhandledrejection",
+      this.handleUnhandledRejection
+    );
+    this.globalErrorHandlersSetup = true;
+  };
+
+  removeGlobalErrorHandlers = () => {
+    if (!this.globalErrorHandlersSetup || typeof window === "undefined") {
+      return;
+    }
+
+    window.removeEventListener("error", this.handleUncaughtError);
+    window.removeEventListener(
+      "unhandledrejection",
+      this.handleUnhandledRejection
+    );
+    this.globalErrorHandlersSetup = false;
+  };
+
+  handleUncaughtError = (event: ErrorEvent) => {
+    try {
+      const error = new Error(event.error || event.message);
+
+      // Log the error
+      logger.error("Uncaught JavaScript error", error, {
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+        source: "global-error-handler",
+      });
+
+      // Trigger error boundary UI
+      this.setState({
+        hasError: true,
+        error,
+        errorId: `global_error_${Date.now()}_${Math.random()
+          .toString(36)
+          .substring(2, 9)}`,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error("ErrorBoundary failed in global error handler:", err);
+    }
+  };
+
+  handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+    try {
+      const error =
+        event.reason instanceof Error
+          ? event.reason
+          : new Error(String(event.reason));
+
+      // Log the error
+      logger.error("Unhandled promise rejection", error, {
+        reason: event.reason,
+        source: "unhandled-rejection-handler",
+      });
+
+      // Trigger error boundary UI
+      this.setState({
+        hasError: true,
+        error,
+        errorId: `rejection_error_${Date.now()}_${Math.random()
+          .toString(36)
+          .substring(2, 9)}`,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error(
+        "ErrorBoundary failed in unhandled rejection handler:",
+        err
+      );
+    }
+  };
 
   resetErrorBoundary = () => {
     this.setState({
@@ -109,6 +201,11 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
             <p className="text-muted-foreground">
               An unexpected error occurred. Please try refreshing the page.
             </p>
+            {this.state.errorId && (
+              <p className="text-sm text-muted-foreground font-mono">
+                Error ID: {this.state.errorId}
+              </p>
+            )}
             <div className="flex gap-4 justify-center">
               <button
                 onClick={this.handleRetry}

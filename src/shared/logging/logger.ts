@@ -7,10 +7,13 @@ import {
 } from "./types";
 import { APP_CONFIG, Environment } from "../AppConfig";
 import { ConsoleDestination } from "./destination/console";
+import { ExternalApiLogDestination } from "./destination/externalApi";
 
 class Logger implements ILogger {
   private context: Partial<LogContext> = {};
-  private externalDestinations: IDestinationService[] = [];
+  private externalDestinations: IDestinationService[] = [
+    new ExternalApiLogDestination(),
+  ];
   private consoleDestination: IDestinationService = new ConsoleDestination();
   private buffer: LogEntry[] = [];
   private readonly maxBufferSize = 100;
@@ -53,10 +56,6 @@ class Logger implements ILogger {
       // Return main logger as fallback
       return this;
     }
-  }
-
-  addExternalService(service: IDestinationService): void {
-    this.externalDestinations.push(service);
   }
 
   debug(message: string, data?: any): void {
@@ -110,7 +109,7 @@ class Logger implements ILogger {
       }
 
       // Production logging
-      if (APP_CONFIG.environment === Environment.Development) {
+      if (APP_CONFIG.environment === Environment.Production) {
         this.addToBuffer(logEntry);
       }
 
