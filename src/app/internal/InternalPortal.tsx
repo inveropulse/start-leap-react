@@ -5,6 +5,7 @@ import {
   CardContent,
   CardDescription,
 } from "@/shared/ui/card";
+import NotificationDemo from "@/shared/components/NotificationDemo";
 
 export default function InternalPortal() {
   return (
@@ -12,7 +13,7 @@ export default function InternalPortal() {
       <header className="bg-blue-600 text-white p-4">
         <h1 className="text-xl font-semibold">Internal Portal</h1>
       </header>
-      <main className="p-6">
+      <main className="p-6 space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Welcome to Internal Portal</CardTitle>
@@ -25,6 +26,8 @@ export default function InternalPortal() {
             </p>
           </CardContent>
         </Card>
+
+        <NotificationDemo />
       </main>
     </div>
   );

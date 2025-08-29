@@ -2,15 +2,18 @@ import { PropsWithChildren } from "react";
 import LoggingProvider from "./LoggingProvider";
 import TanstackProvider from "./TanstackProvider";
 import AxiosClientProvider from "./AxiosClientProvider";
+import NotificationProvider from "./NotificationProvider";
 import { ErrorBoundary } from "@/shared//components/Error/ErrorBoundary";
 
 export default function WithProviders(props: PropsWithChildren) {
   return (
     <ErrorBoundary>
       <LoggingProvider>
-        <TanstackProvider>
-          <AxiosClientProvider>{props.children}</AxiosClientProvider>
-        </TanstackProvider>
+        <NotificationProvider>
+          <TanstackProvider>
+            <AxiosClientProvider>{props.children}</AxiosClientProvider>
+          </TanstackProvider>
+        </NotificationProvider>
       </LoggingProvider>
     </ErrorBoundary>
   );

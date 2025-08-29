@@ -7,12 +7,44 @@ import {
 } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { useLogging } from "@/shared/provider/LoggingProvider";
+import { useNotifications } from "@/shared/notifications";
 
 export default function LoginPage() {
   const logger = useLogging({
     feature: "LoginPage",
     metadata: { component: "LoginPage" },
   });
+  const notifications = useNotifications();
+
+  const handleInternalNavigation = () => {
+    window.location.href = "/internal";
+
+    logger.info("Info message -> navigating to /internal", {
+      infoData: "test",
+      user: "demo-user",
+      action: "navigate",
+    });
+
+    notifications.showInfo("Navigating to Internal Portal", "Please wait...");
+  };
+
+  const handlePatientNavigation = () => {
+    window.location.href = "/patient";
+    notifications.showInfo(
+      "Redirecting to Patient Portal",
+      "Loading your dashboard..."
+    );
+  };
+
+  const handleSedationistNavigation = () => {
+    window.location.href = "/sedationist";
+    notifications.showSuccess("Accessing Sedationist Portal", "Welcome back!");
+  };
+
+  const handleClinicNavigation = () => {
+    window.location.href = "/clinic";
+    notifications.showInfo("Opening Clinic Portal", "Connecting...");
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -45,36 +77,28 @@ export default function LoginPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  window.location.href = "/internal";
-
-                  logger.info("Info message -> navigating to /internal", {
-                    infoData: "test",
-                    user: "demo-user",
-                    action: "navigate",
-                  });
-                }}
+                onClick={handleInternalNavigation}
               >
                 Internal
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => (window.location.href = "/patient")}
+                onClick={handlePatientNavigation}
               >
                 Patient
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => (window.location.href = "/sedationist")}
+                onClick={handleSedationistNavigation}
               >
                 Sedationist
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => (window.location.href = "/clinic")}
+                onClick={handleClinicNavigation}
               >
                 Clinic
               </Button>
