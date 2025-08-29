@@ -48,12 +48,12 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   return (
     <div className={className || defaultClassName}>
       <div className={`
-        max-w-md w-full 
+        max-w-lg w-full 
         bg-card 
         border ${severityStyles[severity]}
         shadow-elegant 
         rounded-xl 
-        p-8
+        p-10
         transition-smooth
         animate-slideDownAndFade
       `}>
