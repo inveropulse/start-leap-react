@@ -39,14 +39,3 @@ export const useErrorContext = (): ErrorContextType => {
   return context;
 };
 
-// Hook for manually reporting errors
-export const useErrorReporter = () => {
-  const { reportError } = useErrorContext();
-
-  return {
-    reportError: (error: Error | string, context?: Record<string, any>) => {
-      const errorObj = typeof error === "string" ? new Error(error) : error;
-      reportError(errorObj, context);
-    },
-  };
-};

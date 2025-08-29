@@ -1,5 +1,4 @@
 import { Component, ErrorInfo, PropsWithChildren } from "react";
-import { ErrorDisplay } from "./ErrorDisplay";
 import { ErrorBoundaryState, ErrorBoundaryConfig } from "./types";
 
 export interface Props extends PropsWithChildren, ErrorBoundaryConfig {}
@@ -108,16 +107,30 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
         return this.props.fallback;
       }
 
-      // Use the modular ErrorDisplay component
+      // Simple fallback UI
       return (
-        <ErrorDisplay
-          error={this.state.error}
-          errorInfo={this.state.errorInfo}
-          errorId={this.state.errorId}
-          timestamp={this.state.timestamp}
-          onRetry={this.handleRetry}
-          onReload={this.handleReload}
-        />
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="text-center space-y-4 p-8">
+            <h1 className="text-2xl font-bold text-destructive">Something went wrong</h1>
+            <p className="text-muted-foreground">
+              An unexpected error occurred. Please try refreshing the page.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={this.handleRetry}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+              >
+                Try Again
+              </button>
+              <button
+                onClick={this.handleReload}
+                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80"
+              >
+                Reload Page
+              </button>
+            </div>
+          </div>
+        </div>
       );
     }
 
