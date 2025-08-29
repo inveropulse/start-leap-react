@@ -1,0 +1,23 @@
+// src/shared/components/Error/types.ts
+export interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+  errorInfo?: any;
+  errorId?: string;
+  timestamp?: string;
+}
+
+export interface ErrorBoundaryConfig {
+  fallback?: React.ReactNode;
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+  resetOnPropsChange?: boolean;
+  resetKeys?: Array<string | number>;
+  isolate?: boolean;
+  level?: "page" | "section" | "component";
+}
+
+export interface ErrorContextType {
+  reportError: (error: Error, context?: Record<string, any>) => void;
+  clearError: () => void;
+  errorCount: number;
+}

@@ -5,6 +5,7 @@ import { ApiClient, CancelablePromise } from "@/api/generated";
 import { createContext, PropsWithChildren, useContext } from "react";
 import { AxiosHttpRequest } from "@/api/generated/core/AxiosHttpRequest";
 import { ApiRequestOptions } from "@/api/generated/core/ApiRequestOptions";
+import { logger } from "../../lib/logger";
 
 export type AxiosClientContextType = {
   readonly apiClient: ApiClient;
@@ -40,15 +41,68 @@ const axios = baseAxios.create({
   timeout: APP_CONFIG.apiTimeout,
 });
 
-axios.interceptors.request.use((config) => {
-  // Add any request interceptors here
-  return config;
-});
+axios.interceptors.request.use(
+  (config) => {
+    // Log API requests
+    logger.info("API Request started", {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      baseURL: config.baseURL,
+      timeout: config.timeout,
+      source: "axios-interceptor",
+    });
 
-axios.interceptors.response.use((response) => {
-  // Add any response interceptors here
-  return response;
-});
+    // Add timestamp for response time calculation
+    (config as any).requestStartTime = Date.now();
+
+    return config;
+  },
+  (error) => {
+    // Log request errors
+    logger.error("API Request failed to send", error, {
+      source: "axios-request-interceptor",
+    });
+    return Promise.reject(error);
+  }
+);
+
+axios.interceptors.response.use(
+  (response) => {
+    // Calculate response time
+    const startTime = (response.config as any).requestStartTime;
+    const responseTime = startTime ? Date.now() - startTime : undefined;
+
+    // Log successful API responses
+    logger.info("API Request completed successfully", {
+      method: response.config.method?.toUpperCase(),
+      url: response.config.url,
+      status: response.status,
+      statusText: response.statusText,
+      responseTime,
+      source: "axios-interceptor",
+    });
+
+    return response;
+  },
+  (error) => {
+    // Calculate response time for errors too
+    const startTime = (error.config as any)?.requestStartTime;
+    const responseTime = startTime ? Date.now() - startTime : undefined;
+
+    // Log API errors
+    logger.error("API Request failed", error, {
+      method: error.config?.method?.toUpperCase(),
+      url: error.config?.url,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      responseTime,
+      errorMessage: error.message,
+      source: "axios-interceptor",
+    });
+
+    return Promise.reject(error);
+  }
+);
 
 const httpRequest = class AxiosHttpRequestInstance extends AxiosHttpRequest {
   public override request<T>(options: ApiRequestOptions): CancelablePromise<T> {
