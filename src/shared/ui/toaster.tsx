@@ -5,6 +5,7 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
+  ToastContent,
 } from "@/shared/ui/toast";
 import { useNotifications } from "../provider/NotificationProvider";
 
@@ -16,12 +17,12 @@ export function Toaster() {
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
           <Toast key={id} {...props}>
-            <div className="grid gap-1">
+            <ToastContent>
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && (
                 <ToastDescription>{description}</ToastDescription>
               )}
-            </div>
+            </ToastContent>
             {action}
             <ToastClose />
           </Toast>

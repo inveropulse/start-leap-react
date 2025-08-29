@@ -123,3 +123,36 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Toast stacking animations */
+  .toast-stack-enter {
+    animation: toast-stack-enter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .toast-stack-exit {
+    animation: toast-stack-exit 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@keyframes toast-stack-enter {
+  from {
+    transform: translateX(100%) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-stack-exit {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%) scale(0.95);
+    opacity: 0;
+  }
+}
