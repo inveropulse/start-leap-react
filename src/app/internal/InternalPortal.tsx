@@ -5,7 +5,6 @@ import {
   CardContent,
   CardDescription,
 } from "@/shared/ui/card";
-import NotificationDemo from "@/shared/components/NotificationDemo";
 
 export default function InternalPortal() {
   return (
@@ -26,8 +25,6 @@ export default function InternalPortal() {
             </p>
           </CardContent>
         </Card>
-
-        <NotificationDemo />
       </main>
     </div>
   );

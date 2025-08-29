@@ -5,7 +5,7 @@ import {
   LogContext,
   IDestinationService,
 } from "./types";
-import { APP_CONFIG, Environment } from "../AppConfig";
+import { APP_CONFIG, Environment } from "../../AppConfig";
 import { ConsoleDestination } from "./destination/console";
 import { ExternalApiLogDestination } from "./destination/externalApi";
 

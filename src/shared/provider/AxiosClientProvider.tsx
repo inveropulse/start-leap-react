@@ -1,4 +1,4 @@
-import { logger } from "../logging/logger";
+import { logger } from "../services/logging/logger";
 import { APP_CONFIG } from "@/shared/AppConfig";
 import baseAxios, { AxiosInstance } from "axios";
 import { request } from "@/api/generated/core/request";

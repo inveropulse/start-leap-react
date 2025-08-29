@@ -6,9 +6,9 @@ import {
   createContext,
   PropsWithChildren,
 } from "react";
-import { logger } from "../logging/logger";
+import { logger } from "../services/logging/logger";
 import { APP_CONFIG, Environment } from "../AppConfig";
-import { ILogger, LogContext } from "../logging/types";
+import { ILogger, LogContext } from "../services/logging/types";
 
 const LoggingContext = createContext<ILogger>(undefined!);
 

@@ -1,6 +1,6 @@
 import { Component, ErrorInfo, PropsWithChildren } from "react";
 import { ErrorBoundaryState, ErrorBoundaryConfig } from "./types";
-import { logger } from "@/shared/logging/logger";
+import { logger } from "@/shared/services/logging/logger";
 
 export interface Props extends PropsWithChildren, ErrorBoundaryConfig {}
 
