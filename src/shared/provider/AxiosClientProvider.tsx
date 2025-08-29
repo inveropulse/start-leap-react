@@ -1,5 +1,5 @@
+import { APP_CONFIG } from "../AppConfig";
 import baseAxios, { AxiosInstance } from "axios";
-import { APP_CONFIG } from "../ApplicationConfig";
 import { request } from "@/api/generated/core/request";
 import { ApiClient, CancelablePromise } from "@/api/generated";
 import { createContext, PropsWithChildren, useContext } from "react";
