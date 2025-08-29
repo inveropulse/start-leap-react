@@ -1,0 +1,36 @@
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+export enum DiaryWorkflowStatus {
+    BOOKING_CREATED = 'Booking Created',
+    PATIENT_NOTIFIED_ABOUT_BOOKING = 'Patient Notified About Booking',
+    CLINIC_NOTIFIED_ABOUT_BOOKING = 'Clinic Notified About Booking',
+    SEDATIONIST_NOTIFIED_ABOUT_BOOKING = 'Sedationist Notified About Booking',
+    PATIENT_PACK_ADDED = 'Patient Pack Added',
+    PATIENT_PACK_REMOVED = 'Patient Pack Removed',
+    CLINIC_ADDED_BOOKING_FORM = 'Clinic Added Booking Form',
+    CLINIC_UPDATED_BOOKING_FORM = 'Clinic Updated Booking Form',
+    CLINIC_REMOVED_BOOKING_ATTACHEMNT = 'Clinic Removed Booking Attachemnt',
+    CLINIC_CANCELLED_BOOKING_FORM = 'Clinic Cancelled Booking Form',
+    APPOINTMENT_CANCELLED = 'Appointment Cancelled',
+    APPOINTMENT_RESCHEDULED = 'Appointment Rescheduled',
+    PATIENT_NOTIFIED_ABOUT_RESCHEDULING = 'Patient Notified About Rescheduling',
+    CLINIC_NOTIFIED_ABOUT_RESCHEDULING = 'Clinic Notified About Rescheduling',
+    SEDATIONIST_NOTIFIED_ABOUT_RESCHEDULING = 'Sedationist Notified About Rescheduling',
+    PATIENT_NOTIFIED_ABOUT_CANCELLATION = 'Patient Notified About Cancellation',
+    CLINIC_NOTIFIED_ABOUT_CANCELLATION = 'Clinic Notified About Cancellation',
+    SEDATIONIST_NOTIFIED_ABOUT_CANCELLATION = 'Sedationist Notified About Cancellation',
+    PAYMENT_DETAILS_UPDATED = 'Payment Details Updated',
+    PAYMENT_RECEIVED = 'Payment Received',
+    APPOINTMENT_CONFIRMED = 'Appointment Confirmed',
+    SEDATION_RECORDED = 'Sedation Recorded',
+    SEDATION_COMPLETE = 'Sedation Complete',
+    DATA_IMPORT_FROM_OLD_SYSTEM = 'Data Import From Old System',
+    SEDATIONIST_S_NOTIFIED_ABOUT_BOOKING_CHANGE = 'Sedationist(s) Notified About Booking Change',
+    PATIENT_S_NOTIFIED_ABOUT_BOOKING_CHANGE = 'Patient(s) Notified About Booking Change',
+    CLINIC_S_NOTIFIED_ABOUT_BOOKING_CHANGE = 'Clinic(s) Notified About Booking Change',
+    CLINIC_NOTIFIED_ABOUT_BOOKING_CHANGE = 'Clinic Notified About Booking Change',
+    INTERNAL_TEAM_ADDED_SEDATION_RECORD_PDF = 'Internal Team Added Sedation Record Pdf',
+    INTERNAL_TEAM_DELETED_SEDATION_RECORD_PDF = 'Internal Team Deleted Sedation Record Pdf',
+}
