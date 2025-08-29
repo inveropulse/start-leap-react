@@ -6,8 +6,14 @@ import {
   CardDescription,
 } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
+import { useLogging } from "@/shared/provider/LoggingProvider";
 
 export default function LoginPage() {
+  const logger = useLogging({
+    feature: "LoginPage",
+    metadata: { component: "LoginPage" },
+  });
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md">
@@ -39,7 +45,15 @@ export default function LoginPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => (window.location.href = "/internal")}
+                onClick={() => {
+                  window.location.href = "/internal";
+
+                  logger.info("Info message -> navigating to /internal", {
+                    infoData: "test",
+                    user: "demo-user",
+                    action: "navigate",
+                  });
+                }}
               >
                 Internal
               </Button>

@@ -21,7 +21,7 @@ The centralized logging system for Sedation Solutions provides enterprise-level 
 ### Import and Use Logger
 
 ```typescript
-import { logger } from "@/lib/logger";
+import { logger } from "@/shared/logging";
 
 // Basic logging
 logger.info("User logged in", { userId: "123" });
@@ -32,7 +32,7 @@ logger.warn("Deprecated function used", { function: "oldMethod" });
 ### React Hook Usage
 
 ```typescript
-import { useLogger } from "@/hooks/useLogger";
+import { useLogger } from "@/shared/hooks";
 
 const MyComponent = () => {
   const logger = useLogger({
@@ -55,10 +55,10 @@ const MyComponent = () => {
 ### API Logging Hook
 
 ```typescript
-import { useApiLogger } from "@/hooks/useLogger";
+import { useApiEndpointLogger } from "@/shared/hooks";
 
 const useUserApi = () => {
-  const apiLogger = useApiLogger("/api/users");
+  const apiLogger = useApiEndpointLogger("/api/users");
 
   const fetchUsers = async () => {
     apiLogger.logApiCall("GET");
@@ -79,7 +79,7 @@ const useUserApi = () => {
 ### Set Global Context
 
 ```typescript
-import { logger } from "@/lib/logger";
+import { logger } from "@/shared/logging";
 
 // Set user context when user logs in
 logger.setContext({

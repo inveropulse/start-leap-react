@@ -1,3 +1,4 @@
+import { logger } from "../logging/logger";
 import { APP_CONFIG } from "@/shared/AppConfig";
 import baseAxios, { AxiosInstance } from "axios";
 import { request } from "@/api/generated/core/request";
@@ -5,7 +6,6 @@ import { ApiClient, CancelablePromise } from "@/api/generated";
 import { createContext, PropsWithChildren, useContext } from "react";
 import { AxiosHttpRequest } from "@/api/generated/core/AxiosHttpRequest";
 import { ApiRequestOptions } from "@/api/generated/core/ApiRequestOptions";
-import { logger } from "../../lib/logger";
 
 export type AxiosClientContextType = {
   readonly apiClient: ApiClient;
@@ -16,11 +16,9 @@ const AxiosClientContext = createContext<AxiosClientContextType>(undefined!);
 
 export default function AxiosClientProvider(props: PropsWithChildren) {
   return (
-    <div>
-      <AxiosClientContext.Provider value={{ apiClient: apiClient, axios }}>
-        {props.children}
-      </AxiosClientContext.Provider>
-    </div>
+    <AxiosClientContext.Provider value={{ apiClient: apiClient, axios }}>
+      {props.children}
+    </AxiosClientContext.Provider>
   );
 }
 
