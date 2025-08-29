@@ -11,6 +11,7 @@ import PatientPortal from "@/app/patient/PatientPortal";
 import InternalPortal from "@/app/internal/InternalPortal";
 import SedationistPortal from "@/app/sedationist/SedationistPortal";
 import WithProviders from "./shared/provider/WithProviders";
+import { ErrorDisplay } from "./shared/components/Error/ErrorDisplay";
 
 export default function App() {
   return (
@@ -23,6 +24,18 @@ export default function App() {
           <Route path="/patient" element={<PatientPortal />} />
           <Route path="/internal" element={<InternalPortal />} />
           <Route path="/sedationist" element={<SedationistPortal />} />
+          <Route 
+            path="/error-test" 
+            element={
+              <ErrorDisplay 
+                title="Something went wrong"
+                message="An unexpected error occurred while processing your request."
+                severity="error"
+                errorId="ERR-12345"
+                timestamp={new Date().toISOString()}
+              />
+            } 
+          />
         </Routes>
       </Router>
     </WithProviders>
