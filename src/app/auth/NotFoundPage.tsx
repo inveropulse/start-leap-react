@@ -6,9 +6,9 @@ import {
   CardHeader,
   CardContent,
   CardDescription,
-} from "@/shared/ui/card";
-import { Button } from "@/shared/ui/button";
-import { useLogging } from "@/shared/provider/LoggingProvider";
+} from "@/shared/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
+import { useLogging } from "@/shared/providers/LoggingProvider";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { PORTALS } from "@/shared/services/auth/types";
 

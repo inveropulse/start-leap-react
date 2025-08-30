@@ -5,9 +5,9 @@ import React, {
   useReducer,
   useEffect,
 } from "react";
-import { Toaster } from "../ui/toaster";
+import { Toaster } from "../components/ui/toaster";
 import { useLogging } from "./LoggingProvider";
-import type { ToastActionElement, ToastProps } from "../ui/toast";
+import type { ToastActionElement, ToastProps } from "../components/ui/toast";
 
 // Toast configuration and styling constants
 const TOAST_CONFIG = {

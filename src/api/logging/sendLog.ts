@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useAxiosClient } from "@/shared/provider/AxiosClientProvider";
+import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
 
 export interface SendLogRequest {
   logs: Record<string, any>[];

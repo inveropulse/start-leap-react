@@ -4,7 +4,7 @@ import {
   CardHeader,
   CardContent,
   CardDescription,
-} from "@/shared/ui/card";
+} from "@/shared/components/ui/card";
 
 export default function InternalPortal() {
   return (

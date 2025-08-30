@@ -27,9 +27,9 @@
       "@/api/*": ["./src/api/*"],
       "@/app/*": ["./src/app/*"],
       "@/shared/*": ["./src/shared/*"],
-      "@/shared/ui/*": ["./src/shared/ui/*"],
+      "@/shared/ui/*": ["src/shared/components/ui/*"],
       "@/shared/utils/*": ["./src/shared/utils/*"],
-      "@/shared/provider/*": ["./src/shared/provider/*"]
+      "@/shared/provider/*": ["src/shared/providers/*"]
     }
   },
   "include": ["src"]

@@ -16,7 +16,7 @@ import ClinicPortal from "@/app/clinic/ClinicPortal";
 import PatientPortal from "@/app/patient/PatientPortal";
 import InternalPortal from "@/app/internal/InternalPortal";
 import SedationistPortal from "@/app/sedationist/SedationistPortal";
-import WithProviders from "./shared/provider/WithProviders";
+import WithProviders from "./shared/providers/WithProviders";
 import { PublicRoute } from "./shared/components/PublicRoute";
 import { ProtectedRoute } from "./shared/components/ProtectedRoute";
 import { PortalType } from "./shared/services/auth/types";

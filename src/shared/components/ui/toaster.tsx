@@ -6,8 +6,8 @@ import {
   ToastTitle,
   ToastViewport,
   ToastContent,
-} from "@/shared/ui/toast";
-import { useNotifications } from "../provider/NotificationProvider";
+} from "@/shared/components/ui/toast";
+import { useNotifications } from "../../providers/NotificationProvider";
 
 export function Toaster() {
   const { toasts } = useNotifications();

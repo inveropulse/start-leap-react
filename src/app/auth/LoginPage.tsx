@@ -6,10 +6,10 @@ import {
   CardHeader,
   CardContent,
   CardDescription,
-} from "@/shared/ui/card";
-import { Button } from "@/shared/ui/button";
-import { useLogging } from "@/shared/provider/LoggingProvider";
-import { useNotifications } from "@/shared/provider/NotificationProvider";
+} from "@/shared/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
+import { useLogging } from "@/shared/providers/LoggingProvider";
+import { useNotifications } from "@/shared/providers/NotificationProvider";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { PORTALS } from "@/shared/services/auth/types";
 
