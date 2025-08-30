@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardTitle,
@@ -8,11 +8,9 @@ import {
   CardDescription,
 } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { useLogging } from "@/shared/providers/LoggingProvider";
 import { useNotifications } from "@/shared/providers/NotificationProvider";
 import { useAuth } from "@/shared/services/auth/hooks";
-import { PORTALS } from "@/shared/services/auth/types";
-import { useLoginRequest } from "@/api/auth/login";
+import { useLoginSubmit } from "./useLoginSubmit";
 
 interface LoginFormData {
   email: string;
@@ -20,17 +18,9 @@ interface LoginFormData {
 }
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-  const loginRequest = useLoginRequest();
-
-  const logger = useLogging({
-    feature: "LoginPage",
-    metadata: { component: "LoginPage" },
-  });
-
   const notifications = useNotifications();
-
-  const { login, isAuthenticated, isLoading, error, clearError } = useAuth();
+  const { isAuthenticated, isLoading, error, clearError } = useAuth();
+  const { handleSubmit } = useLoginSubmit();
 
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
@@ -81,7 +71,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -92,82 +82,7 @@ export default function LoginPage() {
       return;
     }
 
-    try {
-      logger.info("Login attempt started", {
-        email: formData.email,
-        user: formData.email,
-        action: "login-attempt",
-      });
-
-      notifications.showInfo(
-        "Signing In",
-        "Authenticating your credentials..."
-      );
-
-      const result = await loginRequest.mutateAsync({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (!result.isAuthenticated) {
-        notifications.showError("Login Failed", result.error);
-        logger.error("Login failed", null, {
-          errorCode: result.errorCode,
-          errorMessage: result.error,
-          userEmail: formData.email,
-          action: "login-failed",
-        });
-        return;
-      }
-
-      login(result);
-
-      // Success - login should set the current portal automatically
-      // The store will determine the appropriate portal based on user role
-
-      logger.info("Login successful, redirecting to portal", {
-        email: formData.email,
-        portal: result.currentPortal,
-        user: formData.email,
-        action: "login-success",
-      });
-
-      notifications.showSuccess(
-        "Login Successful!",
-        `Redirecting to ${PORTALS[result.currentPortal].name}...`
-      );
-
-      // Navigate to the portal
-      setTimeout(() => {
-        navigate(PORTALS[result.currentPortal].route);
-      }, 1000); // Small delay to show success message
-    } catch (error: any) {
-      const errorMessage = error?.message || "Login failed. Please try again.";
-
-      logger.error("Login failed", error, {
-        email: formData.email,
-        errorMessage,
-        user: formData.email,
-        action: "login-failed",
-      });
-
-      notifications.showError("Login Failed", errorMessage);
-    }
-  };
-
-  // Development portal navigation handlers (keep for dev convenience)
-  const handleDevPortalNavigation = (portal: string) => {
-    logger.info(`Dev navigation to ${portal}`, {
-      user: "dev-user",
-      action: "dev-navigate",
-      portal,
-    });
-
-    notifications.showInfo(
-      `Navigating to ${portal} Portal`,
-      "Development mode"
-    );
-    window.location.href = `/${portal}`;
+    await handleSubmit(formData);
   };
 
   return (
@@ -183,7 +98,7 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={onSubmit} className="space-y-4">
             {/* Email Field */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>
@@ -282,49 +197,6 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
-
-          {/* Development Quick Access */}
-          {import.meta.env.DEV && (
-            <div className="mt-6 pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600 mb-2">
-                Quick access (dev only):
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDevPortalNavigation("internal")}
-                  disabled={isLoading}
-                >
-                  Internal
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDevPortalNavigation("patient")}
-                  disabled={isLoading}
-                >
-                  Patient
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDevPortalNavigation("sedationist")}
-                  disabled={isLoading}
-                >
-                  Sedationist
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDevPortalNavigation("clinic")}
-                  disabled={isLoading}
-                >
-                  Clinic
-                </Button>
-              </div>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>

@@ -5,7 +5,7 @@ import {
   Navigate,
   BrowserRouter as Router,
 } from "react-router-dom";
-import LoginPage from "@/app/auth/LoginPage";
+import LoginPage from "@/app/auth/login/LoginPage";
 import RegisterPage from "@/app/auth/RegisterPage";
 import ForgotPasswordPage from "@/app/auth/ForgotPasswordPage";
 import ResetPasswordPage from "@/app/auth/ResetPasswordPage";
