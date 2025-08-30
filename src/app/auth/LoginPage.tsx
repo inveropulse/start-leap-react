@@ -12,6 +12,7 @@ import { useLogging } from "@/shared/providers/LoggingProvider";
 import { useNotifications } from "@/shared/providers/NotificationProvider";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { PORTALS } from "@/shared/services/auth/types";
+import { useLoginRequest } from "@/api/auth/login";
 
 interface LoginFormData {
   email: string;
@@ -20,6 +21,7 @@ interface LoginFormData {
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const loginRequest = useLoginRequest();
 
   const logger = useLogging({
     feature: "LoginPage",
@@ -125,10 +127,23 @@ export default function LoginPage() {
         "Authenticating your credentials..."
       );
 
-      await login({
+      const result = await loginRequest.mutateAsync({
         email: formData.email,
         password: formData.password,
       });
+
+      if (!result.isAuthenticated) {
+        notifications.showError("Login Failed", result.error);
+        logger.error("Login failed", null, {
+          errorCode: result.errorCode,
+          errorMessage: result.error,
+          userEmail: formData.email,
+          action: "login-failed",
+        });
+        return;
+      }
+
+      login(result);
 
       // Success - login should set the current portal automatically
       // The store will determine the appropriate portal based on user role

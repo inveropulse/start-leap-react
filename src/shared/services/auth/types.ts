@@ -33,23 +33,31 @@ export enum AuthErrorCode {
   FEATURE_DISABLED = "FEATURE_DISABLED",
   MAINTENANCE_MODE = "MAINTENANCE_MODE",
   ACCESS_DENIED = "ACCESS_DENIED",
+  INVALID_ROLE = "INVALID_ROLE",
+  INVALID_USER_ID = "INVALID_USER_ID",
 }
 
 export enum UserRole {
   ADMIN = "admin",
-  MANAGER = "manager",
-  USER = "user",
-  DOCTOR = "doctor",
-  NURSE = "nurse",
-  SEDATIONIST = "sedationist",
+  CLINIC = "clinic",
   PATIENT = "patient",
+  SEDATIONIST = "sedationist",
+  BOOKING_COORDINATOR = "booking_coordinator",
+
+  // TODO - NOT NEEDED NOW BUT CAN BE USEFUL LATER
+  // MANAGER = "manager",
+  // USER = "user",
+  // DOCTOR = "doctor",
+  // NURSE = "nurse",
 }
 
 // Core Types
 export type User = {
   readonly id: string;
   readonly email: string;
-  readonly name: string;
+  readonly fullName: string;
+  readonly firstName: string;
+  readonly lastName: string;
   readonly role: UserRole;
   readonly avatar?: string;
   readonly portalAccess: {

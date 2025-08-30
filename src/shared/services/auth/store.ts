@@ -1,17 +1,10 @@
-import {
-  User,
-  AuthState,
-  PortalType,
-  STORAGE_KEYS,
-  AuthErrorCode,
-} from "./types";
 import { create } from "zustand";
 import { secureStorage } from "./storage";
-import { LoginRequest } from "@/api/auth/login";
+import { AuthState, PortalType, STORAGE_KEYS, AuthErrorCode } from "./types";
 
 export interface AuthStore extends AuthState {
   // Core actions
-  login: (req: LoginRequest) => Promise<void>;
+  login: (state: AuthState) => void;
   logout: () => void;
   update: (changes: Partial<AuthState>) => void;
   clearError: () => void;
@@ -59,7 +52,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             accessToken: stored.accessToken,
             refreshToken: stored.refreshToken,
             tokenExpiry: stored.tokenExpiry,
-            currentPortal: stored.currentPortal || PortalType.INTERNAL, // ideally log out user or determine based on role
+            currentPortal: stored.currentPortal,
           });
         } else {
           // Token expired, clear storage
@@ -73,38 +66,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   // Login action
-  login: async (req: LoginRequest) => {
-    get().update({ isLoading: true, error: null });
-
+  login: (state: AuthState) => {
     try {
-      // This will be replaced with real API call
-      // For now, simulate login
-      const mockUser: User = {
-        id: "1",
-        email: req.email,
-        name: "Test User",
-        role: "admin" as any,
-        portalAccess: {
-          [PortalType.CLINIC]: true,
-          [PortalType.INTERNAL]: true,
-          [PortalType.PATIENT]: true,
-          [PortalType.SEDATIONIST]: true,
-        },
-      };
-
-      const accessToken = "mock-access-token";
-      const refreshToken = "mock-refresh-token";
-      const expiresIn = 3600; // 1 hour
-
       get().update({
-        user: mockUser,
-        isAuthenticated: true,
-        accessToken,
-        refreshToken,
-        tokenExpiry: Date.now() + expiresIn * 1000,
-        currentPortal: PortalType.INTERNAL,
-        isLoading: false,
-        error: null,
+        ...state,
       });
     } catch (error: any) {
       get().update({
