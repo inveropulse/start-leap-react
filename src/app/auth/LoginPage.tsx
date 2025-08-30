@@ -30,16 +30,7 @@ export default function LoginPage() {
 
   const notifications = useNotifications();
 
-  const {
-    login,
-    isAuthenticated,
-    isLoading,
-    error,
-    clearError,
-    currentPortal,
-    switchPortal,
-    user,
-  } = useAuth();
+  const { login, isAuthenticated, isLoading, error, clearError } = useAuth();
 
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
@@ -47,20 +38,6 @@ export default function LoginPage() {
   });
 
   const [formErrors, setFormErrors] = useState<Partial<LoginFormData>>({});
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated && user && currentPortal) {
-      const portalInfo = PORTALS[currentPortal];
-      navigate(portalInfo.route);
-
-      logger.info("User already authenticated, redirecting to current portal", {
-        portal: portalInfo.name,
-        user: user.email || "authenticated-user",
-        action: "auto-redirect",
-      });
-    }
-  }, [isAuthenticated, user, currentPortal, navigate, logger]);
 
   // Clear errors when user starts typing
   useEffect(() => {
@@ -150,19 +127,19 @@ export default function LoginPage() {
 
       logger.info("Login successful, redirecting to portal", {
         email: formData.email,
-        portal: currentPortal,
+        portal: result.currentPortal,
         user: formData.email,
         action: "login-success",
       });
 
       notifications.showSuccess(
         "Login Successful!",
-        `Redirecting to ${PORTALS[currentPortal].name}...`
+        `Redirecting to ${PORTALS[result.currentPortal].name}...`
       );
 
       // Navigate to the portal
       setTimeout(() => {
-        navigate(PORTALS[currentPortal].route);
+        navigate(PORTALS[result.currentPortal].route);
       }, 1000); // Small delay to show success message
     } catch (error: any) {
       const errorMessage = error?.message || "Login failed. Please try again.";
