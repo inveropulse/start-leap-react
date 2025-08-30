@@ -65,7 +65,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Sedation Solutions Portal</CardTitle>
+          <CardTitle>Sedation Solutions Hub</CardTitle>
           <CardDescription>
             {isAuthenticated
               ? "Redirecting to your portal..."
