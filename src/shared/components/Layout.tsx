@@ -83,10 +83,10 @@ export function Layout({ children, portal }: LayoutProps) {
 
               {/* Logout */}
               <Button 
-                variant="ghost" 
+                variant="secondary" 
                 size="icon" 
                 onClick={logout}
-                className="h-8 w-8"
+                className="h-8 w-8 hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="sr-only">Logout</span>
