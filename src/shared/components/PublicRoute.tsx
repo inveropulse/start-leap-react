@@ -3,6 +3,7 @@ import React, { PropsWithChildren } from "react";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { PORTALS } from "@/shared/services/auth/types";
 import { useLocation, Navigate } from "react-router-dom";
+import { AuthLayout } from "./AuthLayout";
 
 export interface PublicRouteProps extends PropsWithChildren {
   fallback?: React.ReactNode;
@@ -21,9 +22,11 @@ export const PublicRoute: React.FC<PublicRouteProps> = ({
   if (isLoading) {
     return (
       fallback || (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-lg text-gray-600">Loading...</div>
-        </div>
+        <AuthLayout>
+          <div className="flex items-center justify-center">
+            <div className="text-lg text-muted-foreground">Loading...</div>
+          </div>
+        </AuthLayout>
       )
     );
   }
@@ -43,5 +46,5 @@ export const PublicRoute: React.FC<PublicRouteProps> = ({
     return <Navigate to={portalInfo.route} replace />;
   }
 
-  return <>{children}</>;
+  return <AuthLayout>{children}</AuthLayout>;
 };
