@@ -4,6 +4,7 @@ import { PortalType } from "@/shared/services/auth/types";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/shared/components/ui/sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { AppSidebar } from "./AppSidebar";
+import { MobileNavigation } from "./MobileNavigation";
 import { Button } from "@/shared/components/ui/button";
 import { LogOut, User, Bell, ChevronDown, Menu } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
@@ -37,7 +38,7 @@ export function Layout({ children, portal }: LayoutProps) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="p-0 w-72">
-                <AppSidebar portal={portal} />
+                <MobileNavigation portal={portal} onNavigate={() => setMobileMenuOpen(false)} />
               </SheetContent>
             </Sheet>
             <h1 className="text-lg font-semibold text-white">
