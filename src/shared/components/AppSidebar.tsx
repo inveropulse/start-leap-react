@@ -34,6 +34,7 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/shared/components/ui/sidebar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
 
 interface AppSidebarProps {
   portal: PortalType;
@@ -103,115 +104,229 @@ export function AppSidebar({ portal }: AppSidebarProps) {
   };
 
   return (
-    <Sidebar variant="inset" collapsible="icon">
-      <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <Activity className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+    <TooltipProvider>
+      <Sidebar variant="inset" collapsible="icon">
+        <SidebarHeader>
+          <div className="flex items-center gap-2 px-2 py-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Activity className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+            </div>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-semibold text-sidebar-foreground">
+                {portalInfo[portal].name}
+              </span>
+              <span className="truncate text-xs text-sidebar-foreground/70">
+                {portalInfo[portal].subtitle}
+              </span>
+            </div>
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold text-sidebar-foreground">
-              {portalInfo[portal].name}
-            </span>
-            <span className="truncate text-xs text-sidebar-foreground/70">
-              {portalInfo[portal].subtitle}
-            </span>
-          </div>
-        </div>
-      </SidebarHeader>
+        </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink to={item.url} className="flex items-center gap-2">
-                      <item.icon className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    {isCollapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                            <NavLink to={item.url} className="flex items-center gap-2">
+                              <item.icon className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                              <span>{item.title}</span>
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>{item.title}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                        <NavLink to={item.url} className="flex items-center gap-2">
+                          <item.icon className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    )}
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
 
-        <SidebarSeparator />
+          <SidebarSeparator />
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {portal === PortalType.INTERNAL && (
-                <>
+          <SidebarGroup>
+            <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {portal === PortalType.INTERNAL && (
+                  <>
+                    <SidebarMenuItem>
+                      {isCollapsed ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SidebarMenuButton asChild>
+                              <NavLink to="/internal/patients/new" className="flex items-center gap-2">
+                                <Users className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                                <span>Add Patient</span>
+                              </NavLink>
+                            </SidebarMenuButton>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>Add Patient</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <SidebarMenuButton asChild>
+                          <NavLink to="/internal/patients/new" className="flex items-center gap-2">
+                            <Users className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                            <span>Add Patient</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      )}
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      {isCollapsed ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SidebarMenuButton asChild>
+                              <NavLink to="/internal/appointments/new" className="flex items-center gap-2">
+                                <Calendar className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                                <span>New Appointment</span>
+                              </NavLink>
+                            </SidebarMenuButton>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>New Appointment</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <SidebarMenuButton asChild>
+                          <NavLink to="/internal/appointments/new" className="flex items-center gap-2">
+                            <Calendar className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                            <span>New Appointment</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      )}
+                    </SidebarMenuItem>
+                  </>
+                )}
+                
+                {portal === PortalType.CLINIC && (
+                  <>
+                    <SidebarMenuItem>
+                      {isCollapsed ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SidebarMenuButton asChild>
+                              <NavLink to="/clinic/appointments/new" className="flex items-center gap-2">
+                                <Calendar className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                                <span>Book Appointment</span>
+                              </NavLink>
+                            </SidebarMenuButton>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>Book Appointment</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <SidebarMenuButton asChild>
+                          <NavLink to="/clinic/appointments/new" className="flex items-center gap-2">
+                            <Calendar className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                            <span>Book Appointment</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      )}
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      {isCollapsed ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SidebarMenuButton asChild>
+                              <NavLink to="/clinic/patients/new" className="flex items-center gap-2">
+                                <Users className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                                <span>New Patient</span>
+                              </NavLink>
+                            </SidebarMenuButton>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>New Patient</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <SidebarMenuButton asChild>
+                          <NavLink to="/clinic/patients/new" className="flex items-center gap-2">
+                            <Users className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                            <span>New Patient</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      )}
+                    </SidebarMenuItem>
+                  </>
+                )}
+                
+                {portal === PortalType.PATIENT && (
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <NavLink to="/internal/patients/new" className="flex items-center gap-2">
-                        <Users className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
-                        <span>Add Patient</span>
-                      </NavLink>
-                    </SidebarMenuButton>
+                    {isCollapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton asChild>
+                            <NavLink to="/patient/appointments/book" className="flex items-center gap-2">
+                              <Calendar className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                              <span>Book Appointment</span>
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>Book Appointment</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <SidebarMenuButton asChild>
+                        <NavLink to="/patient/appointments/book" className="flex items-center gap-2">
+                          <Calendar className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                          <span>Book Appointment</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    )}
                   </SidebarMenuItem>
+                )}
+                
+                {portal === PortalType.SEDATIONIST && (
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <NavLink to="/internal/appointments/new" className="flex items-center gap-2">
-                        <Calendar className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
-                        <span>New Appointment</span>
-                      </NavLink>
-                    </SidebarMenuButton>
+                    {isCollapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton asChild>
+                            <NavLink to="/sedationist/procedures/new" className="flex items-center gap-2">
+                              <ClipboardList className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                              <span>New Procedure</span>
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>New Procedure</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <SidebarMenuButton asChild>
+                        <NavLink to="/sedationist/procedures/new" className="flex items-center gap-2">
+                          <ClipboardList className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                          <span>New Procedure</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    )}
                   </SidebarMenuItem>
-                </>
-              )}
-              
-              {portal === PortalType.CLINIC && (
-                <>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <NavLink to="/clinic/appointments/new" className="flex items-center gap-2">
-                        <Calendar className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
-                        <span>Book Appointment</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <NavLink to="/clinic/patients/new" className="flex items-center gap-2">
-                        <Users className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
-                        <span>New Patient</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </>
-              )}
-              
-              {portal === PortalType.PATIENT && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <NavLink to="/patient/appointments/book" className="flex items-center gap-2">
-                      <Calendar className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
-                      <span>Book Appointment</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
-              
-              {portal === PortalType.SEDATIONIST && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <NavLink to="/sedationist/procedures/new" className="flex items-center gap-2">
-                      <ClipboardList className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
-                      <span>New Procedure</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    </TooltipProvider>
   );
 }
