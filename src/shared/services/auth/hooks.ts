@@ -20,6 +20,11 @@ export const useAuth = () => {
     error: store.error,
     errorCode: store.errorCode,
     currentPortal: store.currentPortal,
+    availablePortals: store.user
+      ? Object.entries(store.user.portalAccess)
+          .map(([key, value]) => (value === true ? key : null))
+          .filter((key): key is string => key !== null)
+      : [],
 
     // Actions
     login: store.login,

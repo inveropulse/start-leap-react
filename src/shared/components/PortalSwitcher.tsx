@@ -12,15 +12,20 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
   className = "",
 }) => {
   const navigate = useNavigate();
-  const { currentPortal, hasPortalAccess, switchPortal } = useAuth();
+  const {
+    currentPortal,
+    availablePortals: availableUserPortals,
+    hasPortalAccess,
+    switchPortal,
+  } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const availablePortals = Object.entries(PORTALS).map(
-    ([portalType, portalInfo]) => ({
+  const availablePortals = Object.entries(PORTALS)
+    .filter(([portalType]) => availableUserPortals.includes(portalType))
+    .map(([portalType, portalInfo]) => ({
       id: portalType as PortalType,
       ...portalInfo,
-    })
-  );
+    }));
 
   const currentPortalInfo = availablePortals.find(
     (p) => p.id === currentPortal
