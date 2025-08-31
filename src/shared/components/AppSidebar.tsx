@@ -108,7 +108,7 @@ export function AppSidebar({ portal }: AppSidebarProps) {
 
   return (
     <TooltipProvider>
-      <Sidebar variant="inset" collapsible="icon">
+      <Sidebar variant="inset" collapsible="icon" className="w-52">
         <SidebarHeader>
           <div className="flex items-center gap-2 px-2 py-2">
             <div className={cn(
