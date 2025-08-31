@@ -21,6 +21,8 @@ import {
 
 import { PortalType, UserRole } from "@/shared/services/auth/types";
 import { useAuth } from "@/shared/services/auth/hooks";
+import { usePortalTheme } from "@/shared/hooks/usePortalTheme";
+import { cn } from "@/shared/utils/cn";
 import {
   Sidebar,
   SidebarContent,
@@ -44,6 +46,7 @@ export function AppSidebar({ portal }: AppSidebarProps) {
   const { user } = useAuth();
   const location = useLocation();
   const { state } = useSidebar();
+  const theme = usePortalTheme(portal);
   
   const isCollapsed = state === "collapsed";
 
@@ -108,7 +111,11 @@ export function AppSidebar({ portal }: AppSidebarProps) {
       <Sidebar variant="inset" collapsible="icon">
         <SidebarHeader>
           <div className="flex items-center gap-2 px-2 py-2">
-            <div className={`flex items-center justify-center rounded-md bg-primary text-primary-foreground transition-all duration-300 ${isCollapsed ? 'h-10 w-10' : 'h-8 w-8'}`}>
+            <div className={cn(
+              "flex items-center justify-center rounded-md text-white transition-all duration-300",
+              theme.primaryClass,
+              isCollapsed ? 'h-10 w-10' : 'h-8 w-8'
+            )}>
               <Activity className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -130,21 +137,21 @@ export function AppSidebar({ portal }: AppSidebarProps) {
                 {items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     {isCollapsed ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                            <NavLink to={item.url} className="flex items-center gap-2">
-                              <item.icon className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
-                              <span>{item.title}</span>
-                            </NavLink>
-                          </SidebarMenuButton>
-                        </TooltipTrigger>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SidebarMenuButton asChild isActive={isActive(item.url)} className={isActive(item.url) ? cn("text-white", theme.primaryClass) : ""}>
+                              <NavLink to={item.url} className="flex items-center gap-2">
+                                <item.icon className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+                                <span>{item.title}</span>
+                              </NavLink>
+                            </SidebarMenuButton>
+                          </TooltipTrigger>
                         <TooltipContent side="right">
                           <p>{item.title}</p>
                         </TooltipContent>
                       </Tooltip>
                     ) : (
-                      <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                      <SidebarMenuButton asChild isActive={isActive(item.url)} className={isActive(item.url) ? cn("text-white", theme.primaryClass) : ""}>
                         <NavLink to={item.url} className="flex items-center gap-2">
                           <item.icon className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
                           <span>{item.title}</span>

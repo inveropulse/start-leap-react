@@ -6,6 +6,7 @@ import { AppSidebar } from "./AppSidebar";
 import { Button } from "@/shared/components/ui/button";
 import { LogOut, User, Bell, ChevronDown } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
+import { usePortalTheme } from "@/shared/hooks/usePortalTheme";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,47 +15,23 @@ interface LayoutProps {
 
 export function Layout({ children, portal }: LayoutProps) {
   const { user, logout } = useAuth();
-
-  const portalConfig = {
-    [PortalType.INTERNAL]: {
-      name: "Internal Portal",
-      bgClass: "bg-portal-internal-background",
-      headerClass: "bg-portal-internal-primary",
-    },
-    [PortalType.CLINIC]: {
-      name: "Clinic Portal", 
-      bgClass: "bg-portal-clinic-background",
-      headerClass: "bg-portal-clinic-primary",
-    },
-    [PortalType.PATIENT]: {
-      name: "Patient Portal",
-      bgClass: "bg-portal-patient-background", 
-      headerClass: "bg-portal-patient-primary",
-    },
-    [PortalType.SEDATIONIST]: {
-      name: "Sedationist Portal",
-      bgClass: "bg-portal-sedationist-background",
-      headerClass: "bg-portal-sedationist-primary",
-    },
-  };
-
-  const config = portalConfig[portal];
+  const theme = usePortalTheme(portal);
 
   console.log("Layout rendering for portal:", portal, "with user:", user?.fullName);
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen w-full flex bg-background">
+      <div className={cn("min-h-screen w-full flex", theme.backgroundClass)}>
         <AppSidebar portal={portal} />
         <SidebarInset className="flex flex-col">
           {/* Header - Sticky to top */}
-          <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-4 border-b bg-background">
+          <header className={cn("sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-4 border-b", theme.gradientClass, "text-white")}>
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1" />
               <div className="h-6 w-px bg-border" />
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold">
-                  {config.name}
+                <h1 className="text-lg font-semibold text-white">
+                  {theme.name}
                 </h1>
               </div>
             </div>
@@ -62,31 +39,31 @@ export function Layout({ children, portal }: LayoutProps) {
             {/* Header Actions */}
             <div className="flex items-center gap-2">
               {/* Notifications */}
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10">
                 <Bell className="h-4 w-4" />
                 <span className="sr-only">Notifications</span>
               </Button>
 
               {/* User Menu */}
-              <div className="flex items-center gap-2 pl-2 border-l">
+              <div className="flex items-center gap-2 pl-2 border-l border-white/20">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                  <div className="h-8 w-8 rounded-full bg-white/20 text-white flex items-center justify-center text-sm font-medium">
                     {user?.firstName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                   </div>
                   <div className="hidden md:block text-sm">
-                    <div className="font-medium">{user?.fullName}</div>
-                    <div className="text-xs text-muted-foreground">{user?.email}</div>
+                    <div className="font-medium text-white">{user?.fullName}</div>
+                    <div className="text-xs text-white/70">{user?.email}</div>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  <ChevronDown className="h-4 w-4 text-white/70" />
                 </div>
               </div>
 
               {/* Logout */}
               <Button 
-                variant="secondary" 
+                variant="ghost" 
                 size="icon" 
                 onClick={logout}
-                className="h-8 w-8 hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="sr-only">Logout</span>
