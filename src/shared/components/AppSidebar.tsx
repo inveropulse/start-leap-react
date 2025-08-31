@@ -108,7 +108,7 @@ export function AppSidebar({ portal }: AppSidebarProps) {
       <Sidebar variant="inset" collapsible="icon">
         <SidebarHeader>
           <div className="flex items-center gap-2 px-2 py-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <div className={`flex items-center justify-center rounded-md bg-primary text-primary-foreground transition-all duration-300 ${isCollapsed ? 'h-10 w-10' : 'h-8 w-8'}`}>
               <Activity className={`transition-all duration-300 ${isCollapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
