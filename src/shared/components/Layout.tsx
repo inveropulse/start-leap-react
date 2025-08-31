@@ -25,7 +25,7 @@ export function Layout({ children, portal }: LayoutProps) {
         <AppSidebar portal={portal} />
         <SidebarInset className="flex flex-col">
           {/* Header - Sticky to top */}
-          <header className={cn("sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-4 border-b", theme.gradientClass, "text-white")}>
+          <header className={cn("sticky top-0 z-10 flex py-3 shrink-0 items-center justify-between px-4 border-b", theme.gradientClass, "text-white")}>
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1" />
               <div className="h-6 w-px bg-border" />
