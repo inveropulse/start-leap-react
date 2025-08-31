@@ -37,7 +37,7 @@ export function Layout({ children, portal }: LayoutProps) {
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="p-0 w-72">
+              <SheetContent side="left" className="p-0 w-52">
                 <MobileNavigation portal={portal} onNavigate={() => setMobileMenuOpen(false)} />
               </SheetContent>
             </Sheet>
