@@ -21,7 +21,7 @@ export const useLoginRequest = () => {
   return useMutation({
     mutationKey: ["login.user.request"],
     mutationFn: async (req: LoginRequest): Promise<LoginResponse> => {
-      return createAuthState(createFakeLoginResponse());
+      return createAuthState(createFakeLoginResponse(req));
       // return await apiClient.auth
       //   .postApiAuthLogin(req)
       //   .then((response) => {
@@ -38,7 +38,7 @@ export const useLoginRequest = () => {
   });
 };
 
-const createFakeLoginResponse = (): LoginResponseDto => {
+const createFakeLoginResponse = (req: LoginRequest): LoginResponseDto => {
   return {
     token: {
       token: "mock-token-" + Date.now(),
@@ -57,13 +57,30 @@ const createFakeLoginResponse = (): LoginResponseDto => {
       lastName: "User",
       fullName: "Mock User",
       phoneNumber: "+1234567890",
-      roles: ["BookingAdmin"],
+      roles: determineFakeLoginResponseRoles(req),
       permissions: [],
       clinic: null,
       patient: null,
       sedationist: null,
     },
   };
+};
+
+const determineFakeLoginResponseRoles = (
+  req: LoginRequest
+): string[] | null => {
+  switch (req.email.toLowerCase()) {
+    case "admin@sedation.com":
+      return ["Admin"];
+    case "clinic@sedation.com":
+      return ["ClinicAdmin"];
+    case "patient@sedation.com":
+      return ["PatientUser"];
+    case "sedationist@sedation.com":
+      return ["Sedationist"];
+    default:
+      return null;
+  }
 };
 
 const createAuthState = (loginDto: LoginResponseDto): AuthState => {
@@ -106,7 +123,8 @@ const createAuthState = (loginDto: LoginResponseDto): AuthState => {
     refreshToken: loginDto.refreshToken?.token ?? null,
     tokenExpiry: new Date(loginDto.token.tokenExpiration).getTime(),
     currentPortal: currentPortal,
-    sessionId: "session-" + Date.now() + "-" + Math.random().toString(36).substring(2),
+    sessionId:
+      "session-" + Date.now() + "-" + Math.random().toString(36).substring(2),
   };
 };
 

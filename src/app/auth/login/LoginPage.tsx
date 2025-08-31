@@ -14,6 +14,7 @@ import { useLoginForm, LoginFormData } from "./hooks/useLoginForm";
 import { FormTextField } from "@/shared/components/form/FormTextField";
 import { useEffect } from "react";
 import { logger } from "@/shared/services/logging/logger";
+import { APP_CONFIG, Environment } from "@/shared/AppConfig";
 
 export default function LoginPage() {
   const { isAuthenticated, isLoading, error } = useAuth();
@@ -129,17 +130,31 @@ export default function LoginPage() {
             </form>
           </Form>
 
-          <div className="pt-4 border-t border-border">
-            <div className="text-xs text-muted-foreground mb-3">
-              <p className="font-medium mb-2">Test Accounts:</p>
-              <div className="space-y-1">
-                <p><span className="font-medium">Internal:</span> admin@sedation.com</p>
-                <p><span className="font-medium">Clinic:</span> clinic@sedation.com</p>
-                <p><span className="font-medium">Patient:</span> patient@sedation.com</p>
-                <p><span className="font-medium">Sedationist:</span> sedationist@sedation.com</p>
+          {APP_CONFIG.environment == Environment.Development && (
+            <div className="pt-4 border-t border-border">
+              <div className="text-xs text-muted-foreground mb-3">
+                <p className="font-medium mb-2">Test Accounts:</p>
+                <div className="space-y-1">
+                  <p>
+                    <span className="font-medium">Internal:</span>{" "}
+                    admin@sedation.com
+                  </p>
+                  <p>
+                    <span className="font-medium">Clinic:</span>{" "}
+                    clinic@sedation.com
+                  </p>
+                  <p>
+                    <span className="font-medium">Patient:</span>{" "}
+                    patient@sedation.com
+                  </p>
+                  <p>
+                    <span className="font-medium">Sedationist:</span>{" "}
+                    sedationist@sedation.com
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="text-center pt-4 border-t border-border">
             <p className="text-sm text-muted-foreground">
