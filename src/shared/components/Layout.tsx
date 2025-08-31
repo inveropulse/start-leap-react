@@ -46,9 +46,9 @@ export function Layout({ children, portal }: LayoutProps) {
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen w-full flex bg-background">
         <AppSidebar portal={portal} />
-        <SidebarInset>
-          {/* Header */}
-          <header className="flex h-12 shrink-0 items-center justify-between px-4 border-b bg-background">
+        <SidebarInset className="flex flex-col">
+          {/* Header - Sticky to top */}
+          <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-4 border-b bg-background">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1" />
               <div className="h-6 w-px bg-border" />
@@ -94,8 +94,8 @@ export function Layout({ children, portal }: LayoutProps) {
             </div>
           </header>
 
-          {/* Main Content */}
-          <main className="flex-1 overflow-auto">
+          {/* Main Content - Scrollable with vertical padding */}
+          <main className="flex-1 overflow-auto py-6">
             {children}
           </main>
         </SidebarInset>
