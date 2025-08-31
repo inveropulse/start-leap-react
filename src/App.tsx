@@ -24,7 +24,12 @@ import { PortalType } from "./shared/services/auth/types";
 export default function App() {
   return (
     <WithProviders>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <Routes>
           {/* Root redirect */}
           <Route path="/" element={<Navigate to="/login" replace />} />

@@ -7,6 +7,7 @@ export interface Props extends PropsWithChildren, ErrorBoundaryConfig {}
 export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
   private resetTimeoutId: number | null = null;
   private globalErrorHandlersSetup = false;
+  private pendingStateUpdate = false;
 
   constructor(props: Props) {
     super(props);
@@ -83,6 +84,7 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
     if (this.resetTimeoutId) {
       clearTimeout(this.resetTimeoutId);
     }
+    this.pendingStateUpdate = false;
     this.removeGlobalErrorHandlers();
   }
 
@@ -91,11 +93,14 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
       return;
     }
 
-    window.addEventListener("error", this.handleUncaughtError);
-    window.addEventListener(
-      "unhandledrejection",
-      this.handleUnhandledRejection
-    );
+    // Only setup global handlers if not in isolate mode
+    if (!this.props.isolate) {
+      window.addEventListener("error", this.handleUncaughtError);
+      window.addEventListener(
+        "unhandledrejection",
+        this.handleUnhandledRejection
+      );
+    }
     this.globalErrorHandlersSetup = true;
   };
 
@@ -113,8 +118,16 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
   };
 
   handleUncaughtError = (event: ErrorEvent) => {
+    // Prevent handling if we're already in an error state or have a pending update
+    if (this.state.hasError || this.pendingStateUpdate) {
+      return;
+    }
+
     try {
-      const error = new Error(event.error || event.message);
+      const error =
+        event.error instanceof Error
+          ? event.error
+          : new Error(event.message || "Unknown error");
 
       // Log the error
       logger.error("Uncaught JavaScript error", error, {
@@ -124,21 +137,33 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
         source: "global-error-handler",
       });
 
-      // Trigger error boundary UI
-      this.setState({
-        hasError: true,
-        error,
-        errorId: `global_error_${Date.now()}_${Math.random()
-          .toString(36)
-          .substring(2, 9)}`,
-        timestamp: new Date().toISOString(),
-      });
+      // Use timeout to avoid state updates during render
+      this.pendingStateUpdate = true;
+      setTimeout(() => {
+        if (!this.state.hasError) {
+          this.setState({
+            hasError: true,
+            error,
+            errorId: `global_error_${Date.now()}_${Math.random()
+              .toString(36)
+              .substring(2, 9)}`,
+            timestamp: new Date().toISOString(),
+          });
+        }
+        this.pendingStateUpdate = false;
+      }, 0);
     } catch (err) {
       console.error("ErrorBoundary failed in global error handler:", err);
+      this.pendingStateUpdate = false;
     }
   };
 
   handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+    // Prevent handling if we're already in an error state or have a pending update
+    if (this.state.hasError || this.pendingStateUpdate) {
+      return;
+    }
+
     try {
       const error =
         event.reason instanceof Error
@@ -151,24 +176,36 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
         source: "unhandled-rejection-handler",
       });
 
-      // Trigger error boundary UI
-      this.setState({
-        hasError: true,
-        error,
-        errorId: `rejection_error_${Date.now()}_${Math.random()
-          .toString(36)
-          .substring(2, 9)}`,
-        timestamp: new Date().toISOString(),
-      });
+      // Use timeout to avoid state updates during render
+      this.pendingStateUpdate = true;
+      setTimeout(() => {
+        if (!this.state.hasError) {
+          this.setState({
+            hasError: true,
+            error,
+            errorId: `rejection_error_${Date.now()}_${Math.random()
+              .toString(36)
+              .substring(2, 9)}`,
+            timestamp: new Date().toISOString(),
+          });
+        }
+        this.pendingStateUpdate = false;
+      }, 0);
     } catch (err) {
       console.error(
         "ErrorBoundary failed in unhandled rejection handler:",
         err
       );
+      this.pendingStateUpdate = false;
     }
   };
 
   resetErrorBoundary = () => {
+    if (this.resetTimeoutId) {
+      clearTimeout(this.resetTimeoutId);
+    }
+
+    this.pendingStateUpdate = false;
     this.setState({
       hasError: false,
       error: undefined,

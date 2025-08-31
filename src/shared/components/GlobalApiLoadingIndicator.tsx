@@ -1,4 +1,3 @@
-import React from "react";
 import { useAxiosClient } from "../providers/AxiosClientProvider";
 
 export function GlobalApiLoadingIndicator() {

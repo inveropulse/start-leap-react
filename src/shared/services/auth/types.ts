@@ -81,40 +81,40 @@ export type AuthState = {
   readonly sessionId: string;
 };
 
-export const PORTALS = {
-  [PortalType.CLINIC]: {
-    name: "Clinic Portal",
-    icon: "🏥",
-    route: "/clinic",
-    description:
-      "Access patient records, schedule appointments, and manage clinic operations.",
-  },
-  [PortalType.INTERNAL]: {
-    name: "Internal Portal",
-    icon: "🏢",
-    route: "/internal",
-    description:
-      "Access internal tools, manage users, and oversee clinic operations.",
-  },
-  [PortalType.PATIENT]: {
-    name: "Patient Portal",
-    icon: "👤",
-    route: "/patient",
-    description:
-      "Access personal health information, communicate with providers, and manage appointments.",
-  },
-  [PortalType.SEDATIONIST]: {
-    name: "Sedationist Portal",
-    icon: "⚕️",
-    route: "/sedationist",
-    description:
-      "Access sedation-related tools, manage patient sedation records, and collaborate with other providers.",
-  },
-} as const;
+// export const PORTALS = {
+//   [PortalType.CLINIC]: {
+//     name: "Clinic Portal",
+//     icon: "🏥",
+//     route: "/clinic",
+//     description:
+//       "Access patient records, schedule appointments, and manage clinic operations.",
+//   },
+//   [PortalType.INTERNAL]: {
+//     name: "Internal Portal",
+//     icon: "🏢",
+//     route: "/internal",
+//     description:
+//       "Access internal tools, manage users, and oversee clinic operations.",
+//   },
+//   [PortalType.PATIENT]: {
+//     name: "Patient Portal",
+//     icon: "👤",
+//     route: "/patient",
+//     description:
+//       "Access personal health information, communicate with providers, and manage appointments.",
+//   },
+//   [PortalType.SEDATIONIST]: {
+//     name: "Sedationist Portal",
+//     icon: "⚕️",
+//     route: "/sedationist",
+//     description:
+//       "Access sedation-related tools, manage patient sedation records, and collaborate with other providers.",
+//   },
+// } as const;
 
 // Helper function
-export const getPortalRoute = (portalType: PortalType) =>
-  PORTALS[portalType].route;
+// export const getPortalRoute = (portalType: PortalType) =>
+//   PORTALS[portalType].route;
 
 // Storage keys - MOVE TO APP_CONFIG
 export const STORAGE_KEYS = {

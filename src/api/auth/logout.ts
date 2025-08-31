@@ -12,11 +12,19 @@ export const useLogoutRequest = () => {
 
       // await apiClient.auth.postApiAuthLogout();
 
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({ data: { success: true } });
-        }, 500);
-      });
+      try {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ data: { success: true } });
+          }, 500);
+        });
+      } catch {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ data: { success: false } });
+          });
+        });
+      }
 
       // When ready to use real API, replace above with:
       // const response = await apiClient.post(ApiEndpoint.LOGOUT);

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAuthStore } from "./store";
-import { AuthErrorCode, UserRole } from "./types";
+import { AuthErrorCode, PortalType, UserRole } from "./types";
 
 export const useAuth = () => {
   const store = useAuthStore();
@@ -20,11 +20,11 @@ export const useAuth = () => {
     error: store.error,
     errorCode: store.errorCode,
     currentPortal: store.currentPortal,
-    availablePortals: store.user
+    availablePortals: (store.user
       ? Object.entries(store.user.portalAccess)
           .map(([key, value]) => (value === true ? key : null))
           .filter((key): key is string => key !== null)
-      : [],
+      : []) as PortalType[],
 
     // Actions
     login: store.login,

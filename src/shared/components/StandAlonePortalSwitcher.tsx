@@ -1,38 +1,28 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/shared/services/auth/hooks";
-import { PORTALS, PortalType } from "@/shared/services/auth/types";
+import { PortalType } from "@/shared/services/auth/types";
+import { useUserAvailablePortals } from "../hooks/useUserAvailblePortals";
 
 export interface PortalSwitcherProps {
   className?: string;
   showHistory?: boolean;
 }
 
-export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
+export const StandAlonePortalSwitcher: React.FC<PortalSwitcherProps> = ({
   className = "",
 }) => {
   const navigate = useNavigate();
-  const {
-    currentPortal,
-    availablePortals: availableUserPortals,
-    hasPortalAccess,
-    switchPortal,
-  } = useAuth();
+  const userAvailablePortals = useUserAvailablePortals();
+  const { currentPortal, hasPortalAccess, switchPortal } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const availablePortals = Object.entries(PORTALS)
-    .filter(([portalType]) => availableUserPortals.includes(portalType))
-    .map(([portalType, portalInfo]) => ({
-      id: portalType as PortalType,
-      ...portalInfo,
-    }));
-
-  const currentPortalInfo = availablePortals.find(
+  const currentPortalInfo = userAvailablePortals.find(
     (p) => p.id === currentPortal
   );
 
   const handlePortalSwitch = (portalId: PortalType) => {
-    const portal = availablePortals.find((p) => p.id === portalId);
+    const portal = userAvailablePortals.find((p) => p.id === portalId);
     if (portal && hasPortalAccess(portal.id)) {
       switchPortal(portalId);
       navigate(portal.route);
@@ -40,7 +30,7 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
     }
   };
 
-  if (availablePortals.length <= 1) {
+  if (userAvailablePortals.length <= 1) {
     return null; // Don't show if user only has access to one portal
   }
 
@@ -50,6 +40,9 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+        aria-label="Portal switcher"
       >
         <span className="text-lg">{currentPortalInfo?.icon}</span>
         <div className="text-left">
@@ -77,11 +70,15 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+        <div
+          className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+          role="menu"
+          aria-label="Available portals"
+        >
           <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
             Available Portals
           </div>
-          {availablePortals.map((portal) => (
+          {userAvailablePortals.map((portal) => (
             <button
               key={portal.id}
               onClick={() => handlePortalSwitch(portal.id)}
@@ -91,6 +88,8 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
                   ? "bg-blue-50 text-blue-700 cursor-not-allowed"
                   : "hover:bg-gray-50 text-gray-900"
               }`}
+              role="menuitem"
+              aria-current={portal.id === currentPortal ? "true" : undefined}
             >
               <span className="text-lg">{portal.icon}</span>
               <div className="flex-1">
@@ -110,7 +109,11 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
 
       {/* Backdrop */}
       {isOpen && (
-        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
       )}
     </div>
   );

@@ -1,11 +1,11 @@
 import {
   PortalType,
-  getPortalRoute,
   PublicRoute as PublicRouteEnum,
 } from "@/shared/services/auth/types";
 import React, { PropsWithChildren } from "react";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { useLocation, Navigate } from "react-router-dom";
+import { usePortalInfoAndRoutes } from "../hooks/usePortalInfoAndRoutes";
 
 export interface ProtectedRouteProps extends PropsWithChildren {
   requiredPortal: PortalType;
@@ -19,6 +19,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { isAuthenticated, isLoading, hasPortalAccess, currentPortal } =
     useAuth();
+  const { getPortalBaseRoute } = usePortalInfoAndRoutes();
   const location = useLocation();
 
   // Show loading while initializing
@@ -40,7 +41,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Auto-redirect to correct portal if user is in wrong portal
   if (requiredPortal && currentPortal !== requiredPortal) {
-    const correctRoute = getPortalRoute(requiredPortal);
+    const correctRoute = getPortalBaseRoute(requiredPortal);
     return <Navigate to={correctRoute} replace />;
   }
 
