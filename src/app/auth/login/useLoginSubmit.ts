@@ -4,11 +4,7 @@ import { useNotifications } from "@/shared/providers/NotificationProvider";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { PORTALS } from "@/shared/services/auth/types";
 import { useLoginRequest } from "@/api/auth/login";
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
+import { LoginFormData } from "./useLoginForm";
 
 export function useLoginSubmit() {
   const navigate = useNavigate();

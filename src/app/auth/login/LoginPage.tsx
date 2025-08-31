@@ -1,8 +1,3 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
   Card,
   CardTitle,
@@ -10,52 +5,18 @@ import {
   CardContent,
   CardDescription,
 } from "@/shared/components/ui/card";
-import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/shared/components/ui/form";
-import { useNotifications } from "@/shared/providers/NotificationProvider";
-import { useAuth } from "@/shared/services/auth/hooks";
+import { Link } from "react-router-dom";
 import { useLoginSubmit } from "./useLoginSubmit";
-
-const formSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Please enter a valid email address"),
-  password: z
-    .string()
-    .min(1, "Password is required")
-    .min(6, "Password must be at least 6 characters"),
-});
-
-type LoginFormData = z.infer<typeof formSchema>;
+import { Form } from "@/shared/components/ui/form";
+import { useAuth } from "@/shared/services/auth/hooks";
+import { Button } from "@/shared/components/ui/button";
+import { useLoginForm, LoginFormData } from "./useLoginForm";
+import { FormTextField } from "@/shared/components/form/FormTextField";
 
 export default function LoginPage() {
-  const notifications = useNotifications();
-  const { isAuthenticated, isLoading, error, clearError } = useAuth();
+  const { isAuthenticated, isLoading, error } = useAuth();
   const { handleSubmit: submitLogin } = useLoginSubmit();
-
-  const form = useForm<LoginFormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  // Clear auth errors when user starts typing
-  useEffect(() => {
-    if (error) {
-      clearError();
-    }
-  }, [form.watch("email"), form.watch("password"), error, clearError]);
+  const { form } = useLoginForm();
 
   const onSubmit = async (data: LoginFormData) => {
     await submitLogin(data);
@@ -76,42 +37,26 @@ export default function LoginPage() {
         <CardContent className="space-y-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
+              <FormTextField
                 control={form.control}
                 name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Email"
+                type="email"
+                placeholder="Enter your email"
+                autoComplete="email"
+                loading={isLoading}
+                required
               />
 
-              <FormField
+              <FormTextField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Enter your password"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Password"
+                type="password"
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                loading={isLoading}
+                required
               />
 
               {/* Global Error Display */}
