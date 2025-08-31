@@ -8,8 +8,8 @@ import {
 
 export default function InternalPortal() {
   return (
-    <div className="min-h-screen bg-blue-50">
-      <header className="bg-blue-600 text-white p-4">
+    <div className="min-h-screen bg-portal-internal-background">
+      <header className="bg-portal-internal-primary text-white p-4">
         <h1 className="text-xl font-semibold">Internal Portal</h1>
       </header>
       <main className="p-6 space-y-6">

@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 220 91% 48%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -34,7 +34,7 @@ All colors MUST be HSL.
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 220 91% 48%;
 
     --radius: 0.5rem;
 
@@ -45,9 +45,40 @@ All colors MUST be HSL.
     --enterprise-surface: 220 13% 97%;
     --enterprise-surface-dark: 220 23% 11%;
 
+    /* Portal Theme System */
+    /* Internal Portal - Blue Theme */
+    --portal-internal-primary: 220 91% 48%;
+    --portal-internal-secondary: 220 14% 96%;
+    --portal-internal-accent: 259 84% 60%;
+    --portal-internal-background: 220 13% 97%;
+    
+    /* Clinic Portal - Orange Theme */
+    --portal-clinic-primary: 24 100% 50%;
+    --portal-clinic-secondary: 24 100% 95%;
+    --portal-clinic-accent: 16 84% 60%;
+    --portal-clinic-background: 24 54% 97%;
+    
+    /* Patient Portal - Green Theme */
+    --portal-patient-primary: 142 76% 36%;
+    --portal-patient-secondary: 142 33% 94%;
+    --portal-patient-accent: 120 84% 45%;
+    --portal-patient-background: 142 20% 97%;
+    
+    /* Sedationist Portal - Purple Theme */
+    --portal-sedationist-primary: 259 84% 60%;
+    --portal-sedationist-secondary: 259 33% 94%;
+    --portal-sedationist-accent: 275 84% 70%;
+    --portal-sedationist-background: 259 20% 97%;
+
     /* Gradients */
     --gradient-enterprise: linear-gradient(135deg, hsl(var(--enterprise-primary)), hsl(var(--enterprise-secondary)));
     --gradient-surface: linear-gradient(180deg, hsl(var(--enterprise-surface)), hsl(var(--background)));
+
+    /* Portal Gradients */
+    --gradient-portal-internal: linear-gradient(135deg, hsl(var(--portal-internal-primary)), hsl(var(--portal-internal-accent)));
+    --gradient-portal-clinic: linear-gradient(135deg, hsl(var(--portal-clinic-primary)), hsl(var(--portal-clinic-accent)));
+    --gradient-portal-patient: linear-gradient(135deg, hsl(var(--portal-patient-primary)), hsl(var(--portal-patient-accent)));
+    --gradient-portal-sedationist: linear-gradient(135deg, hsl(var(--portal-sedationist-primary)), hsl(var(--portal-sedationist-accent)));
 
     /* Shadows */
     --shadow-enterprise: 0 4px 20px hsl(var(--enterprise-primary) / 0.15);

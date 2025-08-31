@@ -8,8 +8,8 @@ import {
 
 export default function ClinicPortal() {
   return (
-    <div className="min-h-screen bg-orange-50">
-      <header className="bg-orange-600 text-white p-4">
+    <div className="min-h-screen bg-portal-clinic-background">
+      <header className="bg-portal-clinic-primary text-white p-4">
         <h1 className="text-xl font-semibold">Clinic Portal</h1>
       </header>
       <main className="p-6">
