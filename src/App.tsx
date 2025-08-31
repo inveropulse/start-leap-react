@@ -19,7 +19,105 @@ import SedationistPortal from "@/app/sedationist/SedationistPortal";
 import WithProviders from "./shared/providers/WithProviders";
 import { PublicRoute } from "./shared/components/PublicRoute";
 import { ProtectedRoute } from "./shared/components/ProtectedRoute";
-import { PortalType } from "./shared/services/auth/types";
+import { PortalType, PublicRoute as PublicRouteEnum } from "./shared/services/auth/types";
+import { usePortalInfoAndRoutes } from "./shared/hooks/usePortalInfoAndRoutes";
+import { Layout } from "./shared/components/layout/Layout";
+
+function AppRoutes() {
+  const { PORTAL_INFO, getPortalRoutes } = usePortalInfoAndRoutes();
+
+  const renderPortalRoutes = (portalType: PortalType, PortalComponent: React.ComponentType) => {
+    const routes = getPortalRoutes(portalType);
+    const baseRoute = PORTAL_INFO[portalType].route;
+
+    return (
+      <Route
+        path={`${baseRoute}/*`}
+        element={
+          <ProtectedRoute requiredPortal={portalType}>
+            <Routes>
+              <Route index element={<PortalComponent />} />
+              {routes.slice(1).map((route) => (
+                <Route
+                  key={route.url}
+                  path={route.url.replace(baseRoute, '').substring(1)}
+                  element={
+                    <Layout>
+                      <div className="p-6">
+                        <div className="text-2xl font-semibold">Page Name: {route.title}</div>
+                      </div>
+                    </Layout>
+                  }
+                />
+              ))}
+            </Routes>
+          </ProtectedRoute>
+        }
+      />
+    );
+  };
+
+  return (
+    <Routes>
+      {/* Root redirect */}
+      <Route path="/" element={<Navigate to={PublicRouteEnum.LOGIN} replace />} />
+
+      {/* Public Routes (unauthenticated users only) */}
+      <Route
+        path={PublicRouteEnum.LOGIN}
+        element={
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={PublicRouteEnum.REGISTER}
+        element={
+          <PublicRoute>
+            <RegisterPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={PublicRouteEnum.FORGOT_PASSWORD}
+        element={
+          <PublicRoute>
+            <ForgotPasswordPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={PublicRouteEnum.RESET_PASSWORD}
+        element={
+          <PublicRoute>
+            <ResetPasswordPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={PublicRouteEnum.VERIFY_EMAIL}
+        element={
+          <PublicRoute>
+            <VerifyEmailPage />
+          </PublicRoute>
+        }
+      />
+
+      {/* Error/Access Pages (accessible to everyone) */}
+      <Route path={PublicRouteEnum.UNAUTHORIZED} element={<UnauthorizedPage />} />
+
+      {/* Protected Portal Routes */}
+      {renderPortalRoutes(PortalType.CLINIC, ClinicPortal)}
+      {renderPortalRoutes(PortalType.PATIENT, PatientPortal)}
+      {renderPortalRoutes(PortalType.INTERNAL, InternalPortal)}
+      {renderPortalRoutes(PortalType.SEDATIONIST, SedationistPortal)}
+
+      {/* 404 Catch-all (accessible to everyone) */}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
+}
 
 export default function App() {
   return (
@@ -30,92 +128,7 @@ export default function App() {
           v7_relativeSplatPath: true,
         }}
       >
-        <Routes>
-          {/* Root redirect */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
-
-          {/* Public Routes (unauthenticated users only) */}
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <LoginPage />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <PublicRoute>
-                <RegisterPage />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/forgot-password"
-            element={
-              <PublicRoute>
-                <ForgotPasswordPage />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/reset-password"
-            element={
-              <PublicRoute>
-                <ResetPasswordPage />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/verify-email"
-            element={
-              <PublicRoute>
-                <VerifyEmailPage />
-              </PublicRoute>
-            }
-          />
-
-          {/* Error/Access Pages (accessible to everyone) */}
-          <Route path="/unauthorized" element={<UnauthorizedPage />} />
-
-          {/* Protected Portal Routes */}
-          <Route
-            path="/clinic/*"
-            element={
-              <ProtectedRoute requiredPortal={PortalType.CLINIC}>
-                <ClinicPortal />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/patient/*"
-            element={
-              <ProtectedRoute requiredPortal={PortalType.PATIENT}>
-                <PatientPortal />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/internal/*"
-            element={
-              <ProtectedRoute requiredPortal={PortalType.INTERNAL}>
-                <InternalPortal />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/sedationist/*"
-            element={
-              <ProtectedRoute requiredPortal={PortalType.SEDATIONIST}>
-                <SedationistPortal />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* 404 Catch-all (accessible to everyone) */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <AppRoutes />
       </Router>
     </WithProviders>
   );
