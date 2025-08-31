@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardTitle,
@@ -8,68 +7,29 @@ import {
   CardDescription,
 } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { useLogging } from "@/shared/providers/LoggingProvider";
-import { useAuth } from "@/shared/services/auth/hooks";
-import { PORTALS } from "@/shared/services/auth/types";
+import { useUnauthorizedState } from "./hooks/useUnauthorizedState";
+import { useUnauthorizedActions } from "./hooks/useUnauthorizedActions";
 
 export default function UnauthorizedPage() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const logger = useLogging({
-    feature: "UnauthorizedPage",
-    metadata: { component: "UnauthorizedPage" },
-  });
-
-  const { isAuthenticated, user, logout, currentPortal, switchPortal } =
-    useAuth();
-
-  const fromPath = location.state?.from?.pathname || "";
-  const attemptedAction =
-    location.state?.attemptedAction || "access this resource";
-
-  useEffect(() => {
-    logger.info("Unauthorized access attempt", {
-      isAuthenticated,
-      fromPath,
-      attemptedAction,
-      user: user?.email || "anonymous",
-      action: "unauthorized-access",
-    });
-  }, [logger, isAuthenticated, fromPath, attemptedAction, user?.email]);
-
-  const handleGoBack = () => {
-    window.history.length > 1 ? navigate(-1) : navigate("/");
-  };
-
-  const handleGoToPortals = () => {
-    if (isAuthenticated && currentPortal) {
-      navigate(PORTALS[currentPortal].route);
-    } else {
-      navigate("/login");
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      logger.info("User logout from unauthorized page", {
-        user: user?.email || "anonymous",
-        action: "logout-from-unauthorized",
-      });
-      await logout();
-      navigate("/login");
-    } catch (error) {
-      navigate("/login");
-    }
-  };
+  const { fromPath, attemptedAction, isAuthenticated, location } =
+    useUnauthorizedState();
+  const {
+    handleGoBack,
+    handleGoToPortals,
+    handleLogout,
+    handleSignIn,
+    handleRegister,
+    handleGoHome,
+    user,
+  } = useUnauthorizedActions();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-muted">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-destructive/10 rounded-full flex items-center justify-center">
             <svg
-              className="w-8 h-8 text-red-600"
+              className="w-8 h-8 text-destructive"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -82,7 +42,9 @@ export default function UnauthorizedPage() {
               />
             </svg>
           </div>
-          <CardTitle className="text-2xl text-red-600">Access Denied</CardTitle>
+          <CardTitle className="text-2xl text-destructive">
+            Access Denied
+          </CardTitle>
           <CardDescription className="text-base">
             {isAuthenticated
               ? `You don't have permission to ${attemptedAction}`
@@ -132,12 +94,14 @@ export default function UnauthorizedPage() {
               </div>
 
               {user && (
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                <div className="bg-muted rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-foreground mb-2">
                     Current User:
                   </h4>
-                  <p className="text-sm text-gray-600">{user.email}</p>
-                  <p className="text-sm text-gray-600">Role: {user.role}</p>
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Role: {user.role}
+                  </p>
                 </div>
               )}
 
@@ -157,7 +121,7 @@ export default function UnauthorizedPage() {
                 <Button
                   onClick={handleLogout}
                   variant="outline"
-                  className="w-full text-red-600 border-red-300 hover:bg-red-50"
+                  className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
                 >
                   Sign Out
                 </Button>
@@ -165,11 +129,11 @@ export default function UnauthorizedPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg
-                      className="h-5 w-5 text-blue-400"
+                      className="h-5 w-5 text-primary"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -181,10 +145,10 @@ export default function UnauthorizedPage() {
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-blue-800">
+                    <h3 className="text-sm font-medium text-primary">
                       Authentication Required
                     </h3>
-                    <div className="mt-2 text-sm text-blue-700">
+                    <div className="mt-2 text-sm text-primary/80">
                       <p>
                         Please sign in to your account to access this resource.
                         {fromPath && (
@@ -204,20 +168,14 @@ export default function UnauthorizedPage() {
 
               <div className="space-y-3">
                 <Button
-                  onClick={() =>
-                    navigate("/login", {
-                      state: {
-                        from: location.state?.from || { pathname: "/" },
-                      },
-                    })
-                  }
+                  onClick={() => handleSignIn(location)}
                   className="w-full"
                 >
                   Sign In
                 </Button>
 
                 <Button
-                  onClick={() => navigate("/register")}
+                  onClick={handleRegister}
                   variant="outline"
                   className="w-full"
                 >
@@ -225,7 +183,7 @@ export default function UnauthorizedPage() {
                 </Button>
 
                 <Button
-                  onClick={() => navigate("/")}
+                  onClick={handleGoHome}
                   variant="outline"
                   className="w-full"
                 >
@@ -236,12 +194,12 @@ export default function UnauthorizedPage() {
           )}
 
           {/* Contact Support */}
-          <div className="text-center pt-4 border-t border-gray-200">
-            <p className="text-sm text-gray-600">
+          <div className="text-center pt-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">
               Need help?{" "}
               <Link
                 to="/contact"
-                className="text-blue-600 hover:text-blue-500 font-medium"
+                className="text-primary hover:text-primary/80 font-medium"
               >
                 Contact Support
               </Link>

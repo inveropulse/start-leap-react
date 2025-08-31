@@ -6,12 +6,12 @@ import {
   BrowserRouter as Router,
 } from "react-router-dom";
 import LoginPage from "@/app/auth/login/LoginPage";
-import RegisterPage from "@/app/auth/RegisterPage";
-import ForgotPasswordPage from "@/app/auth/ForgotPasswordPage";
-import ResetPasswordPage from "@/app/auth/ResetPasswordPage";
-import VerifyEmailPage from "@/app/auth/VerifyEmailPage";
-import UnauthorizedPage from "@/app/auth/UnauthorizedPage";
-import NotFoundPage from "@/app/auth/NotFoundPage";
+import { RegisterPage } from "@/app/auth/register";
+import { ForgotPasswordPage } from "@/app/auth/forgot-password";
+import { ResetPasswordPage } from "@/app/auth/reset-password";
+import { VerifyEmailPage } from "@/app/auth/verify-email";
+import { UnauthorizedPage } from "@/app/auth/unauthorized";
+import { NotFoundPage } from "@/app/auth/not-found";
 import ClinicPortal from "@/app/clinic/ClinicPortal";
 import PatientPortal from "@/app/patient/PatientPortal";
 import InternalPortal from "@/app/internal/InternalPortal";

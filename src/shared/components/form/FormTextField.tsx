@@ -7,6 +7,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/shared/components/ui/form";
 
 export interface FormTextFieldProps<T extends FieldValues>
@@ -16,6 +17,7 @@ export interface FormTextFieldProps<T extends FieldValues>
   label: string;
   loading?: boolean;
   required?: boolean;
+  description?: string;
 }
 
 export function FormTextField<T extends FieldValues>({
@@ -26,6 +28,7 @@ export function FormTextField<T extends FieldValues>({
   required = false,
   disabled,
   className,
+  description,
   ...inputProps
 }: FormTextFieldProps<T>) {
   return (
@@ -53,6 +56,7 @@ export function FormTextField<T extends FieldValues>({
               )}
             </div>
           </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
         </FormItem>
       )}
