@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { secureStorage } from "./storage";
+import { secureStorage, StorageEventType } from "./storage";
 import { AuthState, PortalType, STORAGE_KEYS, AuthErrorCode } from "./types";
 
 export interface AuthStore extends AuthState {
@@ -25,6 +25,9 @@ export interface AuthStore extends AuthState {
   initialize: () => void;
   saveToStorage: () => void;
   clearStorage: () => void;
+
+  // Security
+  initializeSecurityListener: () => void;
 }
 
 const generateSessionId = (): string => {
@@ -59,6 +62,77 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     get().saveToStorage();
   },
 
+  // Initialize security listener for storage tampering detection
+  initializeSecurityListener: () => {
+    const securityListener = (event: {
+      type: StorageEventType;
+      key: string;
+      timestamp: Date;
+      success: boolean;
+      error?: string;
+    }) => {
+      const state = get();
+
+      // Only monitor auth-related storage keys
+      if (event.key !== STORAGE_KEYS.AUTH_STATE) {
+        return;
+      }
+
+      // Detect suspicious activities that warrant immediate logout
+      const suspiciousEvents = [
+        StorageEventType.DECRYPT_ERROR,
+        StorageEventType.CORRUPTED_DATA,
+        StorageEventType.ENCRYPT_ERROR,
+        StorageEventType.EXTERNAL_DELETION,
+        StorageEventType.EXTERNAL_MODIFICATION,
+      ];
+
+      if (suspiciousEvents.includes(event.type) && state.isAuthenticated) {
+        console.warn(
+          `Security event detected: ${event.type} for key: ${event.key}`,
+          {
+            timestamp: event.timestamp,
+            error: event.error,
+            sessionId: state.sessionId,
+          }
+        );
+
+        // Log security incident for audit trail
+        const securityIncident = {
+          type: "STORAGE_TAMPERING_DETECTED",
+          eventType: event.type,
+          key: event.key,
+          timestamp: event.timestamp,
+          sessionId: state.sessionId,
+          userId: state.user?.id,
+          userEmail: state.user?.email,
+          error: event.error,
+        };
+
+        // You might want to send this to a logging service
+        console.error("Security incident logged:", securityIncident);
+
+        // Immediate logout for security
+        set({
+          ...initialState,
+          sessionId: null,
+          error:
+            "Session terminated due to security concerns. Please log in again.",
+          errorCode: AuthErrorCode.TOKEN_EXPIRED,
+        });
+
+        // Clear all storage
+        get().clearStorage();
+      }
+    };
+
+    // Add the security listener
+    secureStorage.addListener(securityListener);
+
+    // Start monitoring the auth state key for external changes
+    secureStorage.startMonitoring(STORAGE_KEYS.AUTH_STATE);
+  },
+
   // Initialize from storage
   initialize: () => {
     try {
@@ -85,6 +159,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       console.error("Failed to initialize auth from storage:", error);
       get().clearStorage();
     }
+
+    // Initialize security listener after auth initialization
+    get().initializeSecurityListener();
   },
 
   // Login action - generate new session on login
