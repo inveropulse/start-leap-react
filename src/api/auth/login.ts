@@ -39,6 +39,7 @@ export const useLoginRequest = () => {
 };
 
 const createFakeLoginResponse = (req: LoginRequest): LoginResponseDto => {
+  const roles = determineFakeLoginResponseRoles(req);
   return {
     token: {
       token: "mock-token-" + Date.now(),
@@ -57,11 +58,21 @@ const createFakeLoginResponse = (req: LoginRequest): LoginResponseDto => {
       lastName: "User",
       fullName: "Mock User",
       phoneNumber: "+1234567890",
-      roles: determineFakeLoginResponseRoles(req),
+      roles: roles,
       permissions: [],
       clinic: null,
       patient: null,
-      sedationist: null,
+      sedationist:
+        roles.includes("Admin") || roles.includes("Sedationist")
+          ? {
+              id: "sedationist-123",
+              email: "mock.user@example.com",
+              firstName: "Mock",
+              lastName: "User",
+              fullName: "Mock User",
+              phoneNumber: "+1234567890",
+            }
+          : null,
     },
   };
 };
