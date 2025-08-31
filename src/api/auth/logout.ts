@@ -9,6 +9,9 @@ export const useLogoutRequest = () => {
     mutationFn: async () => {
       // For now, keeping mock implementation
       // Replace this with actual API call when ready
+
+      // await apiClient.auth.postApiAuthLogout();
+
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve({ data: { success: true } });

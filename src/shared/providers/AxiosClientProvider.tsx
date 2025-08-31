@@ -1,12 +1,18 @@
-import { logger } from "../services/logging/logger";
 import { APP_CONFIG } from "@/shared/AppConfig";
 import baseAxios, { AxiosInstance } from "axios";
+import { logger } from "../services/logging/logger";
 import { request } from "@/api/generated/core/request";
 import { ApiClient, CancelablePromise } from "@/api/generated";
 import { createContext, PropsWithChildren, useContext } from "react";
+import { AuthError, AuthErrorFactory } from "../utils/errorHandling";
 import { AxiosHttpRequest } from "@/api/generated/core/AxiosHttpRequest";
 import { ApiRequestOptions } from "@/api/generated/core/ApiRequestOptions";
-import { AuthError, AuthErrorFactory } from "../utils/errorHandling";
+import {
+  createFakeApiRefreshResponse,
+  createRefreshResponse,
+  RefreshTokenRequest,
+  RefreshTokenResponse,
+} from "@/api/auth/refresh";
 
 export type AxiosClientContextType = {
   readonly apiClient: ApiClient;
@@ -25,6 +31,14 @@ class TokenRefreshManager {
     reject: (error: any) => void;
     request: any;
   }> = [];
+  private apiClient: ApiClient | null = null;
+
+  /**
+   * Initialize with API client instance
+   */
+  initialize(apiClient: ApiClient) {
+    this.apiClient = apiClient;
+  }
 
   /**
    * Handles token refresh with proper race condition management
@@ -68,7 +82,7 @@ class TokenRefreshManager {
   }
 
   /**
-   * Performs the actual token refresh
+   * Performs the actual token refresh using your API layer
    */
   private async performTokenRefresh(): Promise<string> {
     const { useAuthStore } = await import("@/shared/services/auth/store");
@@ -78,6 +92,7 @@ class TokenRefreshManager {
       const error = AuthErrorFactory.tokenExpired({
         reason: "no_refresh_token",
       });
+      await this.performLogout(); // Trigger logout API call
       authState.logout();
       throw error;
     }
@@ -88,21 +103,13 @@ class TokenRefreshManager {
         source: "token-refresh-manager",
       });
 
-      const refreshResponse = await axios.post(
-        "/auth/refresh",
-        {
-          token: authState.accessToken,
-          refreshToken: authState.refreshToken,
-        },
-        {
-          _skipAuthRetry: true, // Prevent infinite loops
-        } as any
-      );
+      // Use your API layer instead of direct axios call
+      const refreshResponse = await this.callRefreshTokenAPI({
+        token: authState.accessToken || "",
+        refreshToken: authState.refreshToken,
+      });
 
-      const { token: newAccessToken, refresh: newRefreshToken } =
-        refreshResponse.data.data;
-
-      if (!newAccessToken) {
+      if (!refreshResponse?.token) {
         throw AuthErrorFactory.tokenExpired({
           reason: "invalid_refresh_response",
         });
@@ -110,9 +117,9 @@ class TokenRefreshManager {
 
       // Update auth store with new tokens
       authState.update({
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-        tokenExpiry: Date.now() + 3600 * 1000, // Default 1 hour
+        accessToken: refreshResponse.token,
+        refreshToken: refreshResponse.refresh,
+        tokenExpiry: refreshResponse.tokenExpires,
         error: null,
         errorCode: null,
       });
@@ -121,7 +128,7 @@ class TokenRefreshManager {
         source: "token-refresh-manager",
       });
 
-      return newAccessToken;
+      return refreshResponse.token;
     } catch (error: any) {
       logger.error("Token refresh failed", error, {
         refreshStatus: error.response?.status,
@@ -134,14 +141,88 @@ class TokenRefreshManager {
           ? error
           : AuthErrorFactory.fromApiError(error, "token_refresh");
 
-      // Clear auth state on refresh failure
+      // Clear auth state and trigger logout on refresh failure
       authState.update({
         error: authError.toUserMessage(),
         errorCode: authError.code,
       });
+
+      // Trigger logout API call (fail silently if it fails)
+      await this.performLogout();
       authState.logout();
 
       throw authError;
+    }
+  }
+
+  /**
+   * Calls the refresh token API using your API layer (mocked for now)
+   */
+  private async callRefreshTokenAPI(
+    req: RefreshTokenRequest
+  ): Promise<RefreshTokenResponse | null> {
+    // TODO UNCOMMENT WHEN READY
+    // if (this.apiClient) {
+    //   try {
+    //     const response = await this.apiClient.auth.postApiAuthRefreshToken(req);
+    //     if (!response.successful) {
+    //       throw new Error("Failed to refresh token");
+    //     }
+    //     return {
+    //       token: response.data.token.token,
+    //       tokenExpires: new Date(response.data.token.tokenExpiration).getTime(),
+    //       refresh: response.data.refreshToken.token,
+    //       refreshExpires: new Date(
+    //         response.data.refreshToken.refreshTokenExpiration
+    //       ).getTime(),
+    //     };
+    //   } catch (error) {
+    // logger.error("Error calling refresh token API", error, {
+    //   source: "token-refresh-manager",
+    // });
+    //     return null;
+    //   }
+    // }
+
+    // Mock implementation matching your refresh.ts
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ ...createRefreshResponse(createFakeApiRefreshResponse()) });
+      }, 500);
+    });
+  }
+
+  /**
+   * Triggers logout API call (fails silently)
+   */
+  private async performLogout(): Promise<void> {
+    try {
+      logger.info("Triggering logout API call", {
+        source: "token-refresh-manager",
+      });
+
+      // Mock implementation matching your logout.ts
+      // When ready, uncomment the real API call below:
+
+      // if (this.apiClient) {
+      //   await this.apiClient.auth.postApiAuthLogout();
+      // }
+
+      // Mock implementation
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ data: { success: true } });
+        }, 500);
+      });
+
+      logger.info("Logout API call successful", {
+        source: "token-refresh-manager",
+      });
+    } catch (error: any) {
+      // Fail silently but log the error
+      logger.error("Logout API call failed - continuing silently", error, {
+        source: "token-refresh-manager",
+      });
     }
   }
 
@@ -325,6 +406,9 @@ const httpRequest = class AxiosHttpRequestInstance extends AxiosHttpRequest {
 
 // Create API client with custom HTTP request
 const apiClient = new ApiClient(undefined, httpRequest);
+
+// Initialize token refresh manager with API client
+tokenRefreshManager.initialize(apiClient);
 
 export default function AxiosClientProvider(props: PropsWithChildren) {
   return (
