@@ -4,6 +4,7 @@ import TanstackProvider from "./TanstackProvider";
 import AxiosClientProvider from "./AxiosClientProvider";
 import NotificationProvider from "./NotificationProvider";
 import { ErrorBoundary } from "@/shared//components/Error/ErrorBoundary";
+import { GlobalApiLoadingIndicator } from "@/shared/components/GlobalApiLoadingIndicator";
 
 export default function WithProviders(props: PropsWithChildren) {
   return (
@@ -11,7 +12,10 @@ export default function WithProviders(props: PropsWithChildren) {
       <LoggingProvider>
         <NotificationProvider>
           <TanstackProvider>
-            <AxiosClientProvider>{props.children}</AxiosClientProvider>
+            <AxiosClientProvider>
+              {props.children}
+              <GlobalApiLoadingIndicator />
+            </AxiosClientProvider>
           </TanstackProvider>
         </NotificationProvider>
       </LoggingProvider>

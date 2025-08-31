@@ -3,7 +3,7 @@ import baseAxios, { AxiosInstance } from "axios";
 import { logger } from "../services/logging/logger";
 import { request } from "@/api/generated/core/request";
 import { ApiClient, CancelablePromise } from "@/api/generated";
-import { createContext, PropsWithChildren, useContext } from "react";
+import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { AuthError, AuthErrorFactory } from "../utils/errorHandling";
 import { AxiosHttpRequest } from "@/api/generated/core/AxiosHttpRequest";
 import { ApiRequestOptions } from "@/api/generated/core/ApiRequestOptions";
@@ -17,9 +17,36 @@ import {
 export type AxiosClientContextType = {
   readonly apiClient: ApiClient;
   readonly axios: AxiosInstance;
+  readonly isLoading: boolean;
 };
 
 const AxiosClientContext = createContext<AxiosClientContextType>(undefined!);
+
+/**
+ * Simple loading manager to track active API requests
+ */
+class LoadingManager {
+  private activeRequests = 0;
+  private updateCallback: ((isLoading: boolean) => void) | null = null;
+
+  setUpdateCallback(callback: (isLoading: boolean) => void) {
+    this.updateCallback = callback;
+  }
+
+  increment(url?: string) {
+    if (url?.includes("/api/Log")) return;
+    this.activeRequests++;
+    this.updateCallback?.(true);
+  }
+
+  decrement(url?: string) {
+    if (url?.includes("/api/Log")) return;
+    this.activeRequests = Math.max(0, this.activeRequests - 1);
+    this.updateCallback?.(this.activeRequests > 0);
+  }
+}
+
+const loadingManager = new LoadingManager();
 
 /**
  * Enhanced token refresh manager to handle race conditions
@@ -271,6 +298,9 @@ const axios = baseAxios.create({
 // Request interceptor with enhanced logging and auth
 axios.interceptors.request.use(
   async (config) => {
+    // Increment loading counter
+    loadingManager.increment(config.url);
+
     // Add auth token to requests - import auth store dynamically to avoid circular dependencies
     try {
       const { useAuthStore } = await import("@/shared/services/auth/store");
@@ -298,6 +328,9 @@ axios.interceptors.request.use(
     return config;
   },
   (error) => {
+    // Decrement loading counter on request error
+    loadingManager.decrement(error.config?.url);
+
     logger.error("API Request failed to send", error, {
       source: "axios-request-interceptor",
     });
@@ -308,6 +341,9 @@ axios.interceptors.request.use(
 // Enhanced response interceptor with proper race condition handling
 axios.interceptors.response.use(
   (response) => {
+    // Decrement loading counter on success
+    loadingManager.decrement(response.config.url);
+
     // Calculate response time
     const startTime = (response.config as any).requestStartTime;
     const responseTime = startTime ? Date.now() - startTime : undefined;
@@ -325,6 +361,9 @@ axios.interceptors.response.use(
     return response;
   },
   async (error) => {
+    // Decrement loading counter on error
+    loadingManager.decrement(error.config?.url);
+
     const originalRequest = error.config;
     const startTime = (error.config as any)?.requestStartTime;
     const responseTime = startTime ? Date.now() - startTime : undefined;
@@ -350,6 +389,8 @@ axios.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
+        // Increment loading counter for retry
+        loadingManager.increment(originalRequest.url);
         return await tokenRefreshManager.handleTokenRefresh(originalRequest);
       } catch (refreshError) {
         logger.debug("Request failed after token refresh attempt", {
@@ -411,8 +452,13 @@ const apiClient = new ApiClient(undefined, httpRequest);
 tokenRefreshManager.initialize(apiClient);
 
 export default function AxiosClientProvider(props: PropsWithChildren) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Initialize loading manager callback
+  loadingManager.setUpdateCallback(setIsLoading);
+
   return (
-    <AxiosClientContext.Provider value={{ apiClient, axios }}>
+    <AxiosClientContext.Provider value={{ apiClient, axios, isLoading }}>
       {props.children}
     </AxiosClientContext.Provider>
   );
