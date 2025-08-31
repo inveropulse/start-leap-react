@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/shared/componen
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { AppSidebar } from "./AppSidebar";
 import { MobileNavigation } from "./MobileNavigation";
+import { PortalSwitcher } from "./PortalSwitcher";
 import { Button } from "@/shared/components/ui/button";
 import { LogOut, User, Bell, ChevronDown, Menu } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
@@ -48,6 +49,9 @@ export function Layout({ children, portal }: LayoutProps) {
 
           {/* Mobile Header Actions */}
           <div className="flex items-center gap-2">
+            {/* Portal Switcher */}
+            <PortalSwitcher className="[&>button]:bg-white/10 [&>button]:border-white/20 [&>button]:text-white [&>button]:hover:bg-white/20" />
+            
             <Button variant="ghost" size="icon" className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10">
               <Bell className="h-4 w-4" />
               <span className="sr-only">Notifications</span>
@@ -96,6 +100,9 @@ export function Layout({ children, portal }: LayoutProps) {
 
             {/* Desktop Header Actions */}
             <div className="flex items-center gap-2">
+              {/* Portal Switcher */}
+              <PortalSwitcher className="[&>button]:bg-white/10 [&>button]:border-white/20 [&>button]:text-white [&>button]:hover:bg-white/20" />
+              
               {/* Notifications */}
               <Button variant="ghost" size="icon" className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10">
                 <Bell className="h-4 w-4" />
