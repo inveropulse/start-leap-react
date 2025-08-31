@@ -40,21 +40,20 @@ export function Layout({ children, portal }: LayoutProps) {
 
   const config = portalConfig[portal];
 
+  console.log("Layout rendering for portal:", portal, "with user:", user?.fullName);
+
   return (
-    <SidebarProvider>
-      <div className={cn("min-h-screen w-full flex", config.bgClass)}>
+    <SidebarProvider defaultOpen={true}>
+      <div className="min-h-screen w-full flex bg-background">
         <AppSidebar portal={portal} />
         <SidebarInset>
           {/* Header */}
-          <header className={cn(
-            "flex h-16 shrink-0 items-center justify-between px-4 border-b border-sidebar-border",
-            "bg-sidebar text-sidebar-foreground"
-          )}>
+          <header className="flex h-16 shrink-0 items-center justify-between px-4 border-b bg-background">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1" />
-              <div className="h-6 w-px bg-sidebar-border" />
+              <div className="h-6 w-px bg-border" />
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold text-sidebar-foreground">
+                <h1 className="text-lg font-semibold">
                   {config.name}
                 </h1>
               </div>
@@ -63,22 +62,22 @@ export function Layout({ children, portal }: LayoutProps) {
             {/* Header Actions */}
             <div className="flex items-center gap-2">
               {/* Notifications */}
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-sidebar-foreground hover:bg-sidebar-accent">
+              <Button variant="ghost" size="icon" className="h-8 w-8">
                 <Bell className="h-4 w-4" />
                 <span className="sr-only">Notifications</span>
               </Button>
 
               {/* User Menu */}
-              <div className="flex items-center gap-2 pl-2 border-l border-sidebar-border">
+              <div className="flex items-center gap-2 pl-2 border-l">
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
                     {user?.firstName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                   </div>
                   <div className="hidden md:block text-sm">
-                    <div className="font-medium text-sidebar-foreground">{user?.fullName}</div>
-                    <div className="text-xs text-sidebar-foreground/70">{user?.email}</div>
+                    <div className="font-medium">{user?.fullName}</div>
+                    <div className="text-xs text-muted-foreground">{user?.email}</div>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-sidebar-foreground/70" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
 
@@ -87,7 +86,7 @@ export function Layout({ children, portal }: LayoutProps) {
                 variant="ghost" 
                 size="icon" 
                 onClick={logout}
-                className="h-8 w-8 text-sidebar-foreground hover:bg-sidebar-accent"
+                className="h-8 w-8"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="sr-only">Logout</span>
