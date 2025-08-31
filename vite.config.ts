@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
       "@/api": "/src/api",
       "@/app": "/src/app",
       "@/shared": "/src/shared",
-      "@/shared/ui": "/src/shared/ui",
+      "@/shared/components": "/src/shared/components",
       "@/shared/utils": "/src/shared/utils",
-      "@/shared/provider": "/src/shared/provider",
+      "@/shared/providers": "/src/shared/providers",
     },
   },
 }));
