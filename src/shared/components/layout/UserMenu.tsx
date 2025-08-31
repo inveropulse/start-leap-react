@@ -111,7 +111,6 @@ function PortalSwitcher({ setIsOpen }: PortalSwitcherProps) {
       switchPortal(portal.id);
       navigate(portal.route);
       setIsOpen(false);
-      window.location.reload();
     }
   };
 
