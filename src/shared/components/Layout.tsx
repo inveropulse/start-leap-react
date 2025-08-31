@@ -5,7 +5,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/shared/componen
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { AppSidebar } from "./AppSidebar";
 import { MobileNavigation } from "./MobileNavigation";
-import { PortalSwitcher } from "./PortalSwitcher";
+import { UserMenu } from "./UserMenu";
 import { Button } from "@/shared/components/ui/button";
 import { LogOut, User, Bell, ChevronDown, Menu } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
@@ -49,27 +49,12 @@ export function Layout({ children, portal }: LayoutProps) {
 
           {/* Mobile Header Actions */}
           <div className="flex items-center gap-2">
-            {/* Portal Switcher */}
-            <PortalSwitcher className="[&>button]:bg-white/10 [&>button]:border-white/20 [&>button]:text-white [&>button]:hover:bg-white/20" />
-            
             <Button variant="ghost" size="icon" className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10">
               <Bell className="h-4 w-4" />
               <span className="sr-only">Notifications</span>
             </Button>
 
-            <div className="h-8 w-8 rounded-full bg-white/20 text-white flex items-center justify-center text-sm font-medium">
-              {user?.firstName?.charAt(0) || user?.email?.charAt(0) || 'U'}
-            </div>
-
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={logout}
-              className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="sr-only">Logout</span>
-            </Button>
+            <UserMenu />
           </div>
         </header>
 
@@ -100,39 +85,14 @@ export function Layout({ children, portal }: LayoutProps) {
 
             {/* Desktop Header Actions */}
             <div className="flex items-center gap-2">
-              {/* Portal Switcher */}
-              <PortalSwitcher className="[&>button]:bg-white/10 [&>button]:border-white/20 [&>button]:text-white [&>button]:hover:bg-white/20" />
-              
               {/* Notifications */}
               <Button variant="ghost" size="icon" className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10">
                 <Bell className="h-4 w-4" />
                 <span className="sr-only">Notifications</span>
               </Button>
 
-              {/* User Menu */}
-              <div className="flex items-center gap-2 pl-2 border-l border-white/20">
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-white/20 text-white flex items-center justify-center text-sm font-medium">
-                    {user?.firstName?.charAt(0) || user?.email?.charAt(0) || 'U'}
-                  </div>
-                  <div className="hidden md:block text-sm">
-                    <div className="font-medium text-white">{user?.fullName}</div>
-                    <div className="text-xs text-white/70">{user?.email}</div>
-                  </div>
-                  <ChevronDown className="h-4 w-4 text-white/70" />
-                </div>
-              </div>
-
-              {/* Logout */}
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={logout}
-                className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="sr-only">Logout</span>
-              </Button>
+              {/* User Menu with Portal Switcher */}
+              <UserMenu />
             </div>
           </header>
 
