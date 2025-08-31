@@ -20,6 +20,8 @@ export default defineConfig(({ mode }) => ({
       "@/shared/components": "/src/shared/components",
       "@/shared/utils": "/src/shared/utils",
       "@/shared/providers": "/src/shared/providers",
+      "@/shared/hooks": "/src/shared/hooks",
+      "@/shared/services": "/src/shared/services",
     },
   },
 }));
