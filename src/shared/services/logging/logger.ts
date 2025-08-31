@@ -16,19 +16,26 @@ class Logger implements ILogger {
   ];
   private consoleDestination: IDestinationService = new ConsoleDestination();
   private buffer: LogEntry[] = [];
-  private readonly maxBufferSize = 100;
+  private readonly maxBufferSize = 300; // Increased from 200 to 300
   private flushInterval: number | null = null;
+  private isFlushPending = false; // Prevent concurrent flushes
 
   constructor() {
     this.context.sessionId = this.generateSessionId();
 
     // Flush buffer periodically in production
     if (APP_CONFIG.environment === Environment.Production) {
-      this.flushInterval = setInterval(() => this.flushBuffer(), 30000); // Flush every 30 seconds
+      this.flushInterval = setInterval(() => this.smartFlush(), 45000); // Reduced to 45s for better responsiveness
     }
 
-    // Cleanup on page unload
-    if (typeof window !== "undefined") {
+    // Enhanced cleanup on page visibility change
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+          this.flushBuffer();
+        }
+      });
+
       window.addEventListener("beforeunload", () => {
         this.flushBuffer();
         if (this.flushInterval) {
@@ -108,14 +115,14 @@ class Logger implements ILogger {
         this.consoleDestination.sendAsync(logEntry);
       }
 
-      // Production logging
+      // Production logging - always buffer, even critical errors
       if (APP_CONFIG.environment === Environment.Production) {
         this.addToBuffer(logEntry);
-      }
 
-      // Always send critical errors immediately
-      if (level === "fatal" || level === "error") {
-        this.sendToExternalServices([logEntry]).catch(() => {});
+        // For critical errors, force a flush but don't send individually
+        if (level === "fatal" || level === "error") {
+          this.flushBuffer().catch(() => {});
+        }
       }
     } catch (err) {
       console.error("Logger internal error:", err);
@@ -126,10 +133,40 @@ class Logger implements ILogger {
     try {
       this.buffer.push(logEntry);
 
-      if (this.buffer.length >= this.maxBufferSize) {
-        this.flushBuffer().catch(() => {});
+      // Smart flush based on log level and buffer size
+      if (this.shouldTriggerFlush()) {
+        this.smartFlush();
       }
     } catch (err) {}
+  }
+
+  private shouldTriggerFlush(): boolean {
+    if (this.buffer.length >= this.maxBufferSize) {
+      return true;
+    }
+
+    // Flush if we have critical logs and buffer is getting full
+    const criticalLogs = this.buffer.filter(
+      (log) => log.level === "fatal" || log.level === "error"
+    );
+    if (criticalLogs.length > 0 && this.buffer.length >= 50) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private async smartFlush(): Promise<void> {
+    if (this.isFlushPending || this.buffer.length === 0) {
+      return;
+    }
+
+    this.isFlushPending = true;
+    try {
+      await this.flushBuffer();
+    } finally {
+      this.isFlushPending = false;
+    }
   }
 
   private async flushBuffer(): Promise<void> {
@@ -141,8 +178,11 @@ class Logger implements ILogger {
     try {
       await this.sendToExternalServices(logsToSend);
     } catch (error) {
-      // Re-add failed logs to buffer (with limit to prevent infinite growth)
-      this.buffer = [...logsToSend.slice(-50), ...this.buffer];
+      // Only re-add critical logs if flush fails
+      const criticalLogs = logsToSend.filter(
+        (log) => log.level === "fatal" || log.level === "error"
+      );
+      this.buffer = [...criticalLogs.slice(-50), ...this.buffer];
     }
   }
 
