@@ -4,16 +4,16 @@ import {
   LogEntry,
   LogContext,
   IDestinationService,
+  LogEnrichmentOptions,
 } from "./types";
 import { APP_CONFIG, Environment } from "../../AppConfig";
 import { ConsoleDestination } from "./destination/console";
 import { ExternalApiLogDestination } from "./destination/externalApi";
+import { logEnrichment } from "./enrichment";
 
 class Logger implements ILogger {
   private context: Partial<LogContext> = {};
-  private externalDestinations: IDestinationService[] = [
-    new ExternalApiLogDestination(),
-  ];
+  private externalDestinations: IDestinationService[] = [];
   private consoleDestination: IDestinationService = new ConsoleDestination();
   private buffer: LogEntry[] = [];
   private readonly maxBufferSize = 300; // Increased from 200 to 300
@@ -21,10 +21,11 @@ class Logger implements ILogger {
   private isFlushPending = false; // Prevent concurrent flushes
 
   constructor() {
-    this.context.sessionId = this.generateSessionId();
-
-    // Flush buffer periodically in production
+    // Only initialize external destinations in production
     if (APP_CONFIG.environment === Environment.Production) {
+      this.externalDestinations = [new ExternalApiLogDestination()];
+
+      // Flush buffer periodically in production
       this.flushInterval = setInterval(() => this.smartFlush(), 45000); // Reduced to 45s for better responsiveness
     }
 
@@ -57,7 +58,10 @@ class Logger implements ILogger {
     try {
       const childLogger = new Logger();
       childLogger.addContext({ ...this.context, ...additionalContext });
-      childLogger.externalDestinations = this.externalDestinations;
+      // Only copy external destinations if in production
+      if (APP_CONFIG.environment === Environment.Production) {
+        childLogger.externalDestinations = this.externalDestinations;
+      }
       return childLogger;
     } catch {
       // Return main logger as fallback
@@ -99,13 +103,50 @@ class Logger implements ILogger {
 
   private log(level: LogLevel, message: string, data?: any): void {
     try {
+      // Extract enrichment options from data if provided
+      const {
+        action,
+        component,
+        metadata,
+        includeUserData,
+        includePerformanceData,
+        includeDeviceData,
+        includeLocationData,
+        ...remainingData
+      } = data || {};
+
+      // Create enrichment options
+      const enrichmentOptions: LogEnrichmentOptions = {
+        action,
+        component,
+        metadata,
+        includeUserData: includeUserData !== false, // Default to true
+        includePerformanceData: includePerformanceData !== false, // Default to true
+        includeDeviceData: includeDeviceData !== false, // Default to true
+        includeLocationData: includeLocationData !== false, // Default to true
+      };
+
+      // Get enriched log data
+      const enrichedData = logEnrichment.enrichLogData(enrichmentOptions);
+
       const logEntry: LogEntry = {
         id: this.generateLogId(),
-        timestamp: new Date().toISOString(),
+        timestamp: enrichedData.timestamp,
         level,
         message,
-        context: { ...this.context },
-        data,
+        context: {
+          ...this.context,
+          // User and session data comes entirely from enrichment service
+          sessionId: enrichedData.sessionId,
+          userId: enrichedData.userId,
+          userEmail: enrichedData.userEmail,
+          userName: enrichedData.userName,
+          userRole: enrichedData.userRole,
+        },
+        data: {
+          ...enrichedData,
+          ...remainingData, // Include any additional data passed to log methods
+        },
         source: APP_CONFIG.applicationName,
         environment: APP_CONFIG.environment,
       };
@@ -187,7 +228,13 @@ class Logger implements ILogger {
   }
 
   private async sendToExternalServices(entries: LogEntry[]): Promise<void> {
-    if (this.externalDestinations.length === 0) return;
+    // Only send to external services in production
+    if (
+      APP_CONFIG.environment !== Environment.Production ||
+      this.externalDestinations.length === 0
+    ) {
+      return;
+    }
 
     const promises = this.externalDestinations.map((service) =>
       service.sendAsync(entries).catch((error) => {
@@ -198,14 +245,6 @@ class Logger implements ILogger {
     );
 
     await Promise.allSettled(promises);
-  }
-
-  private generateSessionId(): string {
-    try {
-      return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    } catch {
-      return `session_${Date.now()}_fallback`;
-    }
   }
 
   private generateLogId(): string {

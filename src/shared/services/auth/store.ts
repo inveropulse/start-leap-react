@@ -3,6 +3,10 @@ import { secureStorage } from "./storage";
 import { AuthState, PortalType, STORAGE_KEYS, AuthErrorCode } from "./types";
 
 export interface AuthStore extends AuthState {
+  // Session management
+  sessionId: string;
+  generateNewSession: () => void;
+
   // Core actions
   login: (state: AuthState) => void;
   logout: () => void;
@@ -23,6 +27,14 @@ export interface AuthStore extends AuthState {
   clearStorage: () => void;
 }
 
+const generateSessionId = (): string => {
+  try {
+    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  } catch {
+    return `session_${Date.now()}_fallback`;
+  }
+};
+
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
@@ -33,10 +45,19 @@ const initialState: AuthState = {
   refreshToken: null,
   tokenExpiry: null,
   currentPortal: null,
+  sessionId: null,
 } as const;
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   ...initialState,
+  sessionId: generateSessionId(), // Generate initial session ID
+
+  // Generate new session ID
+  generateNewSession: () => {
+    const newSessionId = generateSessionId();
+    set({ sessionId: newSessionId });
+    get().saveToStorage();
+  },
 
   // Initialize from storage
   initialize: () => {
@@ -46,16 +67,17 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         // Verify token isn't expired
         const now = Date.now();
         if (stored.tokenExpiry && stored.tokenExpiry > now) {
-          get().update({
+          set({
             user: stored.user,
             isAuthenticated: true,
             accessToken: stored.accessToken,
             refreshToken: stored.refreshToken,
             tokenExpiry: stored.tokenExpiry,
             currentPortal: stored.currentPortal,
+            sessionId: stored.sessionId || generateSessionId(), // Use stored or generate new
           });
         } else {
-          // Token expired, clear storage
+          // Token expired, clear storage but keep session ID
           get().clearStorage();
         }
       }
@@ -65,14 +87,17 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
   },
 
-  // Login action
+  // Login action - generate new session on login
   login: (state: AuthState) => {
     try {
-      get().update({
+      const newSessionId = generateSessionId();
+      set({
         ...state,
+        sessionId: newSessionId, // Generate new session on login
       });
+      get().saveToStorage();
     } catch (error: any) {
-      get().update({
+      set({
         isLoading: false,
         error: error.message || "Login failed",
         errorCode: AuthErrorCode.INVALID_CREDENTIALS,
@@ -81,9 +106,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
   },
 
-  // Logout action
   logout: () => {
-    get().update(initialState);
+    set({
+      ...initialState,
+      sessionId: null,
+    });
     get().clearStorage();
   },
 
@@ -134,6 +161,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       refreshToken: state.refreshToken,
       tokenExpiry: state.tokenExpiry,
       currentPortal: state.currentPortal,
+      sessionId: state.sessionId, // Include session ID in storage
     };
 
     try {
@@ -152,3 +180,17 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
   },
 }));
+
+// Helper function to get current auth data for logging
+export const getAuthDataForLogging = () => {
+  const state = useAuthStore.getState();
+  return {
+    userId: state.user?.id,
+    userEmail: state.user?.email,
+    userName: state.user?.fullName,
+    userRole: state.user?.role,
+    sessionId: state.sessionId, // Include session ID
+    currentPortal: state.currentPortal,
+    isAuthenticated: state.isAuthenticated,
+  };
+};

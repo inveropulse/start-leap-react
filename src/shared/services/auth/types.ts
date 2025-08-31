@@ -78,6 +78,7 @@ export type AuthState = {
   readonly refreshToken: string | null;
   readonly tokenExpiry: number | null;
   readonly currentPortal: PortalType | null;
+  readonly sessionId: string;
 };
 
 export const PORTALS = {

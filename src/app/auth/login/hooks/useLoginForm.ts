@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect } from "react";
 import { useAuth } from "@/shared/services/auth/hooks";
+import { logger } from "@/shared/services/logging/logger";
 
 // Form validation schema
 const formSchema = z.object({
@@ -34,6 +35,27 @@ export function useLoginForm() {
       clearError();
     }
   }, [form.watch("email"), form.watch("password"), error, clearError]);
+
+  // Log form validation errors
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      if (type === "change" && name) {
+        // Only log when there are validation errors
+        const fieldError = form.formState.errors[name as keyof LoginFormData];
+        if (fieldError) {
+          logger.warn("Login form validation error", {
+            fieldName: name,
+            errorType: fieldError.type,
+            errorMessage: fieldError.message,
+            hasEmail: !!value.email,
+            hasPassword: !!value.password,
+          });
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   return {
     form,

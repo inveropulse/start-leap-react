@@ -12,13 +12,48 @@ import { useAuth } from "@/shared/services/auth/hooks";
 import { Button } from "@/shared/components/ui/button";
 import { useLoginForm, LoginFormData } from "./hooks/useLoginForm";
 import { FormTextField } from "@/shared/components/form/FormTextField";
+import { useEffect } from "react";
+import { logger } from "@/shared/services/logging/logger";
 
 export default function LoginPage() {
   const { isAuthenticated, isLoading, error } = useAuth();
   const { handleSubmit: submitLogin } = useLoginSubmit();
   const { form } = useLoginForm();
 
+  // Log page view with login-specific context
+  useEffect(() => {
+    logger.info("Login page viewed", {
+      pageType: "authentication",
+      authMethod: "email_password",
+      hasRememberedUser: !!localStorage.getItem("rememberedEmail"),
+      isAlreadyAuthenticated: isAuthenticated,
+    });
+  }, [isAuthenticated]);
+
+  // Log authentication errors from useAuth hook
+  useEffect(() => {
+    if (error && !isLoading) {
+      logger.warn("Login page showing auth error", {
+        errorMessage: error,
+        errorSource: "auth_hook",
+        isAuthenticated: isAuthenticated,
+      });
+    }
+  }, [error, isLoading, isAuthenticated]);
+
   const onSubmit = async (data: LoginFormData) => {
+    // Log form submission attempt (before actual login)
+    logger.info("Login form submitted", {
+      formData: {
+        hasEmail: !!data.email,
+        hasPassword: !!data.password,
+        emailDomain: data.email?.split("@")[1], // Useful for analytics
+        emailLength: data.email?.length,
+        passwordLength: data.password?.length,
+      },
+      formValidation: form.formState.isValid,
+    });
+
     await submitLogin(data);
   };
 
