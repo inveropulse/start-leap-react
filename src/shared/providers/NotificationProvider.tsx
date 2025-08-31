@@ -343,6 +343,3 @@ export function useNotifications() {
 
   return context;
 }
-
-// Export configuration for external use
-export { TOAST_CONFIG };
