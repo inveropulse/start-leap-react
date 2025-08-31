@@ -6,11 +6,11 @@ import {
   CardDescription,
 } from "@/shared/components/ui/card";
 import { Link } from "react-router-dom";
-import { useLoginSubmit } from "./useLoginSubmit";
+import { useLoginSubmit } from "./hooks/useLoginSubmit";
 import { Form } from "@/shared/components/ui/form";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { Button } from "@/shared/components/ui/button";
-import { useLoginForm, LoginFormData } from "./useLoginForm";
+import { useLoginForm, LoginFormData } from "./hooks/useLoginForm";
 import { FormTextField } from "@/shared/components/form/FormTextField";
 
 export default function LoginPage() {
