@@ -108,7 +108,7 @@ export function AppSidebar({ portal }: AppSidebarProps) {
 
   return (
     <TooltipProvider>
-      <Sidebar variant="inset" collapsible="icon" className="w-72">
+      <Sidebar variant="inset" collapsible="icon" style={{ width: 'var(--sidebar-width)' }}>
         <SidebarHeader>
           <div className="flex items-center gap-2 px-2 py-2">
             <div className={cn(
