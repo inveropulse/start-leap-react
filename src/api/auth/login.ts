@@ -106,6 +106,7 @@ const createAuthState = (loginDto: LoginResponseDto): AuthState => {
     refreshToken: loginDto.refreshToken?.token ?? null,
     tokenExpiry: new Date(loginDto.token.tokenExpiration).getTime(),
     currentPortal: currentPortal,
+    sessionId: "session-" + Date.now() + "-" + Math.random().toString(36).substring(2),
   };
 };
 

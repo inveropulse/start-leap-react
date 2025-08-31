@@ -1,3 +1,5 @@
+import { Layout } from "@/shared/components/Layout";
+import { PortalType } from "@/shared/services/auth/types";
 import {
   Card,
   CardTitle,
@@ -8,11 +10,8 @@ import {
 
 export default function InternalPortal() {
   return (
-    <div className="min-h-screen bg-portal-internal-background">
-      <header className="bg-portal-internal-primary text-white p-4">
-        <h1 className="text-xl font-semibold">Internal Portal</h1>
-      </header>
-      <main className="p-6 space-y-6">
+    <Layout portal={PortalType.INTERNAL}>
+      <div className="p-6 space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Welcome to Internal Portal</CardTitle>
@@ -25,7 +24,7 @@ export default function InternalPortal() {
             </p>
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 }

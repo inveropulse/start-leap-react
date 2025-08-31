@@ -1,3 +1,5 @@
+import { Layout } from "@/shared/components/Layout";
+import { PortalType } from "@/shared/services/auth/types";
 import {
   Card,
   CardTitle,
@@ -8,11 +10,8 @@ import {
 
 export default function ClinicPortal() {
   return (
-    <div className="min-h-screen bg-portal-clinic-background">
-      <header className="bg-portal-clinic-primary text-white p-4">
-        <h1 className="text-xl font-semibold">Clinic Portal</h1>
-      </header>
-      <main className="p-6">
+    <Layout portal={PortalType.CLINIC}>
+      <div className="p-6">
         <Card>
           <CardHeader>
             <CardTitle>Welcome to Clinic Portal</CardTitle>
@@ -22,7 +21,7 @@ export default function ClinicPortal() {
             <p>Manage clinic operations, staff scheduling, and patient flow.</p>
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 }

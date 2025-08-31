@@ -1,3 +1,5 @@
+import { Layout } from "@/shared/components/Layout";
+import { PortalType } from "@/shared/services/auth/types";
 import {
   Card,
   CardTitle,
@@ -8,11 +10,8 @@ import {
 
 export default function SedationistPortal() {
   return (
-    <div className="min-h-screen bg-portal-sedationist-background">
-      <header className="bg-portal-sedationist-primary text-white p-4">
-        <h1 className="text-xl font-semibold">Sedationist Portal</h1>
-      </header>
-      <main className="p-6">
+    <Layout portal={PortalType.SEDATIONIST}>
+      <div className="p-6">
         <Card>
           <CardHeader>
             <CardTitle>Welcome to Sedationist Portal</CardTitle>
@@ -25,7 +24,7 @@ export default function SedationistPortal() {
             </p>
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 }
