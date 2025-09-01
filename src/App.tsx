@@ -11,7 +11,7 @@ import { getEnabledPortals, getEnabledPublicRoutes } from "./routes/registry";
 import { AnimatePresence } from "framer-motion";
 
 export default function App() {
-  const { isInitialLoading } = useAppLoading();
+  const { isInitialLoading, showContent, isPortalSwitch } = useAppLoading();
 
   return (
     <WithProviders>
@@ -22,9 +22,9 @@ export default function App() {
         }}
       >
         <AnimatePresence mode="wait">
-          <AppLoadingOverlay isLoading={isInitialLoading} />
-          {!isInitialLoading && (
-            <RouteTransition isInitialLoad={false}>
+          <AppLoadingOverlay isLoading={isInitialLoading} isPortalSwitch={isPortalSwitch} />
+          {showContent && (
+            <RouteTransition isInitialLoad={true}>
               <WithRoutes />
             </RouteTransition>
           )}

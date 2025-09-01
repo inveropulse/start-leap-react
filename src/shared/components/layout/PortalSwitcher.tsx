@@ -16,6 +16,9 @@ export default function PortalSwitcher({ closeMenu }: PortalSwitcherProps) {
   const handlePortalSwitch = (portalId: PortalType) => {
     const portal = availablePortals.find((p) => p.key === portalId);
     if (portal && hasPortalAccess(portal.key)) {
+      // Set flag for portal switch detection
+      sessionStorage.setItem('portalSwitch', 'true');
+      
       switchPortal(portal.key);
       window.location.assign(portal.basePath);
       closeMenu();

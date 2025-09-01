@@ -13,21 +13,31 @@ export function RouteTransition({ children, isInitialLoad = false }: RouteTransi
     <AnimatePresence mode="wait">
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, y: isInitialLoad ? 20 : 6 }}
+        initial={{ 
+          opacity: 0, 
+          y: isInitialLoad ? 20 : 6,
+          scale: isInitialLoad ? 0.98 : 1
+        }}
         animate={{ 
           opacity: 1, 
           y: 0, 
+          scale: 1,
           transition: { 
-            duration: isInitialLoad ? 0.5 : 0.18,
-            ease: "easeOut"
+            duration: isInitialLoad ? 0.6 : 0.18,
+            ease: "easeOut",
+            staggerChildren: isInitialLoad ? 0.1 : 0
           } 
         }}
         exit={{ 
           opacity: 0, 
           y: isInitialLoad ? -10 : -4, 
+          scale: isInitialLoad ? 1.02 : 1,
           transition: { 
             duration: isInitialLoad ? 0.3 : 0.12 
           } 
+        }}
+        style={{
+          willChange: 'transform, opacity'
         }}
       >
         {children}

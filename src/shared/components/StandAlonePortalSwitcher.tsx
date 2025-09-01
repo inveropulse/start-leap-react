@@ -22,6 +22,9 @@ export const StandAlonePortalSwitcher: React.FC<PortalSwitcherProps> = ({
   const handlePortalSwitch = (portalId: PortalType) => {
     const portal = availablePortals.find((p) => p.key === portalId);
     if (portal && hasPortalAccess(portal.key)) {
+      // Set flag for portal switch detection
+      sessionStorage.setItem('portalSwitch', 'true');
+      
       switchPortal(portalId);
       window.location.assign(portal.basePath);
       setIsOpen(false);
