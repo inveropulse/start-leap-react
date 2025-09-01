@@ -1,6 +1,10 @@
 import React from "react";
 import { LucideProps } from "lucide-react";
 import { PortalType } from "@/shared/types";
+import { ClinicQuickActionKey } from "./clinic_routes";
+import { PatientQuickActionKey } from "./patient_routes";
+import { InternalQuickActionKey } from "./internal_routes";
+import { SedationistQuickActionKey } from "./sedationist_routes";
 
 export type AppRoute = {
   readonly path: string;
@@ -16,6 +20,12 @@ export type AppRoute = {
   };
 };
 
+export type QuickActionKey =
+  | InternalQuickActionKey
+  | SedationistQuickActionKey
+  | PatientQuickActionKey
+  | ClinicQuickActionKey;
+
 export type QuickAction = {
   readonly path: string;
   readonly title: string;
@@ -23,6 +33,7 @@ export type QuickAction = {
   readonly icon?: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
+  readonly actionKey: QuickActionKey;
 };
 
 export type PortalConfig = {

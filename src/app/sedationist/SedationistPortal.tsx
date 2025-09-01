@@ -5,25 +5,22 @@ import {
   CardContent,
   CardDescription,
 } from "@/shared/components/ui/card";
-import { Layout } from "@/shared/components/layout/Layout";
 
 export default function SedationistPortal() {
   return (
-    <Layout>
-      <div className="p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Welcome to Sedationist Portal</CardTitle>
-            <CardDescription>Specialized sedation management</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>
-              Manage sedation procedures, monitor patients, and maintain
-              certification records.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    </Layout>
+    <div className="p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Welcome to Sedationist Portal</CardTitle>
+          <CardDescription>Specialized sedation management</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>
+            Manage sedation procedures, monitor patients, and maintain
+            certification records.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import { Activity } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { NavLink, useLocation } from "react-router-dom";
+import { createSearchParams, NavLink, useLocation } from "react-router-dom";
 import { usePortalTheme } from "@/shared/hooks/usePortalTheme";
 import {
   Sidebar,
@@ -23,6 +23,7 @@ import {
 } from "@/shared/components/ui/tooltip";
 import { PortalType } from "@/shared/types";
 import { getPortalByType } from "@/routes/registry";
+import { quickActionState, quickActionTo } from "@/shared/utils/quickAction";
 
 export interface AppSidebarProps {
   portal: PortalType;
@@ -158,7 +159,8 @@ export function AppSidebar({ portal }: AppSidebarProps) {
                         <TooltipTrigger asChild>
                           <SidebarMenuButton asChild>
                             <NavLink
-                              to={action.path}
+                              to={quickActionTo(action.path, action.actionKey)}
+                              state={quickActionState(action.actionKey)}
                               className="flex items-center gap-2"
                             >
                               <action.icon
@@ -177,7 +179,8 @@ export function AppSidebar({ portal }: AppSidebarProps) {
                     ) : (
                       <SidebarMenuButton asChild>
                         <NavLink
-                          to={action.path}
+                          to={quickActionTo(action.path, action.actionKey)}
+                          state={quickActionState(action.actionKey)}
                           className="flex items-center gap-2"
                         >
                           <action.icon

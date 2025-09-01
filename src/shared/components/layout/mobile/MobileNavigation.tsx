@@ -4,6 +4,7 @@ import { PortalType } from "@/shared/types";
 import { getPortalByType } from "@/routes/registry";
 import { NavLink, useLocation } from "react-router-dom";
 import { usePortalTheme } from "@/shared/hooks/usePortalTheme";
+import { quickActionState, quickActionTo } from "@/shared/utils/quickAction";
 
 export interface MobileNavigationProps {
   portal: PortalType;
@@ -86,7 +87,8 @@ export function MobileNavigation({
                 {quickActions.map((action) => (
                   <NavLink
                     key={action.path}
-                    to={action.path}
+                    to={quickActionTo(action.path, action.actionKey)}
+                    state={quickActionState(action.actionKey)}
                     onClick={onNavigate}
                     className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                   >

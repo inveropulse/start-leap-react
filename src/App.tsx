@@ -15,13 +15,13 @@ export default function App() {
           v7_relativeSplatPath: true,
         }}
       >
-        <AppRoutes />
+        <WithRoutes />
       </Router>
     </WithProviders>
   );
 }
 
-function AppRoutes() {
+function WithRoutes() {
   return (
     <Routes>
       {getEnabledPublicRoutes().map((route) => (

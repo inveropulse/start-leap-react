@@ -1,4 +1,5 @@
 import { PortalType } from "../types";
+import { Layout } from "./layout/Layout";
 import React, { PropsWithChildren } from "react";
 import { PublicRoute } from "@/routes/auth_routes";
 import { getPortalByType } from "@/routes/registry";
@@ -38,5 +39,5 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={correctRoute} replace />;
   }
 
-  return <>{children}</>;
+  return <Layout>{children}</Layout>;
 };

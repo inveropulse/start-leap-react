@@ -58,9 +58,17 @@ export default function MobileLayout(props: PropsWithChildren) {
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-72">
+            <SheetContent
+              side="left"
+              className="p-0 w-72"
+              aria-describedby="navigation-menu-description"
+            >
               <VisuallyHidden>
                 <SheetTitle>Navigation Menu</SheetTitle>
+                <div id="navigation-menu-description">
+                  Use the navigation menu to explore different sections of the
+                  portal.
+                </div>
               </VisuallyHidden>
               <MobileNavigation
                 portal={currentPortal}

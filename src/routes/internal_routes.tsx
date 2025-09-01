@@ -9,10 +9,10 @@ import {
   UserCheck,
   LayoutDashboard,
 } from "lucide-react";
-import { buildUrl } from "@/shared/utils/url";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
 import InternalPortal from "@/app/internal/InternalPortal";
+import PatientPage from "@/app/internal/PatientPage";
 
 const Clinics = <div />;
 const Appointments = <div />;
@@ -22,53 +22,69 @@ const Reports = <div />;
 const UsersMgmt = <div />;
 const SettingsScreen = <div />;
 
-const INTERNAL_BASE_PATH = "/internal" as const;
+export enum InternalQuickActionKey {
+  ADD_PATIENT = "add_patient",
+  NEW_APPOINTMENT = "new_appointment",
+}
+
+export enum InternalRoute {
+  ROOT = "/internal",
+  DASHBOARD = `${InternalRoute.ROOT}/dashboard`,
+  PATIENTS = `${InternalRoute.ROOT}/patients`,
+  CLINICS = `${InternalRoute.ROOT}/clinics`,
+  APPOINTMENTS = `${InternalRoute.ROOT}/appointments`,
+  SEDATIONISTS = `${InternalRoute.ROOT}/sedationists`,
+  ANALYTICS = `${InternalRoute.ROOT}/analytics`,
+  REPORTS = `${InternalRoute.ROOT}/reports`,
+  USERS = `${InternalRoute.ROOT}/users`,
+  SETTINGS = `${InternalRoute.ROOT}/settings`,
+}
 
 const INTERNAL_ROUTES: AppRoute[] = [
   {
     index: true,
-    path: buildUrl(INTERNAL_BASE_PATH),
     element: <InternalPortal />,
+    path: InternalRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },
   {
-    element: <div>Internal Patients Page</div>,
-    path: buildUrl(INTERNAL_BASE_PATH, "patients"),
+    element: <PatientPage />,
+    path: InternalRoute.PATIENTS,
     meta: { title: "Patients", enabled: true, icon: Users },
   },
   {
     element: Clinics,
-    path: buildUrl(INTERNAL_BASE_PATH, "clinics"),
+    path: InternalRoute.CLINICS,
     meta: { title: "Clinics", enabled: true, icon: Building2 },
   },
   {
     element: Appointments,
-    path: buildUrl(INTERNAL_BASE_PATH, "appointments"),
+    path: InternalRoute.APPOINTMENTS,
     meta: { title: "Appointments", enabled: true, icon: Calendar },
   },
   {
     element: Sedationists,
-    path: buildUrl(INTERNAL_BASE_PATH, "sedationists"),
+    path: InternalRoute.SEDATIONISTS,
     meta: { title: "Sedationists", enabled: true, icon: UserCheck },
   },
   {
     element: Analytics,
-    path: buildUrl(INTERNAL_BASE_PATH, "analytics"),
+    path: InternalRoute.ANALYTICS,
     meta: { title: "Analytics", enabled: true, icon: Activity },
   },
   {
-    path: buildUrl(INTERNAL_BASE_PATH, "reports"),
+    path: InternalRoute.REPORTS,
     element: Reports,
     meta: { title: "Reports", enabled: true, icon: FileText },
   },
   {
     element: UsersMgmt,
-    path: buildUrl(INTERNAL_BASE_PATH, "users"),
+    path: InternalRoute.USERS,
     meta: { title: "User Management", enabled: true, icon: Shield },
   },
   {
     element: SettingsScreen,
-    path: buildUrl(INTERNAL_BASE_PATH, "settings"),
+    path: InternalRoute.SETTINGS,
     meta: { title: "Settings", enabled: true, icon: Settings },
   },
 ] as const;
@@ -77,7 +93,7 @@ export const INTERNAL_PORTAL: PortalConfig = {
   key: PortalType.INTERNAL,
   name: "Internal Portal",
   icon: "🏢",
-  basePath: INTERNAL_BASE_PATH,
+  basePath: InternalRoute.ROOT,
   roles: [UserRole.ADMIN, UserRole.BOOKING_COORDINATOR],
   summaryDescription: "Administrative and staff portal",
   description:
@@ -87,16 +103,18 @@ export const INTERNAL_PORTAL: PortalConfig = {
   routes: INTERNAL_ROUTES,
   quickActions: [
     {
-      title: "Add Patient",
-      path: buildUrl(INTERNAL_BASE_PATH, "patients/new"),
-      icon: Users,
       enabled: true,
+      icon: Users,
+      title: "Add Patient",
+      path: InternalRoute.PATIENTS,
+      actionKey: InternalQuickActionKey.ADD_PATIENT,
     },
     {
-      title: "New Appointment",
-      path: buildUrl(INTERNAL_BASE_PATH, "appointments/new"),
-      icon: Calendar,
       enabled: true,
+      icon: Calendar,
+      title: "New Appointment",
+      path: InternalRoute.APPOINTMENTS,
+      actionKey: InternalQuickActionKey.NEW_APPOINTMENT,
     },
   ] as const,
 } as const;

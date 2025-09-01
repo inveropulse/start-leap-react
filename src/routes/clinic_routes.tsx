@@ -6,7 +6,6 @@ import {
   UserCheck,
   LayoutDashboard,
 } from "lucide-react";
-import { buildUrl } from "@/shared/utils/url";
 import { AppRoute, PortalConfig } from "./types";
 import ClinicPortal from "@/app/clinic/ClinicPortal";
 import { PortalType, UserRole } from "@/shared/types";
@@ -19,43 +18,56 @@ const ClinicStaff = <div />;
 const ClinicReports = <div />;
 const ClinicSettings = <div />;
 
-const CLINIC_BASE_PATH = "/clinic" as const;
+export enum ClinicQuickActionKey {
+  NEW_APPOINTMENT = "new_appointment",
+  NEW_PATIENT = "new_patient",
+}
+
+export enum ClinicRoute {
+  ROOT = "/clinic",
+  SCHEDULE = `${ClinicRoute.ROOT}/schedule`,
+  PATIENTS = `${ClinicRoute.ROOT}/patients`,
+  APPOINTMENTS = `${ClinicRoute.ROOT}/appointments`,
+  STAFF = `${ClinicRoute.ROOT}/staff`,
+  REPORTS = `${ClinicRoute.ROOT}/reports`,
+  SETTINGS = `${ClinicRoute.ROOT}/settings`,
+}
 
 const CLINIC_ROUTES: AppRoute[] = [
   {
     index: true,
     element: ClinicDashboard,
-    path: buildUrl(CLINIC_BASE_PATH),
+    path: ClinicRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },
   {
     element: ClinicSchedule,
-    path: buildUrl(CLINIC_BASE_PATH, "schedule"),
+    path: ClinicRoute.SCHEDULE,
     meta: { title: "Today's Schedule", enabled: true, icon: Calendar },
   },
   {
     element: ClinicPatients,
-    path: buildUrl(CLINIC_BASE_PATH, "patients"),
+    path: ClinicRoute.PATIENTS,
     meta: { title: "Patients", enabled: true, icon: Users },
   },
   {
     element: ClinicAppointments,
-    path: buildUrl(CLINIC_BASE_PATH, "appointments"),
+    path: ClinicRoute.APPOINTMENTS,
     meta: { title: "Appointments", enabled: true, icon: Calendar },
   },
   {
     element: ClinicStaff,
-    path: buildUrl(CLINIC_BASE_PATH, "staff"),
+    path: ClinicRoute.STAFF,
     meta: { title: "Staff", enabled: true, icon: UserCheck },
   },
   {
     element: ClinicReports,
-    path: buildUrl(CLINIC_BASE_PATH, "reports"),
+    path: ClinicRoute.REPORTS,
     meta: { title: "Reports", enabled: true, icon: FileText },
   },
   {
     element: ClinicSettings,
-    path: buildUrl(CLINIC_BASE_PATH, "settings"),
+    path: ClinicRoute.SETTINGS,
     meta: { title: "Settings", enabled: true, icon: Settings },
   },
 ] as const;
@@ -64,7 +76,7 @@ export const CLINIC_PORTAL: PortalConfig = {
   key: PortalType.CLINIC,
   name: "Clinic Portal",
   icon: "🏥",
-  basePath: CLINIC_BASE_PATH,
+  basePath: ClinicRoute.ROOT,
   roles: [UserRole.CLINIC],
   summaryDescription: "Clinic management and operations",
   description:
@@ -75,15 +87,17 @@ export const CLINIC_PORTAL: PortalConfig = {
   quickActions: [
     {
       title: "Book Appointment",
-      path: buildUrl(CLINIC_BASE_PATH, "appointments/new"),
+      path: ClinicRoute.APPOINTMENTS,
       icon: Calendar,
       enabled: true,
+      actionKey: ClinicQuickActionKey.NEW_APPOINTMENT,
     },
     {
       title: "New Patient",
-      path: buildUrl(CLINIC_BASE_PATH, "patients/new"),
+      path: ClinicRoute.PATIENTS,
       icon: Users,
       enabled: true,
+      actionKey: ClinicQuickActionKey.NEW_PATIENT,
     },
   ] as const,
 } as const;

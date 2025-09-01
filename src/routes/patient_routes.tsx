@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   User as UserIcon,
 } from "lucide-react";
-import { buildUrl } from "@/shared/utils/url";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
 import PatientPortal from "@/app/patient/PatientPortal";
@@ -18,38 +17,53 @@ const PatientMessages = <div />;
 const PatientBilling = <div />;
 const PatientProfile = <div />;
 
-const PATIENT_BASE_PATH = "/patient" as const;
+export enum PatientQuickActionKey {
+  NEW_APPOINTMENT = "new_appointment",
+  VIEW_RECORDS = "view_records",
+  SEND_MESSAGE = "send_message",
+  MAKE_PAYMENT = "make_payment",
+  EDIT_PROFILE = "edit_profile",
+}
+
+export enum PatientRoute {
+  ROOT = "/patient",
+  APPOINTMENTS = `${PatientRoute.ROOT}/appointments`,
+  RECORDS = `${PatientRoute.ROOT}/records`,
+  MESSAGES = `${PatientRoute.ROOT}/messages`,
+  BILLING = `${PatientRoute.ROOT}/billing`,
+  PROFILE = `${PatientRoute.ROOT}/profile`,
+}
 
 const PATIENT_ROUTES: AppRoute[] = [
   {
     index: true,
     element: PatientDashboard,
-    path: buildUrl(PATIENT_BASE_PATH),
+    path: PatientRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },
   {
     element: PatientAppointments,
-    path: buildUrl(PATIENT_BASE_PATH, "appointments"),
+    path: PatientRoute.APPOINTMENTS,
     meta: { title: "My Appointments", enabled: true, icon: Calendar },
   },
   {
     element: PatientRecords,
-    path: buildUrl(PATIENT_BASE_PATH, "records"),
+    path: PatientRoute.RECORDS,
     meta: { title: "Health Records", enabled: true, icon: Heart },
   },
   {
     element: PatientMessages,
-    path: buildUrl(PATIENT_BASE_PATH, "messages"),
+    path: PatientRoute.MESSAGES,
     meta: { title: "Messages", enabled: true, icon: MessageSquare },
   },
   {
     element: PatientBilling,
-    path: buildUrl(PATIENT_BASE_PATH, "billing"),
+    path: PatientRoute.BILLING,
     meta: { title: "Billing", enabled: true, icon: CreditCard },
   },
   {
     element: PatientProfile,
-    path: buildUrl(PATIENT_BASE_PATH, "profile"),
+    path: PatientRoute.PROFILE,
     meta: { title: "Profile", enabled: true, icon: UserIcon },
   },
 ] as const;
@@ -58,7 +72,7 @@ export const PATIENT_PORTAL: PortalConfig = {
   key: PortalType.PATIENT,
   name: "Patient Portal",
   icon: "👤",
-  basePath: PATIENT_BASE_PATH,
+  basePath: PatientRoute.ROOT,
   roles: [UserRole.PATIENT],
   summaryDescription: "Your personal health portal",
   description:
@@ -69,9 +83,10 @@ export const PATIENT_PORTAL: PortalConfig = {
   quickActions: [
     {
       title: "Book Appointment",
-      path: buildUrl(PATIENT_BASE_PATH, "appointments/book"),
+      path: PatientRoute.APPOINTMENTS,
       icon: Calendar,
       enabled: true,
+      actionKey: PatientQuickActionKey.NEW_APPOINTMENT,
     },
   ] as const,
 } as const;
