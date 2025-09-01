@@ -21,25 +21,25 @@ export function RouteTransition({ children, isInitialLoad = false }: RouteTransi
         key={location.pathname}
         initial={{ 
           opacity: 0, 
-          y: 20, 
-          scale: 0.98 
+          y: 10, 
+          scale: 0.4 
         }}
         animate={{ 
           opacity: 1, 
           y: 0, 
           scale: 1,
           transition: { 
-            duration: 0.6,
+            duration: 0.3,
             ease: "easeOut",
             staggerChildren: 0.1
           } 
         }}
         exit={{ 
           opacity: 0, 
-          y: -10, 
-          scale: 1.02,
+          y: -1, 
+          scale: 1.0,
           transition: { 
-            duration: 0.3 
+            duration: 0.15 
           } 
         }}
         style={{
