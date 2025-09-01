@@ -1,4 +1,7 @@
+import { PortalType } from "../types";
 import { motion } from "framer-motion";
+import { useAuth } from "../services/auth/hooks";
+import { usePortalTheme } from "../hooks/usePortalTheme"; // Adjust the path as needed
 
 interface AppLoadingOverlayProps {
   isLoading: boolean;
@@ -9,6 +12,9 @@ export function AppLoadingOverlay({
   isLoading,
   isPortalSwitch = false,
 }: AppLoadingOverlayProps) {
+  const { currentPortal } = useAuth();
+  const theme = usePortalTheme(currentPortal || PortalType.INTERNAL); // Pass currentPortal to usePortalTheme
+
   if (!isLoading) return null;
 
   return (
@@ -16,7 +22,7 @@ export function AppLoadingOverlay({
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background"
+      className={`fixed inset-0 z-50 flex items-center justify-center ${theme.backgroundClass}`} // Use backgroundClass
     >
       <div className="flex flex-col items-center gap-6">
         <div className="relative">
@@ -31,12 +37,12 @@ export function AppLoadingOverlay({
               repeat: Infinity,
               ease: "easeInOut",
             }}
-            className="absolute inset-0 w-12 h-12 border border-primary/20 rounded-full -translate-x-2 -translate-y-2"
+            className={`absolute inset-0 w-12 h-12 rounded-full -translate-x-2 -translate-y-2 ${theme.primaryClass}`} // Use primaryClass
           />
 
           {/* Main spinner */}
           <div
-            className="w-8 h-8 border-2 border-muted border-t-primary rounded-full animate-spin"
+            className={`w-8 h-8 border-2 rounded-full animate-spin ${theme.secondaryClass}`} // Use secondaryClass
             role="status"
             aria-label="Loading application"
           />
@@ -48,7 +54,9 @@ export function AppLoadingOverlay({
           transition={{ delay: 0.3, duration: 0.4 }}
           className="text-center"
         >
-          <p className="text-sm text-muted-foreground font-medium">
+          <p className={`text-sm font-medium ${theme.accentClass}`}>
+            {" "}
+            {/* Use accentClass */}
             {isPortalSwitch
               ? "Switching portal..."
               : "Preparing your portal..."}
@@ -69,7 +77,7 @@ export function AppLoadingOverlay({
                   delay: i * 0.2,
                   ease: "easeInOut",
                 }}
-                className="w-1.5 h-1.5 bg-primary/60 rounded-full"
+                className={`w-1.5 h-1.5 rounded-full ${theme.primaryClass}`} // Use primaryClass
               />
             ))}
           </div>
