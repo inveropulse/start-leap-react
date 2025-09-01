@@ -8,7 +8,7 @@ import {
 import { PortalType } from "@/shared/types";
 import { getPortalByType } from "@/routes/registry";
 
-export default function InternalPortal() {
+export default function DashboardPage() {
   const portalConfig = getPortalByType(PortalType.INTERNAL);
 
   return (

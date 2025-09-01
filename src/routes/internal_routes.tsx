@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
-import InternalPortal from "@/app/internal/InternalPortal";
+import DashboardPage from "@/app/internal/dashboard";
 import PatientPage from "@/app/internal/PatientPage";
 
 const Clinics = <div />;
@@ -43,7 +43,7 @@ export enum InternalRoute {
 const INTERNAL_ROUTES: AppRoute[] = [
   {
     index: true,
-    element: <InternalPortal />,
+    element: <DashboardPage />,
     path: InternalRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },
