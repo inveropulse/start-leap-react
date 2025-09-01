@@ -4,10 +4,15 @@ import WithProviders from "./shared/providers/WithProviders";
 import { PublicRoute } from "./shared/components/PublicRoute";
 import { ProtectedRoute } from "./shared/components/ProtectedRoute";
 import { RouteTransition } from "./shared/components/RouteTransition";
+import { AppLoadingOverlay } from "./shared/components/AppLoadingOverlay";
+import { useAppLoading } from "./shared/hooks/useAppLoading";
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import { getEnabledPortals, getEnabledPublicRoutes } from "./routes/registry";
+import { AnimatePresence } from "framer-motion";
 
 export default function App() {
+  const { isInitialLoading } = useAppLoading();
+
   return (
     <WithProviders>
       <Router
@@ -16,9 +21,14 @@ export default function App() {
           v7_relativeSplatPath: true,
         }}
       >
-        <RouteTransition>
-          <WithRoutes />
-        </RouteTransition>
+        <AnimatePresence mode="wait">
+          <AppLoadingOverlay isLoading={isInitialLoading} />
+          {!isInitialLoading && (
+            <RouteTransition isInitialLoad={false}>
+              <WithRoutes />
+            </RouteTransition>
+          )}
+        </AnimatePresence>
       </Router>
     </WithProviders>
   );
