@@ -3,7 +3,7 @@ import {
   SidebarTrigger,
   SidebarProvider,
 } from "@/shared/components/ui/sidebar";
-import { UserMenu } from "../UserMenu";
+import { Menu } from "../Menu";
 import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
 import { AppSidebar } from "./AppSidebar";
@@ -70,7 +70,7 @@ export default function DesktopLayout(props: PropsWithChildren) {
               </Button>
 
               {/* User Menu with Portal Switcher */}
-              <UserMenu />
+              <Menu />
             </div>
           </header>
 

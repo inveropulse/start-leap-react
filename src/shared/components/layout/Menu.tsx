@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { PortalType } from "@/shared/types";
-import { PortalConfig } from "@/routes/types";
+import PortalSwitcher from "./PortalSwitcher";
+import { LogOut, ChevronDown } from "lucide-react";
 import { useLogoutRequest } from "@/api/auth/logout";
 import { useAuth } from "@/shared/services/auth/hooks";
-import { LogOut, ChevronDown, Check } from "lucide-react";
 
 export interface UserMenuProps {
   className?: string;
 }
 
-export const UserMenu: React.FC<UserMenuProps> = ({ className = "" }) => {
+export const Menu: React.FC<UserMenuProps> = ({ className = "" }) => {
   const { user, logout } = useAuth();
   const logoutRequest = useLogoutRequest();
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +16,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({ className = "" }) => {
   const handleLogout = () => {
     logout();
     logoutRequest.mutate();
+    setIsOpen(false);
+  };
+
+  const handleCloseMenu = () => {
     setIsOpen(false);
   };
 
@@ -67,7 +70,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ className = "" }) => {
           </div>
 
           {/* Portal Switching Section */}
-          <PortalSwitcher setIsOpen={setIsOpen} />
+          <PortalSwitcher closeMenu={handleCloseMenu} />
 
           {/* Actions Section */}
           <div className="px-4 py-2">
@@ -87,65 +90,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({ className = "" }) => {
       {isOpen && (
         <div
           className="fixed inset-0 z-40"
-          onClick={() => setIsOpen(false)}
+          onClick={handleCloseMenu}
           aria-hidden="true"
         />
       )}
     </div>
   );
 };
-
-interface PortalSwitcherProps {
-  setIsOpen: (value: boolean) => void;
-}
-
-function PortalSwitcher({ setIsOpen }: PortalSwitcherProps) {
-  const { currentPortal, availablePortals, switchPortal, hasPortalAccess } =
-    useAuth();
-
-  const handlePortalSwitch = (portalId: PortalType) => {
-    const portal = availablePortals.find((p) => p.key === portalId);
-    if (portal && hasPortalAccess(portal.key)) {
-      switchPortal(portal.key);
-      window.location.assign(portal.basePath);
-      setIsOpen(false);
-    }
-  };
-
-  if (availablePortals.length <= 1) return;
-
-  return (
-    <>
-      <div className="px-4 py-2 border-b border-gray-100">
-        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-          Switch Portal
-        </div>
-
-        <div className="space-y-1" role="group" aria-label="Portal selection">
-          {availablePortals.map((portal: PortalConfig) => (
-            <button
-              key={portal.key}
-              onClick={() => handlePortalSwitch(portal.key)}
-              disabled={portal.key === currentPortal}
-              className={`w-full px-3 py-2 text-left flex items-center gap-3 rounded-md transition-colors ${
-                portal.key === currentPortal
-                  ? "bg-blue-50 text-blue-700 cursor-not-allowed"
-                  : "hover:bg-gray-50 text-gray-900"
-              }`}
-              role="menuitem"
-              aria-current={portal.key === currentPortal ? "true" : undefined}
-            >
-              <span className="text-lg">{portal.icon}</span>
-              <div className="flex-1">
-                <div className="text-sm font-medium">{portal.name}</div>
-              </div>
-              {portal.key === currentPortal && (
-                <Check className="h-4 w-4 text-blue-600" />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-    </>
-  );
-}

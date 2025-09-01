@@ -4,7 +4,7 @@ import {
   SheetTrigger,
   SheetContent,
 } from "@/shared/components/ui/sheet";
-import { UserMenu } from "../UserMenu";
+import { Menu } from "../Menu";
 import { cn } from "@/shared/utils/cn";
 import { useLocation } from "react-router-dom";
 import { getPortalByType } from "@/routes/registry";
@@ -92,7 +92,7 @@ export default function MobileLayout(props: PropsWithChildren) {
             <span className="sr-only">Notifications</span>
           </Button>
 
-          <UserMenu />
+          <Menu />
         </div>
       </header>
 
