@@ -46,7 +46,7 @@ export function AppLoadingOverlay({ isLoading, isPortalSwitch = false }: AppLoad
           className="text-center"
         >
           <p className="text-sm text-muted-foreground font-medium">
-            {isPortalSwitch ? "Switching workspace..." : "Preparing your workspace..."}
+            {isPortalSwitch ? "Switching portal..." : "Preparing your portal..."}
           </p>
           
           {/* Loading dots */}
