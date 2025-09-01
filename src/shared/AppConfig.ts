@@ -31,26 +31,12 @@ export type AppConfig = {
       readonly windowMs: number;
     };
   };
-  readonly performance: {
-    readonly enableCompression: boolean;
-    readonly cacheTimeout: number;
-    readonly maxConcurrentRequests: number;
-    readonly requestTimeout: number;
-    readonly enableLazyLoading: boolean;
-  };
   readonly logging: {
     readonly level: "debug" | "info" | "warn" | "error";
     readonly enableConsole: boolean;
     readonly enableRemote: boolean;
     readonly maxLogSize: number;
     readonly logRetentionDays: number;
-  };
-  readonly features: {
-    readonly enableAnalytics: boolean;
-    readonly enableErrorTracking: boolean;
-    readonly enablePerformanceMonitoring: boolean;
-    readonly enableUserFeedback: boolean;
-    readonly enableDevTools: boolean;
   };
 };
 
@@ -82,26 +68,12 @@ const DEFAULT_CONFIG: AppConfig = {
       windowMs: 15 * 60 * 1000, // 15 minutes
     },
   },
-  performance: {
-    enableCompression: true,
-    cacheTimeout: 5 * 60 * 1000, // 5 minutes
-    maxConcurrentRequests: 10,
-    requestTimeout: 30000, // 30 seconds
-    enableLazyLoading: true,
-  },
   logging: {
     level: "debug", // debug for development
     enableConsole: true,
     enableRemote: false, // false for development
     maxLogSize: 1 * 1024 * 1024, // 1MB
     logRetentionDays: 7,
-  },
-  features: {
-    enableAnalytics: false, // false for development
-    enableErrorTracking: false, // false for development
-    enablePerformanceMonitoring: false, // false for development
-    enableUserFeedback: false, // false for development
-    enableDevTools: true, // true for development
   },
 } as const;
 
@@ -227,34 +199,6 @@ export class ApplicationConfig {
         },
       },
 
-      performance: {
-        enableCompression: getEnvValue(
-          "VITE_ENABLE_COMPRESSION",
-          DEFAULT_CONFIG.performance.enableCompression,
-          (v) => v !== "false"
-        ),
-        cacheTimeout: getEnvValue(
-          "VITE_CACHE_TIMEOUT",
-          DEFAULT_CONFIG.performance.cacheTimeout,
-          Number
-        ),
-        maxConcurrentRequests: getEnvValue(
-          "VITE_MAX_CONCURRENT_REQUESTS",
-          DEFAULT_CONFIG.performance.maxConcurrentRequests,
-          Number
-        ),
-        requestTimeout: getEnvValue(
-          "VITE_REQUEST_TIMEOUT",
-          DEFAULT_CONFIG.performance.requestTimeout,
-          Number
-        ),
-        enableLazyLoading: getEnvValue(
-          "VITE_ENABLE_LAZY_LOADING",
-          DEFAULT_CONFIG.performance.enableLazyLoading,
-          (v) => v !== "false"
-        ),
-      },
-
       logging: {
         level: getEnvValue(
           "VITE_LOG_LEVEL",
@@ -279,34 +223,6 @@ export class ApplicationConfig {
           "VITE_LOG_RETENTION_DAYS",
           DEFAULT_CONFIG.logging.logRetentionDays,
           Number
-        ),
-      },
-
-      features: {
-        enableAnalytics: getEnvValue(
-          "VITE_ENABLE_ANALYTICS",
-          DEFAULT_CONFIG.features.enableAnalytics,
-          (v) => v === "true"
-        ),
-        enableErrorTracking: getEnvValue(
-          "VITE_ENABLE_ERROR_TRACKING",
-          DEFAULT_CONFIG.features.enableErrorTracking,
-          (v) => v === "true"
-        ),
-        enablePerformanceMonitoring: getEnvValue(
-          "VITE_ENABLE_PERFORMANCE_MONITORING",
-          DEFAULT_CONFIG.features.enablePerformanceMonitoring,
-          (v) => v === "true"
-        ),
-        enableUserFeedback: getEnvValue(
-          "VITE_ENABLE_USER_FEEDBACK",
-          DEFAULT_CONFIG.features.enableUserFeedback,
-          (v) => v === "true"
-        ),
-        enableDevTools: getEnvValue(
-          "VITE_ENABLE_DEV_TOOLS",
-          DEFAULT_CONFIG.features.enableDevTools || !isProduction(),
-          (v) => v === "true"
         ),
       },
     };
