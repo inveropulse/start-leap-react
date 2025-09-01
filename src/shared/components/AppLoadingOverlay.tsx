@@ -5,7 +5,10 @@ interface AppLoadingOverlayProps {
   isPortalSwitch?: boolean;
 }
 
-export function AppLoadingOverlay({ isLoading, isPortalSwitch = false }: AppLoadingOverlayProps) {
+export function AppLoadingOverlay({
+  isLoading,
+  isPortalSwitch = false,
+}: AppLoadingOverlayProps) {
   if (!isLoading) return null;
 
   return (
@@ -19,26 +22,26 @@ export function AppLoadingOverlay({ isLoading, isPortalSwitch = false }: AppLoad
         <div className="relative">
           {/* Outer pulse ring */}
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.2, 1],
-              opacity: [0.3, 0.1, 0.3]
+              opacity: [0.3, 0.1, 0.3],
             }}
-            transition={{ 
+            transition={{
               duration: 2,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
             className="absolute inset-0 w-12 h-12 border border-primary/20 rounded-full -translate-x-2 -translate-y-2"
           />
-          
+
           {/* Main spinner */}
-          <div 
+          <div
             className="w-8 h-8 border-2 border-muted border-t-primary rounded-full animate-spin"
             role="status"
             aria-label="Loading application"
           />
         </div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -46,23 +49,25 @@ export function AppLoadingOverlay({ isLoading, isPortalSwitch = false }: AppLoad
           className="text-center"
         >
           <p className="text-sm text-muted-foreground font-medium">
-            {isPortalSwitch ? "Switching portal..." : "Preparing your portal..."}
+            {isPortalSwitch
+              ? "Switching portal..."
+              : "Preparing your portal..."}
           </p>
-          
+
           {/* Loading dots */}
           <div className="flex justify-center gap-1 mt-3">
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
-                animate={{ 
+                animate={{
                   opacity: [0.3, 1, 0.3],
-                  scale: [0.8, 1, 0.8]
+                  scale: [0.8, 1, 0.8],
                 }}
-                transition={{ 
+                transition={{
                   duration: 1.5,
                   repeat: Infinity,
                   delay: i * 0.2,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
                 className="w-1.5 h-1.5 bg-primary/60 rounded-full"
               />

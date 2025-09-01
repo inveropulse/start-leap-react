@@ -8,7 +8,7 @@ export function useAppLoading() {
     // Show loading overlay for 600ms
     const loadingTimer = setTimeout(() => {
       setIsInitialLoading(false);
-    }, 600);
+    }, 1500);
 
     // Show content after overlay fade-out + gap
     const contentTimer = setTimeout(() => {
@@ -22,18 +22,18 @@ export function useAppLoading() {
   }, []);
 
   // Check if this is a portal switch
-  const isPortalSwitch = sessionStorage.getItem('portalSwitch') === 'true';
-  
+  const isPortalSwitch = sessionStorage.getItem("portalSwitch") === "true";
+
   useEffect(() => {
     if (!isInitialLoading && isPortalSwitch) {
       // Clear the portal switch flag
-      sessionStorage.removeItem('portalSwitch');
+      sessionStorage.removeItem("portalSwitch");
     }
   }, [isInitialLoading, isPortalSwitch]);
 
-  return { 
-    isInitialLoading, 
-    showContent, 
-    isPortalSwitch 
+  return {
+    isInitialLoading,
+    showContent,
+    isPortalSwitch,
   };
 }

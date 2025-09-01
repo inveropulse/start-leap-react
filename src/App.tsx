@@ -22,7 +22,10 @@ export default function App() {
         }}
       >
         <AnimatePresence mode="wait">
-          <AppLoadingOverlay isLoading={isInitialLoading} isPortalSwitch={isPortalSwitch} />
+          <AppLoadingOverlay
+            isLoading={isInitialLoading}
+            isPortalSwitch={isPortalSwitch}
+          />
           {showContent && (
             <RouteTransition isInitialLoad={true}>
               <WithRoutes />
