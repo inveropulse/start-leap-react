@@ -1,17 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { LoginFormData } from "./useLoginForm";
 import { useLoginRequest } from "@/api/auth/login";
+import { getPortalByType } from "@/routes/registry";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { logger } from "@/shared/services/logging/logger";
 import { useNotifications } from "@/shared/providers/NotificationProvider";
-import { usePortalInfoAndRoutes } from "@/shared/hooks/usePortalInfoAndRoutes";
 
 export function useLoginSubmit() {
   const navigate = useNavigate();
   const loginRequest = useLoginRequest();
   const notifications = useNotifications();
   const { login } = useAuth();
-  const { PORTAL_INFO } = usePortalInfoAndRoutes();
 
   const handleSubmit = async (formData: LoginFormData) => {
     const startTime = performance.now();
@@ -63,11 +62,11 @@ export function useLoginSubmit() {
 
       notifications.showSuccess(
         "Login Successful!",
-        `Redirecting to ${PORTAL_INFO[result.currentPortal].name}...`
+        `Redirecting to ${getPortalByType(result.currentPortal).name}...`
       );
 
       setTimeout(() => {
-        navigate(PORTAL_INFO[result.currentPortal].route);
+        navigate(getPortalByType(result.currentPortal).basePath);
       }, 1000);
     } catch (error: any) {
       const errorMessage = error?.message || "Login failed. Please try again.";

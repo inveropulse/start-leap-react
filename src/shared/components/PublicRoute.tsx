@@ -1,9 +1,8 @@
-import { APP_CONFIG } from "@/shared/AppConfig";
 import React, { PropsWithChildren } from "react";
+import { getPortalByType } from "@/routes/registry";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { useLocation, Navigate } from "react-router-dom";
 import { AuthLayout } from "../../app/auth/shared/AuthLayout";
-import { usePortalInfoAndRoutes } from "../hooks/usePortalInfoAndRoutes";
 
 export interface PublicRouteProps extends PropsWithChildren {
   fallback?: React.ReactNode;
@@ -16,7 +15,6 @@ export const PublicRoute: React.FC<PublicRouteProps> = ({
   redirectIfAuthenticated = true,
 }) => {
   const { isAuthenticated, isLoading, currentPortal } = useAuth();
-  const { getPortalBaseRoute } = usePortalInfoAndRoutes();
   const location = useLocation();
 
   // Show loading while initializing
@@ -42,8 +40,8 @@ export const PublicRoute: React.FC<PublicRouteProps> = ({
     }
 
     // Otherwise redirect to current portal or default
-    const targetPortal = currentPortal || APP_CONFIG.portals.defaultRedirect;
-    return <Navigate to={getPortalBaseRoute(targetPortal)} replace />;
+    const targetPortal = currentPortal;
+    return <Navigate to={getPortalByType(targetPortal).basePath} replace />;
   }
 
   return <AuthLayout>{children}</AuthLayout>;

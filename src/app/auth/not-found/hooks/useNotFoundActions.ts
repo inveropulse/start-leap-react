@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/shared/services/auth/hooks";
-import { usePortalInfoAndRoutes } from "@/shared/hooks/usePortalInfoAndRoutes";
+import { getEnabledPortals, getPortalByType } from "@/routes/registry";
 
-interface Suggestion {
+export interface Suggestion {
   name: string;
   path: string;
   icon: string;
@@ -11,11 +11,10 @@ interface Suggestion {
 export function useNotFoundActions() {
   const navigate = useNavigate();
   const { isAuthenticated, currentPortal, availablePortals } = useAuth();
-  const { PORTAL_INFO } = usePortalInfoAndRoutes();
 
   const handleGoHome = () => {
     if (isAuthenticated && currentPortal) {
-      navigate(PORTAL_INFO[currentPortal].route);
+      navigate(getPortalByType(currentPortal).basePath);
     } else {
       navigate("/login");
     }
@@ -34,11 +33,11 @@ export function useNotFoundActions() {
 
     if (isAuthenticated) {
       // Show all available portals
-      Object.entries(PORTAL_INFO).forEach(([portalType, portalInfo]) => {
+      getEnabledPortals().forEach((portal) => {
         suggestions.push({
-          name: portalInfo.name,
-          path: portalInfo.route,
-          icon: portalInfo.icon,
+          name: portal.name,
+          path: portal.basePath,
+          icon: portal.icon,
         });
       });
     } else {

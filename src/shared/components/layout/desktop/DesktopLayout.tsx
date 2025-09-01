@@ -5,19 +5,17 @@ import {
 } from "@/shared/components/ui/sidebar";
 import { UserMenu } from "../UserMenu";
 import { cn } from "@/shared/utils/cn";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { Bell as BellIcon } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { usePortalTheme } from "@/shared/hooks/usePortalTheme";
-import { usePortalInfoAndRoutes } from "@/shared/hooks/usePortalInfoAndRoutes";
 import { useLocation } from "react-router-dom";
 
 export default function DesktopLayout(props: PropsWithChildren) {
-  const { currentPortal } = useAuth();
+  const { currentPortal, availablePortals } = useAuth();
   const theme = usePortalTheme(currentPortal);
-  const { getPortalRoutes } = usePortalInfoAndRoutes();
   const location = useLocation();
 
   const isActive = (path: string) => {
@@ -30,10 +28,11 @@ export default function DesktopLayout(props: PropsWithChildren) {
     return location.pathname.startsWith(path);
   };
 
-  const routes = useMemo(() => getPortalRoutes(currentPortal), [currentPortal]);
-  const currentRoute = useMemo(() => {
-    return routes.filter((route) => isActive(route.url))[0];
-  }, [routes, location.pathname]);
+  const routes =
+    availablePortals.find((portal) => portal.key === currentPortal)?.routes ||
+    [];
+
+  const currentRoute = routes.filter((route) => isActive(route.path))[0];
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -53,7 +52,7 @@ export default function DesktopLayout(props: PropsWithChildren) {
               <div className="h-6 w-px bg-border" />
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-semibold text-white">
-                  {currentRoute?.title || theme.name}
+                  {currentRoute?.meta.title || theme.name}
                 </h1>
               </div>
             </div>

@@ -1,8 +1,7 @@
+import { PortalType } from "../types";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { PortalConfig } from "@/routes/types";
 import { useAuth } from "@/shared/services/auth/hooks";
-import { PortalType } from "@/shared/services/auth/types";
-import { useUserAvailablePortals } from "../hooks/useUserAvailblePortals";
 
 export interface PortalSwitcherProps {
   className?: string;
@@ -12,25 +11,24 @@ export interface PortalSwitcherProps {
 export const StandAlonePortalSwitcher: React.FC<PortalSwitcherProps> = ({
   className = "",
 }) => {
-  const navigate = useNavigate();
-  const userAvailablePortals = useUserAvailablePortals();
-  const { currentPortal, hasPortalAccess, switchPortal } = useAuth();
+  const { currentPortal, availablePortals, hasPortalAccess, switchPortal } =
+    useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const currentPortalInfo = userAvailablePortals.find(
-    (p) => p.id === currentPortal
+  const currentPortalInfo = availablePortals.find(
+    (p) => p.key === currentPortal
   );
 
   const handlePortalSwitch = (portalId: PortalType) => {
-    const portal = userAvailablePortals.find((p) => p.id === portalId);
-    if (portal && hasPortalAccess(portal.id)) {
+    const portal = availablePortals.find((p) => p.key === portalId);
+    if (portal && hasPortalAccess(portal.key)) {
       switchPortal(portalId);
-      navigate(portal.route);
+      window.location.assign(portal.basePath);
       setIsOpen(false);
     }
   };
 
-  if (userAvailablePortals.length <= 1) {
+  if (availablePortals.length <= 1) {
     return null; // Don't show if user only has access to one portal
   }
 
@@ -78,24 +76,24 @@ export const StandAlonePortalSwitcher: React.FC<PortalSwitcherProps> = ({
           <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
             Available Portals
           </div>
-          {userAvailablePortals.map((portal) => (
+          {availablePortals.map((portal: PortalConfig) => (
             <button
-              key={portal.id}
-              onClick={() => handlePortalSwitch(portal.id)}
-              disabled={portal.id === currentPortal}
+              key={portal.key}
+              onClick={() => handlePortalSwitch(portal.key)}
+              disabled={portal.key === currentPortal}
               className={`w-full px-4 py-2 text-left flex items-center space-x-3 ${
-                portal.id === currentPortal
+                portal.key === currentPortal
                   ? "bg-blue-50 text-blue-700 cursor-not-allowed"
                   : "hover:bg-gray-50 text-gray-900"
               }`}
               role="menuitem"
-              aria-current={portal.id === currentPortal ? "true" : undefined}
+              aria-current={portal.key === currentPortal ? "true" : undefined}
             >
               <span className="text-lg">{portal.icon}</span>
               <div className="flex-1">
                 <div className="text-sm font-medium">
                   {portal.name}
-                  {portal.id === currentPortal && (
+                  {portal.key === currentPortal && (
                     <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
                       Current
                     </span>

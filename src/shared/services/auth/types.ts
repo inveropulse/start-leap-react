@@ -1,20 +1,4 @@
-// Core Enums
-export enum PortalType {
-  CLINIC = "clinic",
-  INTERNAL = "internal",
-  PATIENT = "patient",
-  SEDATIONIST = "sedationist",
-}
-
-export enum PublicRoute {
-  LOGIN = "/login",
-  REGISTER = "/register",
-  FORGOT_PASSWORD = "/forgot-password",
-  RESET_PASSWORD = "/reset-password",
-  VERIFY_EMAIL = "/verify-email",
-  UNAUTHORIZED = "/unauthorized",
-  NOT_FOUND = "/404",
-}
+import { UserRole, PortalType } from "@/shared/types";
 
 export enum AuthErrorCode {
   INVALID_CREDENTIALS = "INVALID_CREDENTIALS",
@@ -35,20 +19,6 @@ export enum AuthErrorCode {
   ACCESS_DENIED = "ACCESS_DENIED",
   INVALID_ROLE = "INVALID_ROLE",
   INVALID_USER_ID = "INVALID_USER_ID",
-}
-
-export enum UserRole {
-  ADMIN = "admin",
-  CLINIC = "clinic",
-  PATIENT = "patient",
-  SEDATIONIST = "sedationist",
-  BOOKING_COORDINATOR = "booking_coordinator",
-
-  // TODO - NOT NEEDED NOW BUT CAN BE USEFUL LATER
-  // MANAGER = "manager",
-  // USER = "user",
-  // DOCTOR = "doctor",
-  // NURSE = "nurse",
 }
 
 // Core Types
@@ -80,43 +50,3 @@ export type AuthState = {
   readonly currentPortal: PortalType | null;
   readonly sessionId: string;
 };
-
-// export const PORTALS = {
-//   [PortalType.CLINIC]: {
-//     name: "Clinic Portal",
-//     icon: "🏥",
-//     route: "/clinic",
-//     description:
-//       "Access patient records, schedule appointments, and manage clinic operations.",
-//   },
-//   [PortalType.INTERNAL]: {
-//     name: "Internal Portal",
-//     icon: "🏢",
-//     route: "/internal",
-//     description:
-//       "Access internal tools, manage users, and oversee clinic operations.",
-//   },
-//   [PortalType.PATIENT]: {
-//     name: "Patient Portal",
-//     icon: "👤",
-//     route: "/patient",
-//     description:
-//       "Access personal health information, communicate with providers, and manage appointments.",
-//   },
-//   [PortalType.SEDATIONIST]: {
-//     name: "Sedationist Portal",
-//     icon: "⚕️",
-//     route: "/sedationist",
-//     description:
-//       "Access sedation-related tools, manage patient sedation records, and collaborate with other providers.",
-//   },
-// } as const;
-
-// Helper function
-// export const getPortalRoute = (portalType: PortalType) =>
-//   PORTALS[portalType].route;
-
-// Storage keys - MOVE TO APP_CONFIG
-export const STORAGE_KEYS = {
-  AUTH_STATE: "auth-storage",
-} as const;

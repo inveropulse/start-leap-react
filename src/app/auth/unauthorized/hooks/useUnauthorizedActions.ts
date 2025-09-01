@@ -1,12 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import { getPortalByType } from "@/routes/registry";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { useLogging } from "@/shared/providers/LoggingProvider";
-import { usePortalInfoAndRoutes } from "@/shared/hooks/usePortalInfoAndRoutes";
 
 export function useUnauthorizedActions() {
   const navigate = useNavigate();
   const { isAuthenticated, user, logout, currentPortal } = useAuth();
-  const { PORTAL_INFO } = usePortalInfoAndRoutes();
 
   const logger = useLogging({
     feature: "UnauthorizedPage",
@@ -19,7 +18,7 @@ export function useUnauthorizedActions() {
 
   const handleGoToPortals = () => {
     if (isAuthenticated && currentPortal) {
-      navigate(PORTAL_INFO[currentPortal].route);
+      navigate(getPortalByType(currentPortal).basePath);
     } else {
       navigate("/login");
     }

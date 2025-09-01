@@ -1,9 +1,9 @@
 import { cn } from "@/shared/utils/cn";
 import { Activity } from "lucide-react";
+import { PortalType } from "@/shared/types";
+import { getPortalByType } from "@/routes/registry";
 import { NavLink, useLocation } from "react-router-dom";
-import { PortalType } from "@/shared/services/auth/types";
 import { usePortalTheme } from "@/shared/hooks/usePortalTheme";
-import { usePortalInfoAndRoutes } from "@/shared/hooks/usePortalInfoAndRoutes";
 
 export interface MobileNavigationProps {
   portal: PortalType;
@@ -16,8 +16,9 @@ export function MobileNavigation({
 }: MobileNavigationProps) {
   const location = useLocation();
   const theme = usePortalTheme(portal);
-  const { PORTAL_INFO, getPortalRoutes, getPortalQuickActionRoutes } =
-    usePortalInfoAndRoutes();
+  const portalConfig = getPortalByType(portal);
+  const routeItems = portalConfig.routes || [];
+  const quickActions = portalConfig.quickActions || [];
 
   const isActive = (path: string) => {
     if (path === `/${portal}`) {
@@ -28,9 +29,6 @@ export function MobileNavigation({
     }
     return location.pathname.startsWith(path);
   };
-
-  const routeItems = getPortalRoutes(portal) || [];
-  const quickActions = getPortalQuickActionRoutes(portal) || [];
 
   return (
     <div className="flex flex-col h-full">
@@ -47,7 +45,7 @@ export function MobileNavigation({
         <div className="grid flex-1 text-left text-sm leading-tight">
           <span className="truncate font-semibold">Sedation Solutions</span>
           <span className="truncate text-xs text-muted-foreground">
-            {PORTAL_INFO[portal].name}
+            {portalConfig.name}
           </span>
         </div>
       </div>
@@ -61,18 +59,18 @@ export function MobileNavigation({
           <div className="space-y-1">
             {routeItems.map((item) => (
               <NavLink
-                key={item.url}
-                to={item.url}
+                key={item.path}
+                to={item.path}
                 onClick={onNavigate}
                 className={cn(
                   "flex items-center rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
-                  isActive(item.url)
+                  isActive(item.path)
                     ? cn("text-white", theme.primaryClass)
                     : "text-muted-foreground"
                 )}
               >
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.title}
+                <item.meta.icon className="mr-2 h-4 w-4" />
+                {item.meta.title}
               </NavLink>
             ))}
           </div>
@@ -87,8 +85,8 @@ export function MobileNavigation({
               <div className="space-y-1">
                 {quickActions.map((action) => (
                   <NavLink
-                    key={action.url}
-                    to={action.url}
+                    key={action.path}
+                    to={action.path}
                     onClick={onNavigate}
                     className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                   >

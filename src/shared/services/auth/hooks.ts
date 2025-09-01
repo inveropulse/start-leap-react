@@ -1,6 +1,8 @@
 import { useEffect } from "react";
-import { useAuthStore } from "./store";
-import { AuthErrorCode, PortalType, UserRole } from "./types";
+import { AuthErrorCode } from "./types";
+import { AuthStore, useAuthStore } from "./store";
+import { UserRole, PortalType } from "@/shared/types";
+import { getEnabledPortals } from "@/routes/registry";
 
 export const useAuth = () => {
   const store = useAuthStore();
@@ -20,11 +22,10 @@ export const useAuth = () => {
     error: store.error,
     errorCode: store.errorCode,
     currentPortal: store.currentPortal,
-    availablePortals: (store.user
-      ? Object.entries(store.user.portalAccess)
-          .map(([key, value]) => (value === true ? key : null))
-          .filter((key): key is string => key !== null)
-      : []) as PortalType[],
+    availablePortals: getUserAvailablePortals(
+      store.currentPortal,
+      getUserAvailablePortalKeys(store)
+    ),
 
     // Actions
     login: store.login,
@@ -37,4 +38,25 @@ export const useAuth = () => {
     isError: (code: AuthErrorCode) => store.errorCode === code,
     hasRole: (role: UserRole) => store.user?.role === role,
   };
+};
+
+const getUserAvailablePortalKeys = (store: AuthStore): PortalType[] => {
+  return store.user
+    ? (Object.entries(store.user.portalAccess)
+        .map(([key, value]) => (value === true ? key : null))
+        .filter((key): key is string => key !== null) as PortalType[])
+    : [];
+};
+
+const getUserAvailablePortals = (
+  currentPortal: PortalType,
+  availablePortals: PortalType[]
+) => {
+  return getEnabledPortals()
+    .filter((portal) => availablePortals.includes(portal.key))
+    .map((portal) => ({
+      id: portal.key,
+      isActive: portal.key === currentPortal,
+      ...portal,
+    }));
 };

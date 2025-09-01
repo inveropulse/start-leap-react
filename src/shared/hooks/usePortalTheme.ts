@@ -1,4 +1,4 @@
-import { PortalType } from "@/shared/services/auth/types";
+import { PortalType } from "../types";
 
 export type PortalTheme = {
   readonly name: string;

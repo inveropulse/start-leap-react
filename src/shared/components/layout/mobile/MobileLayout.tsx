@@ -1,26 +1,25 @@
 import {
   Sheet,
-  SheetContent,
-  SheetTrigger,
   SheetTitle,
+  SheetTrigger,
+  SheetContent,
 } from "@/shared/components/ui/sheet";
 import { UserMenu } from "../UserMenu";
 import { cn } from "@/shared/utils/cn";
+import { useLocation } from "react-router-dom";
+import { getPortalByType } from "@/routes/registry";
+import { PropsWithChildren, useState } from "react";
 import { MobileNavigation } from "./MobileNavigation";
 import { useAuth } from "@/shared/services/auth/hooks";
 import { Button } from "@/shared/components/ui/button";
-import { PropsWithChildren, useMemo, useState } from "react";
-import { VisuallyHidden } from "@/shared/components/ui/visually-hidden";
 import { usePortalTheme } from "@/shared/hooks/usePortalTheme";
 import { Bell as BellIcon, Menu as MenuIcon } from "lucide-react";
-import { usePortalInfoAndRoutes } from "@/shared/hooks/usePortalInfoAndRoutes";
-import { useLocation } from "react-router-dom";
+import { VisuallyHidden } from "@/shared/components/ui/visually-hidden";
 
 export default function MobileLayout(props: PropsWithChildren) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentPortal } = useAuth();
   const theme = usePortalTheme(currentPortal);
-  const { getPortalRoutes } = usePortalInfoAndRoutes();
   const location = useLocation();
 
   const isActive = (path: string) => {
@@ -32,10 +31,8 @@ export default function MobileLayout(props: PropsWithChildren) {
     }
     return location.pathname.startsWith(path);
   };
-  const routes = useMemo(() => getPortalRoutes(currentPortal), [currentPortal]);
-  const currentRoute = useMemo(() => {
-    return routes.filter((route) => isActive(route.url))[0];
-  }, [routes, location.pathname]);
+  const routes = getPortalByType(currentPortal).routes;
+  const currentRoute = routes.filter((route) => isActive(route.path))[0];
 
   return (
     <div
@@ -72,7 +69,7 @@ export default function MobileLayout(props: PropsWithChildren) {
             </SheetContent>
           </Sheet>
           <h1 className="text-lg font-semibold text-white">
-            {currentRoute?.title || theme.name}
+            {currentRoute?.meta.title || theme.name}
           </h1>
         </div>
 

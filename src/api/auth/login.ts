@@ -1,11 +1,7 @@
-import {
-  UserRole,
-  AuthState,
-  PortalType,
-  AuthErrorCode,
-} from "@/shared/services/auth/types";
 import { LoginResponseDto } from "../generated";
 import { useMutation } from "@tanstack/react-query";
+import { PortalType, UserRole } from "@/shared/types";
+import { AuthState, AuthErrorCode } from "@/shared/services/auth/types";
 import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
 
 export type LoginRequest = {

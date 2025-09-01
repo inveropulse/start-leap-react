@@ -1,7 +1,6 @@
 import { Activity } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { NavLink, useLocation } from "react-router-dom";
-import { PortalType } from "@/shared/services/auth/types";
 import { usePortalTheme } from "@/shared/hooks/usePortalTheme";
 import {
   Sidebar,
@@ -22,10 +21,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
-import {
-  QuickActionType,
-  usePortalInfoAndRoutes,
-} from "@/shared/hooks/usePortalInfoAndRoutes";
+import { PortalType } from "@/shared/types";
+import { getPortalByType } from "@/routes/registry";
 
 export interface AppSidebarProps {
   portal: PortalType;
@@ -35,12 +32,10 @@ export function AppSidebar({ portal }: AppSidebarProps) {
   const location = useLocation();
   const { state } = useSidebar();
   const theme = usePortalTheme(portal);
-  const { PORTAL_INFO, getPortalRoutes, getPortalQuickActionRoutes } =
-    usePortalInfoAndRoutes();
-
   const isCollapsed = state === "collapsed";
-  const routeItems = getPortalRoutes(portal) || [];
-  const quickActions = getPortalQuickActionRoutes(portal) || [];
+  const portalConfig = getPortalByType(portal);
+  const routeItems = portalConfig.routes || [];
+  const quickActions = portalConfig.quickActions || [];
 
   const isActive = (path: string) => {
     if (path === `/${portal}`) {
@@ -79,7 +74,7 @@ export function AppSidebar({ portal }: AppSidebarProps) {
                 Sedation Solutions
               </span>
               <span className="truncate text-xs text-sidebar-foreground/70">
-                {PORTAL_INFO[portal].name}
+                {portalConfig.name}
               </span>
             </div>
           </div>
@@ -91,56 +86,56 @@ export function AppSidebar({ portal }: AppSidebarProps) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {routeItems.map((item, key) => (
-                  <SidebarMenuItem key={item.url + key}>
+                  <SidebarMenuItem key={item.path + key}>
                     {isCollapsed ? (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <SidebarMenuButton
                             asChild
-                            isActive={isActive(item.url)}
+                            isActive={isActive(item.path)}
                             className={
-                              isActive(item.url)
+                              isActive(item.path)
                                 ? cn("text-white", theme.primaryClass)
                                 : ""
                             }
                           >
                             <NavLink
-                              to={item.url}
+                              to={item.path}
                               className="flex items-center gap-2"
                             >
-                              <item.icon
+                              <item.meta.icon
                                 className={`transition-all duration-300 ${
                                   isCollapsed ? "h-6 w-6" : "h-4 w-4"
                                 }`}
                               />
-                              <span>{item.title}</span>
+                              <span>{item.meta.title}</span>
                             </NavLink>
                           </SidebarMenuButton>
                         </TooltipTrigger>
                         <TooltipContent side="right">
-                          <p>{item.title}</p>
+                          <p>{item.meta.title}</p>
                         </TooltipContent>
                       </Tooltip>
                     ) : (
                       <SidebarMenuButton
                         asChild
-                        isActive={isActive(item.url)}
+                        isActive={isActive(item.path)}
                         className={
-                          isActive(item.url)
+                          isActive(item.path)
                             ? cn("text-white", theme.primaryClass)
                             : ""
                         }
                       >
                         <NavLink
-                          to={item.url}
+                          to={item.path}
                           className="flex items-center gap-2"
                         >
-                          <item.icon
+                          <item.meta.icon
                             className={`transition-all duration-300 ${
                               isCollapsed ? "h-6 w-6" : "h-4 w-4"
                             }`}
                           />
-                          <span>{item.title}</span>
+                          <span>{item.meta.title}</span>
                         </NavLink>
                       </SidebarMenuButton>
                     )}
@@ -156,14 +151,14 @@ export function AppSidebar({ portal }: AppSidebarProps) {
             <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {quickActions.map((action: QuickActionType, index: number) => (
-                  <SidebarMenuItem key={action.url || `quick-action-${index}`}>
+                {quickActions.map((action, key) => (
+                  <SidebarMenuItem key={action.path + key}>
                     {isCollapsed ? (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <SidebarMenuButton asChild>
                             <NavLink
-                              to={action.url}
+                              to={action.path}
                               className="flex items-center gap-2"
                             >
                               <action.icon
@@ -182,7 +177,7 @@ export function AppSidebar({ portal }: AppSidebarProps) {
                     ) : (
                       <SidebarMenuButton asChild>
                         <NavLink
-                          to={action.url}
+                          to={action.path}
                           className="flex items-center gap-2"
                         >
                           <action.icon

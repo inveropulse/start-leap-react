@@ -1,8 +1,3 @@
-import {
-  PortalType,
-  PublicRoute as PublicRouteEnum,
-} from "@/shared/services/auth/types";
-
 export enum Environment {
   Development = "development",
   Production = "production",
@@ -15,6 +10,7 @@ export type AppConfig = {
   readonly environment: Environment;
   readonly version: string;
   readonly auth: {
+    readonly authStorageKey: string;
     readonly encryptionKey: string;
     readonly tokenRefreshThreshold: number;
     readonly sessionTimeout: number;
@@ -49,17 +45,6 @@ export type AppConfig = {
     readonly maxLogSize: number;
     readonly logRetentionDays: number;
   };
-  readonly portals: {
-    readonly defaultRedirect: PortalType;
-    readonly enabledPortals: readonly PortalType[];
-    readonly requireMFA: boolean;
-    readonly sessionSharing: boolean;
-  };
-  readonly publicRoutes: {
-    readonly enabledRoutes: readonly PublicRouteEnum[];
-    readonly landingPage: PublicRouteEnum;
-    readonly unauthorizedRedirect: PublicRouteEnum;
-  };
   readonly features: {
     readonly enableAnalytics: boolean;
     readonly enableErrorTracking: boolean;
@@ -76,6 +61,7 @@ const DEFAULT_CONFIG: AppConfig = {
   environment: Environment.Development,
   version: "1.0.0",
   auth: {
+    authStorageKey: "auth-storage",
     encryptionKey: "dev-fallback-key-change-in-production",
     tokenRefreshThreshold: 5 * 60 * 1000, // 5 minutes in milliseconds
     sessionTimeout: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
@@ -109,30 +95,6 @@ const DEFAULT_CONFIG: AppConfig = {
     enableRemote: false, // false for development
     maxLogSize: 1 * 1024 * 1024, // 1MB
     logRetentionDays: 7,
-  },
-  portals: {
-    defaultRedirect: PortalType.CLINIC,
-    enabledPortals: [
-      PortalType.CLINIC,
-      PortalType.INTERNAL,
-      PortalType.PATIENT,
-      PortalType.SEDATIONIST,
-    ] as const,
-    requireMFA: false, // false for development
-    sessionSharing: true,
-  },
-  publicRoutes: {
-    enabledRoutes: [
-      PublicRouteEnum.LOGIN,
-      PublicRouteEnum.REGISTER,
-      PublicRouteEnum.FORGOT_PASSWORD,
-      PublicRouteEnum.RESET_PASSWORD,
-      PublicRouteEnum.VERIFY_EMAIL,
-      PublicRouteEnum.UNAUTHORIZED,
-      PublicRouteEnum.NOT_FOUND,
-    ] as const,
-    landingPage: PublicRouteEnum.LOGIN,
-    unauthorizedRedirect: PublicRouteEnum.UNAUTHORIZED,
   },
   features: {
     enableAnalytics: false, // false for development
@@ -180,6 +142,10 @@ export class ApplicationConfig {
       version: getEnvValue("VITE_VERSION", DEFAULT_CONFIG.version),
 
       auth: {
+        authStorageKey: getEnvValue(
+          "VITE_AUTH_STORAGE_KEY",
+          DEFAULT_CONFIG.auth.authStorageKey
+        ),
         encryptionKey: getEnvValue(
           "VITE_ENCRYPTION_KEY",
           DEFAULT_CONFIG.auth.encryptionKey
@@ -314,44 +280,6 @@ export class ApplicationConfig {
           DEFAULT_CONFIG.logging.logRetentionDays,
           Number
         ),
-      },
-
-      portals: {
-        defaultRedirect: getEnvValue(
-          "VITE_DEFAULT_PORTAL",
-          DEFAULT_CONFIG.portals.defaultRedirect
-        ) as PortalType,
-        enabledPortals: getEnvValue(
-          "VITE_ENABLED_PORTALS",
-          DEFAULT_CONFIG.portals.enabledPortals,
-          (v) => v.split(",") as PortalType[]
-        ) as readonly PortalType[],
-        requireMFA: getEnvValue(
-          "VITE_REQUIRE_MFA",
-          DEFAULT_CONFIG.portals.requireMFA || isProduction(),
-          (v) => v === "true"
-        ),
-        sessionSharing: getEnvValue(
-          "VITE_SESSION_SHARING",
-          DEFAULT_CONFIG.portals.sessionSharing,
-          (v) => v !== "false"
-        ),
-      },
-
-      publicRoutes: {
-        enabledRoutes: getEnvValue(
-          "VITE_ENABLED_PUBLIC_ROUTES",
-          DEFAULT_CONFIG.publicRoutes.enabledRoutes,
-          (v) => v.split(",") as PublicRouteEnum[]
-        ) as readonly PublicRouteEnum[],
-        landingPage: getEnvValue(
-          "VITE_LANDING_PAGE",
-          DEFAULT_CONFIG.publicRoutes.landingPage
-        ) as PublicRouteEnum,
-        unauthorizedRedirect: getEnvValue(
-          "VITE_UNAUTHORIZED_REDIRECT",
-          DEFAULT_CONFIG.publicRoutes.unauthorizedRedirect
-        ) as PublicRouteEnum,
       },
 
       features: {

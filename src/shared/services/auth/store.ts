@@ -1,6 +1,8 @@
 import { create } from "zustand";
+import { PortalType } from "@/shared/types";
+import { APP_CONFIG } from "@/shared/AppConfig";
+import { AuthState, AuthErrorCode } from "./types";
 import { secureStorage, StorageEventType } from "./storage";
-import { AuthState, PortalType, STORAGE_KEYS, AuthErrorCode } from "./types";
 
 export interface AuthStore extends AuthState {
   // Session management
@@ -74,7 +76,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const state = get();
 
       // Only monitor auth-related storage keys
-      if (event.key !== STORAGE_KEYS.AUTH_STATE) {
+      if (event.key !== APP_CONFIG.auth.authStorageKey) {
         return;
       }
 
@@ -130,13 +132,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     secureStorage.addListener(securityListener);
 
     // Start monitoring the auth state key for external changes
-    secureStorage.startMonitoring(STORAGE_KEYS.AUTH_STATE);
+    secureStorage.startMonitoring(APP_CONFIG.auth.authStorageKey);
   },
 
   // Initialize from storage
   initialize: () => {
     try {
-      const stored = secureStorage.getItem(STORAGE_KEYS.AUTH_STATE);
+      const stored = secureStorage.getItem(APP_CONFIG.auth.authStorageKey);
       if (stored && stored.accessToken && stored.user) {
         // Verify token isn't expired
         const now = Date.now();
@@ -148,7 +150,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             refreshToken: stored.refreshToken,
             tokenExpiry: stored.tokenExpiry,
             currentPortal: stored.currentPortal,
-            sessionId: stored.sessionId || generateSessionId(), // Use stored or generate new
+            sessionId: stored.sessionId || generateSessionId(),
           });
         } else {
           // Token expired, clear storage but keep session ID
@@ -170,7 +172,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const newSessionId = generateSessionId();
       set({
         ...state,
-        sessionId: newSessionId, // Generate new session on login
+        sessionId: newSessionId,
       });
       get().saveToStorage();
     } catch (error: any) {
@@ -242,7 +244,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     };
 
     try {
-      secureStorage.setItem(STORAGE_KEYS.AUTH_STATE, dataToStore);
+      secureStorage.setItem(APP_CONFIG.auth.authStorageKey, dataToStore);
     } catch (error) {
       console.error("Failed to save auth state:", error);
     }
@@ -251,7 +253,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   // Clear storage
   clearStorage: () => {
     try {
-      secureStorage.removeItem(STORAGE_KEYS.AUTH_STATE);
+      secureStorage.removeItem(APP_CONFIG.auth.authStorageKey);
     } catch (error) {
       console.error("Failed to clear auth storage:", error);
     }
