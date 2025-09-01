@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
-import DashboardPage from "@/app/internal/dashboard";
+import DashboardPage from "@/app/internal/dashboard/DashboardPage";
 import PatientPage from "@/app/internal/PatientPage";
 
 const Clinics = <div />;
