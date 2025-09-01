@@ -23,7 +23,7 @@ export function RouteTransition({ children, isInitialLoad = false }: RouteTransi
           y: 0, 
           scale: 1,
           transition: { 
-            duration: isInitialLoad ? 0.6 : 0.18,
+            duration: isInitialLoad ? 0.6 : 0.1,
             ease: "easeOut",
             staggerChildren: isInitialLoad ? 0.1 : 0
           } 
@@ -33,7 +33,7 @@ export function RouteTransition({ children, isInitialLoad = false }: RouteTransi
           y: isInitialLoad ? -10 : -4, 
           scale: isInitialLoad ? 1.02 : 1,
           transition: { 
-            duration: isInitialLoad ? 0.3 : 0.12 
+            duration: isInitialLoad ? 0.3 : 0.08 
           } 
         }}
         style={{
