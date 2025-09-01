@@ -3,6 +3,7 @@ import { NotFoundPage } from "@/app/auth/not-found";
 import WithProviders from "./shared/providers/WithProviders";
 import { PublicRoute } from "./shared/components/PublicRoute";
 import { ProtectedRoute } from "./shared/components/ProtectedRoute";
+import { RouteTransition } from "./shared/components/RouteTransition";
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import { getEnabledPortals, getEnabledPublicRoutes } from "./routes/registry";
 
@@ -15,7 +16,9 @@ export default function App() {
           v7_relativeSplatPath: true,
         }}
       >
-        <WithRoutes />
+        <RouteTransition>
+          <WithRoutes />
+        </RouteTransition>
       </Router>
     </WithProviders>
   );
