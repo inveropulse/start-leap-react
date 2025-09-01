@@ -37,12 +37,12 @@ export function AppLoadingOverlay({
               repeat: Infinity,
               ease: "easeInOut",
             }}
-            className={`absolute inset-0 w-12 h-12 border border-[hsl(var(--portal-${currentPortal || PortalType.INTERNAL}-primary)/0.2)] rounded-full -translate-x-2 -translate-y-2`}
+            className={`absolute inset-0 w-12 h-12 rounded-full -translate-x-2 -translate-y-2 ${theme.primaryClass}`} // Use primaryClass
           />
 
           {/* Main spinner */}
           <div
-            className={`w-8 h-8 ${theme.secondaryClass} rounded-full animate-spin`}
+            className={`w-8 h-8 border-2 rounded-full animate-spin ${theme.secondaryClass}`} // Use secondaryClass
             role="status"
             aria-label="Loading application"
           />
