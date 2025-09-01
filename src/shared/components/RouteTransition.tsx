@@ -15,13 +15,11 @@ export function RouteTransition({ children, isInitialLoad = false }: RouteTransi
         key={location.pathname}
         initial={{ 
           opacity: 0, 
-          y: isInitialLoad ? 20 : 6,
-          ...(isInitialLoad && { scale: 0.98 })
+          ...(isInitialLoad && { y: 20, scale: 0.98 })
         }}
         animate={{ 
           opacity: 1, 
-          y: 0, 
-          ...(isInitialLoad && { scale: 1 }),
+          ...(isInitialLoad && { y: 0, scale: 1 }),
           transition: { 
             duration: isInitialLoad ? 0.6 : 0.1,
             ease: "easeOut",
@@ -30,8 +28,7 @@ export function RouteTransition({ children, isInitialLoad = false }: RouteTransi
         }}
         exit={{ 
           opacity: 0, 
-          y: isInitialLoad ? -10 : -4, 
-          ...(isInitialLoad && { scale: 1.02 }),
+          ...(isInitialLoad && { y: -10, scale: 1.02 }),
           transition: { 
             duration: isInitialLoad ? 0.3 : 0.08 
           } 
