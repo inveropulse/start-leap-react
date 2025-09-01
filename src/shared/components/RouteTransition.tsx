@@ -36,10 +36,10 @@ export function RouteTransition({ children, isInitialLoad = false }: RouteTransi
         }}
         exit={{ 
           opacity: 0, 
-          y: -1, 
-          scale: 1.0,
+          y: -10, 
+          scale: 1.01,
           transition: { 
-            duration: 0.15 
+            duration: 0.2 
           } 
         }}
         style={{
