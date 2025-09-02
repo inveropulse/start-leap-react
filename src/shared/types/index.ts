@@ -18,3 +18,9 @@ export enum UserRole {
   // DOCTOR = "doctor",
   // NURSE = "nurse",
 }
+
+export enum Currency {
+  GBP = "GBP",
+  USD = "USD",
+  EUR = "EUR",
+}

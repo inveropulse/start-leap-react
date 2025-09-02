@@ -1,4 +1,5 @@
-import { DashboardData, DashboardMetric, QuickAction, ActivityItem } from '../types/dashboard.types';
+import { DashboardData, DashboardMetric, QuickAction, ActivityItem, RevenueChartData, ChartDataPoint } from '../types/dashboard.types';
+import { formatCurrency } from '@/shared/utils/currency';
 
 // Mock metrics data with vibrant colors
 const mockMetrics: DashboardMetric[] = [
@@ -53,9 +54,9 @@ const mockMetrics: DashboardMetric[] = [
     previousValue: 118200,
     change: 5.3,
     changeType: 'positive',
-    icon: 'DollarSign',
+    icon: 'PoundSterling',
     color: 'rose',
-    unit: '$',
+    unit: '£',
     description: 'Revenue for current month'
   },
   {
@@ -71,6 +72,29 @@ const mockMetrics: DashboardMetric[] = [
     description: 'Appointment completion rate'
   }
 ];
+
+// Mock revenue chart data
+const generateRevenueChartData = (): RevenueChartData => {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const baseRevenue = 85000;
+  
+  const data: ChartDataPoint[] = months.map((month, index) => ({
+    month,
+    value: Math.floor(baseRevenue + (Math.random() - 0.3) * 40000 + (index * 2000)) // Growing trend with variation
+  }));
+
+  const totalRevenue = data.reduce((sum, point) => sum + point.value, 0);
+  const previousTotalRevenue = totalRevenue * 0.92; // 8% less than current
+  const change = ((totalRevenue - previousTotalRevenue) / previousTotalRevenue) * 100;
+
+  return {
+    data,
+    totalRevenue,
+    previousTotalRevenue,
+    change: Math.round(change * 10) / 10,
+    changeType: change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral'
+  };
+};
 
 const mockQuickActions: QuickAction[] = [
   {
@@ -162,7 +186,8 @@ export const getMockDashboardData = (): Promise<DashboardData> => {
       resolve({
         metrics: mockMetrics,
         quickActions: mockQuickActions,
-        recentActivity: mockRecentActivity
+        recentActivity: mockRecentActivity,
+        revenueChart: generateRevenueChartData()
       });
     }, 800); // Simulate network delay
   });

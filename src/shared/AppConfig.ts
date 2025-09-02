@@ -1,3 +1,5 @@
+import { Currency } from "@/shared/types";
+
 export enum Environment {
   Development = "development",
   Production = "production",
@@ -9,6 +11,7 @@ export type AppConfig = {
   readonly apiTimeout: number;
   readonly environment: Environment;
   readonly version: string;
+  readonly currency: Currency;
   readonly auth: {
     readonly authStorageKey: string;
     readonly encryptionKey: string;
@@ -46,6 +49,7 @@ const DEFAULT_CONFIG: AppConfig = {
   apiTimeout: 10000, // 10 seconds
   environment: Environment.Development,
   version: "1.0.0",
+  currency: Currency.GBP,
   auth: {
     authStorageKey: "auth-storage",
     encryptionKey: "dev-fallback-key-change-in-production",
@@ -112,6 +116,11 @@ export class ApplicationConfig {
         DEFAULT_CONFIG.environment
       ) as Environment,
       version: getEnvValue("VITE_VERSION", DEFAULT_CONFIG.version),
+      currency: getEnvValue(
+        "VITE_CURRENCY", 
+        DEFAULT_CONFIG.currency,
+        (v) => v as Currency
+      ),
 
       auth: {
         authStorageKey: getEnvValue(

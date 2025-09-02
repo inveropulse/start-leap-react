@@ -11,6 +11,19 @@ export interface DashboardMetric {
   description?: string;
 }
 
+export interface ChartDataPoint {
+  month: string;
+  value: number;
+}
+
+export interface RevenueChartData {
+  data: ChartDataPoint[];
+  totalRevenue: number;
+  previousTotalRevenue: number;
+  change: number;
+  changeType: 'positive' | 'negative' | 'neutral';
+}
+
 export interface QuickAction {
   id: string;
   label: string;
@@ -34,4 +47,5 @@ export interface DashboardData {
   metrics: DashboardMetric[];
   quickActions: QuickAction[];
   recentActivity: ActivityItem[];
+  revenueChart: RevenueChartData;
 }

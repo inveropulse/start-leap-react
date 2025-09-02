@@ -8,6 +8,7 @@ import {
   Clock, 
   Building2, 
   DollarSign, 
+  PoundSterling,
   TrendingUp, 
   TrendingDown,
   ArrowUp,
@@ -21,6 +22,7 @@ const iconMap = {
   Clock,
   Building2,
   DollarSign,
+  PoundSterling,
   TrendingUp,
 };
 
@@ -82,6 +84,9 @@ export const MetricCard = ({ metric, className, style }: MetricCardProps) => {
   const formatValue = (value: number) => {
     if (metric.unit === '$') {
       return `$${value.toLocaleString()}`;
+    }
+    if (metric.unit === '£') {
+      return `£${value.toLocaleString()}`;
     }
     if (metric.unit === '%') {
       return `${value}%`;

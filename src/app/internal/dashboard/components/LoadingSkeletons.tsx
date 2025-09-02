@@ -47,6 +47,12 @@ export const DashboardSkeletons = () => (
       <Skeleton className="h-5 w-96" />
     </div>
 
+    {/* Revenue Chart Skeleton */}
+    <div>
+      <Skeleton className="h-6 w-36 mb-4" />
+      <Skeleton className="h-80 w-full rounded-xl" />
+    </div>
+
     {/* Metrics Grid */}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
       {Array.from({ length: 6 }).map((_, i) => (

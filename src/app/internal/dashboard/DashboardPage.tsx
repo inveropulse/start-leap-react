@@ -4,6 +4,7 @@ import { useDashboardData } from "./hooks/useDashboardData";
 import { MetricsGrid } from "./components/MetricsGrid";
 import { QuickActionCard } from "./components/QuickActionCard";
 import { ActivityFeed } from "./components/ActivityFeed";
+import { RevenueChartCard } from "./components/RevenueChartCard";
 import { DashboardSkeletons } from "./components/LoadingSkeletons";
 import { AlertCircle } from "lucide-react";
 
@@ -46,6 +47,16 @@ export default function DashboardPage() {
           {portalConfig.summaryDescription} - Monitor key metrics and manage operations efficiently.
         </p>
       </div>
+
+      {/* Revenue Chart */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold">Revenue Overview</h2>
+        <RevenueChartCard 
+          data={data.revenueChart}
+          className="animate-fade-in"
+          style={{ animationDelay: '400ms' } as React.CSSProperties}
+        />
+      </section>
 
       {/* Metrics Overview */}
       <section className="space-y-4">
