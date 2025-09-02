@@ -64,10 +64,23 @@ export interface AppointmentItem {
   attentionReason?: string;
 }
 
+export interface SedationistPerformance {
+  id: string;
+  name: string;
+  title?: string;
+  completedAppointments: number;
+  previousPeriodAppointments: number;
+  change: number;
+  changeType: 'positive' | 'negative' | 'neutral';
+  rank: number;
+  clinics: string[];
+}
+
 export interface DashboardData {
   metrics: DashboardMetric[];
   quickActions: QuickAction[];
   recentActivity: ActivityItem[];
   appointments: AppointmentItem[];
   revenueChart: RevenueChartData;
+  topSedationists: SedationistPerformance[];
 }

@@ -5,6 +5,7 @@ import { MetricsGrid } from "./components/MetricsGrid";
 import { QuickActionCard } from "./components/QuickActionCard";
 import { AppointmentOverview } from "./components/AppointmentOverview";
 import { RevenueChartCard } from "./components/RevenueChartCard";
+import { TopSedationistsCard } from "./components/TopSedationistsCard";
 import { DashboardSkeletons } from "./components/LoadingSkeletons";
 import { AlertCircle } from "lucide-react";
 
@@ -79,17 +80,26 @@ export default function DashboardPage() {
         />
       </section>
 
-      {/* Appointment Overview */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Appointment Overview</h2>
-        <div className="max-w-2xl">
+      {/* Layout with Top Sedationists and Appointment Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Top Sedationists</h2>
+          <TopSedationistsCard 
+            sedationists={data.topSedationists}
+            className="animate-fade-in"
+            style={{ animationDelay: '1400ms' } as React.CSSProperties}
+          />
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Appointment Overview</h2>
           <AppointmentOverview 
             appointments={data.appointments}
             className="animate-fade-in"
             style={{ animationDelay: '1000ms' } as React.CSSProperties}
           />
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { DashboardData, DashboardMetric, QuickAction, ActivityItem, AppointmentItem, RevenueChartData, ChartDataPoint } from '../types/dashboard.types';
+import { DashboardData, DashboardMetric, QuickAction, ActivityItem, AppointmentItem, RevenueChartData, ChartDataPoint, SedationistPerformance } from '../types/dashboard.types';
 import { Title } from '../../../../api/generated/models/Title';
 import { formatCurrency } from '@/shared/utils/currency';
 
@@ -310,6 +310,76 @@ export const mockAppointments: AppointmentItem[] = [
   }
 ];
 
+// Mock top sedationists data (last 30 days)
+const mockTopSedationists: SedationistPerformance[] = [
+  {
+    id: '1',
+    name: 'Michael Chen',
+    title: 'Dr',
+    completedAppointments: 47,
+    previousPeriodAppointments: 42,
+    change: 11.9,
+    changeType: 'positive',
+    rank: 1,
+    clinics: ['Harley Street Dental', 'City Dental Practice']
+  },
+  {
+    id: '2',
+    name: 'Sarah Lee',
+    title: 'Dr',
+    completedAppointments: 43,
+    previousPeriodAppointments: 38,
+    change: 13.2,
+    changeType: 'positive',
+    rank: 2,
+    clinics: ['City Dental Practice', 'Premier Dental Clinic']
+  },
+  {
+    id: '3',
+    name: 'Patricia Williams',
+    title: 'Dr',
+    completedAppointments: 41,
+    previousPeriodAppointments: 45,
+    change: -8.9,
+    changeType: 'negative',
+    rank: 3,
+    clinics: ['Premier Dental Clinic']
+  },
+  {
+    id: '4',
+    name: 'James Miller',
+    title: 'Prof',
+    completedAppointments: 39,
+    previousPeriodAppointments: 41,
+    change: -4.9,
+    changeType: 'negative',
+    rank: 4,
+    clinics: ['Modern Dental Solutions', 'Excellence Dental Care']
+  },
+  {
+    id: '5',
+    name: 'Anna Rodriguez',
+    title: 'Ms',
+    completedAppointments: 35,
+    previousPeriodAppointments: 33,
+    change: 6.1,
+    changeType: 'positive',
+    rank: 5,
+    clinics: ['Gentle Care Dentistry']
+  },
+  {
+    id: '6',
+    name: 'Thomas Anderson',
+    title: 'Dr',
+    completedAppointments: 32,
+    previousPeriodAppointments: 29,
+    change: 10.3,
+    changeType: 'positive',
+    rank: 6,
+    clinics: ['Excellence Dental Care', 'Modern Dental Solutions']
+  }
+];
+
 // Simulate API call with loading time
 export const getMockDashboardData = (): Promise<DashboardData> => {
   return new Promise((resolve) => {
@@ -319,7 +389,8 @@ export const getMockDashboardData = (): Promise<DashboardData> => {
         quickActions: mockQuickActions,
         recentActivity: mockRecentActivity,
         appointments: mockAppointments,
-        revenueChart: generateRevenueChartData()
+        revenueChart: generateRevenueChartData(),
+        topSedationists: mockTopSedationists
       });
     }, 800); // Simulate network delay
   });
