@@ -268,7 +268,7 @@ export const mockAppointments: AppointmentItem[] = [
     procedure: 'Oral Surgery',
     type: 'attention',
     color: 'red',
-    icon: 'AlertCircle',
+    icon: 'AlertTriangle',
     requiresAttention: true,
     attentionReason: 'Patient pack incomplete'
   },

@@ -55,7 +55,7 @@ const statusLabels = {
   attention: "Needs Attention"
 };
 
-interface AppointmentOverviewProps {
+interface UpcomingAppointmentsProps {
   appointments: AppointmentItem[];
   className?: string;
   style?: React.CSSProperties;
@@ -188,11 +188,11 @@ const AppointmentItemComponent = ({ appointment, isLast }: { appointment: Appoin
   );
 };
 
-export const AppointmentOverview = ({ appointments, className, style }: AppointmentOverviewProps) => {
+export const UpcomingAppointments = ({ appointments, className, style }: UpcomingAppointmentsProps) => {
   return (
     <Card className={cn("h-full max-h-96 flex flex-col", className)} style={style}>
       <CardHeader className="pb-4 flex-shrink-0">
-        <CardTitle className="text-lg">Appointment Overview</CardTitle>
+        <CardTitle className="text-lg">Upcoming Appointments</CardTitle>
       </CardHeader>
       <CardContent className="p-0 flex-1 overflow-y-auto">
         <div>

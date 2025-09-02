@@ -3,7 +3,7 @@ import { getPortalByType } from "@/routes/registry";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { MetricsGrid } from "./components/MetricsGrid";
 import { QuickActionCard } from "./components/QuickActionCard";
-import { AppointmentOverview } from "./components/AppointmentOverview";
+import { UpcomingAppointments } from "./components/UpcomingAppointments";
 import { RevenueChartCard } from "./components/RevenueChartCard";
 import { TopSedationistsCard } from "./components/TopSedationistsCard";
 import { DashboardSkeletons } from "./components/LoadingSkeletons";
@@ -83,8 +83,8 @@ export default function DashboardPage() {
       {/* Layout with Appointment Overview and Top Sedationists */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Appointment Overview</h2>
-          <AppointmentOverview 
+          <h2 className="text-xl font-semibold">Upcoming Appointments</h2>
+          <UpcomingAppointments 
             appointments={data.appointments}
             className="animate-fade-in"
             style={{ animationDelay: '1000ms' } as React.CSSProperties}
