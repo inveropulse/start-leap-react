@@ -9,19 +9,24 @@ import {
   UserCheck,
   LayoutDashboard,
 } from "lucide-react";
+import { lazy } from "react";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
-import DashboardPage from "@/app/internal/dashboard/DashboardPage";
-import PatientPage from "@/app/internal/PatientPage";
-import { AppointmentPage } from "@/app/internal/appointment";
 
 const Clinics = <div />;
-
 const Sedationists = <div />;
 const Analytics = <div />;
 const Reports = <div />;
 const UsersMgmt = <div />;
 const SettingsScreen = <div />;
+
+const DashboardPage = lazy(
+  () => import("@/app/internal/dashboard/DashboardPage")
+);
+const PatientPage = lazy(() => import("@/app/internal/PatientPage"));
+const AppointmentPage = lazy(
+  () => import("@/app/internal/appointment/AppointmentPage")
+);
 
 export enum InternalQuickActionKey {
   ADD_PATIENT = "add_patient",

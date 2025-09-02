@@ -1,11 +1,21 @@
+import { lazy } from "react";
 import { PublicConfig } from "./types";
-import LoginPage from "@/app/auth/login/LoginPage";
-import { RegisterPage } from "@/app/auth/register";
-import { NotFoundPage } from "@/app/auth/not-found";
-import { VerifyEmailPage } from "@/app/auth/verify-email";
-import { UnauthorizedPage } from "@/app/auth/unauthorized";
-import { ResetPasswordPage } from "@/app/auth/reset-password";
-import { ForgotPasswordPage } from "@/app/auth/forgot-password";
+
+const LoginPage = lazy(() => import("@/app/auth/login/LoginPage"));
+const RegisterPage = lazy(() => import("@/app/auth/register/RegisterPage"));
+const NotFoundPage = lazy(() => import("@/app/auth/not-found/NotFoundPage"));
+const VerifyEmailPage = lazy(
+  () => import("@/app/auth/verify-email/VerifyEmailPage")
+);
+const UnauthorizedPage = lazy(
+  () => import("@/app/auth/unauthorized/UnauthorizedPage")
+);
+const ResetPasswordPage = lazy(
+  () => import("@/app/auth/reset-password/ResetPasswordPage")
+);
+const ForgotPasswordPage = lazy(
+  () => import("@/app/auth/forgot-password/ForgotPasswordPage")
+);
 
 export enum PublicRoute {
   ROOT = "/",

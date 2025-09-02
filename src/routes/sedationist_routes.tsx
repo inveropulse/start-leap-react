@@ -7,11 +7,13 @@ import {
   ClipboardList,
   LayoutDashboard,
 } from "lucide-react";
+import { lazy } from "react";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
-import SedationistPortal from "@/app/sedationist/SedationistPortal";
 
-const SedationistDashboard = <SedationistPortal />;
+const SedationistDashboard = lazy(
+  () => import("@/app/sedationist/SedationistPortal")
+);
 const SedationistSchedule = <div />;
 const SedationistPatients = <div />;
 const SedationistProcedures = <div />;
@@ -36,7 +38,7 @@ export enum SedationistRoute {
 const SEDATIONIST_ROUTES: AppRoute[] = [
   {
     index: true,
-    element: SedationistDashboard,
+    element: <SedationistDashboard />,
     path: SedationistRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },

@@ -1,16 +1,16 @@
 import {
   Users,
-  FileText,
-  Calendar,
   Settings,
+  Calendar,
+  FileText,
   UserCheck,
   LayoutDashboard,
 } from "lucide-react";
+import { lazy } from "react";
 import { AppRoute, PortalConfig } from "./types";
-import ClinicPortal from "@/app/clinic/ClinicPortal";
 import { PortalType, UserRole } from "@/shared/types";
 
-const ClinicDashboard = <ClinicPortal />;
+const ClinicDashboardPage = lazy(() => import("@/app/clinic/ClinicPortal"));
 const ClinicSchedule = <div />;
 const ClinicPatients = <div />;
 const ClinicAppointments = <div />;
@@ -36,7 +36,7 @@ export enum ClinicRoute {
 const CLINIC_ROUTES: AppRoute[] = [
   {
     index: true,
-    element: ClinicDashboard,
+    element: <ClinicDashboardPage />,
     path: ClinicRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },
