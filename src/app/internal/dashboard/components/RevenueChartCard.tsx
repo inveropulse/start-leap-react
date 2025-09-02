@@ -38,16 +38,19 @@ export const RevenueChartCard: React.FC<RevenueChartCardProps> = ({ data, classN
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Revenue Over Time</CardTitle>
         <div className="flex items-center space-x-2">
+          <ChangeIcon className={cn(
+            "h-4 w-4",
+            data.changeType === 'positive' ? "text-emerald-600" : "text-rose-600"
+          )} />
           <span className={cn(
             "text-xs font-medium",
             data.changeType === 'positive' ? "text-emerald-600" : "text-rose-600"
           )}>
             {data.change > 0 ? '+' : ''}{data.change}%
           </span>
-          <ChangeIcon className={cn(
-            "h-4 w-4",
-            data.changeType === 'positive' ? "text-emerald-600" : "text-rose-600"
-          )} />
+          <span className="text-xs font-medium text-muted-foreground">
+            vs last period
+          </span>
         </div>
       </CardHeader>
       <CardContent>
