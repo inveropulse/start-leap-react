@@ -45,22 +45,25 @@ export const RevenueChartCard: React.FC<RevenueChartCardProps> = ({ data, classN
           </div>
           
           {/* Chart Container */}
-          <div className="h-64 w-full">
-            <div className="flex h-full items-end justify-between space-x-1">
+          <div className="h-64 w-full border rounded-lg bg-card/30 p-4">
+            <div className="h-full w-full flex items-end justify-between gap-2">
               {data.data.map((point, index) => {
-                const height = (point.value / maxValue) * 100;
+                const height = Math.max((point.value / maxValue) * 100, 8); // Minimum 8% height
+                const barHeight = `${height}%`;
                 return (
-                  <div key={point.month} className="flex flex-col items-center space-y-1 flex-1">
-                    <div 
-                      className="w-full bg-gradient-to-t from-rose-400 to-rose-300 rounded-t-sm transition-all duration-500 hover:from-rose-500 hover:to-rose-400 cursor-pointer group relative"
-                      style={{ height: `${height}%` }}
-                    >
-                      {/* Tooltip */}
-                      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-popover text-popover-foreground px-2 py-1 rounded text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap border shadow-md z-10">
-                        {formatCurrency(point.value)}
+                  <div key={`revenue-${point.month}-${index}`} className="flex flex-col items-center gap-2 flex-1 min-w-0">
+                    <div className="w-full h-full flex items-end">
+                      <div 
+                        className="w-full bg-gradient-to-t from-primary/80 to-primary/60 rounded-t-md transition-all duration-300 hover:from-primary hover:to-primary/80 cursor-pointer group relative min-h-[8px] border border-primary/20"
+                        style={{ height: barHeight }}
+                      >
+                        {/* Tooltip */}
+                        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-popover text-popover-foreground px-3 py-1.5 rounded-md text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap border shadow-lg z-20">
+                          {formatCurrency(point.value)}
+                        </div>
                       </div>
                     </div>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground font-medium">
                       {point.month}
                     </span>
                   </div>
