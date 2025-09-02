@@ -45,7 +45,7 @@ export const RevenueChartCard: React.FC<RevenueChartCardProps> = ({ data, classN
           </div>
           
           {/* Chart Container */}
-          <div className="h-64 w-full border rounded-lg bg-card/30 p-4">
+          <div className="h-64 w-full bg-card/30 p-4">
             <div className="h-full w-full relative">
               {/* SVG Line Chart */}
               <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -55,7 +55,9 @@ export const RevenueChartCard: React.FC<RevenueChartCardProps> = ({ data, classN
                     <stop offset="100%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.6" />
                   </linearGradient>
                   <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.2" />
+                    <stop offset="0%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.6" />
+                    <stop offset="30%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.4" />
+                    <stop offset="70%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.2" />
                     <stop offset="100%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.05" />
                   </linearGradient>
                 </defs>
