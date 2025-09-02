@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/utils/cn";
+import { quickActionTo } from "@/shared/utils/quickAction";
+import { InternalRoute, InternalQuickActionKey } from "@/routes/internal_routes";
+import { useNavigate } from "react-router-dom";
 import type { AppointmentItem } from "../types/dashboard.types";
 import { 
   Calendar, 
@@ -85,10 +88,15 @@ const formatAppointmentTime = (date: Date): string => {
 const AppointmentItemComponent = ({ appointment, isLast }: { appointment: AppointmentItem; isLast: boolean }) => {
   const IconComponent = iconMap[appointment.icon as keyof typeof iconMap];
   const colors = colorVariants[appointment.color];
+  const navigate = useNavigate();
   
   const handleViewDetails = () => {
-    console.log(`View details for appointment ${appointment.reference}`);
-    // TODO: Navigate to appointment details
+    const navigationData = quickActionTo(
+      InternalRoute.APPOINTMENTS, 
+      InternalQuickActionKey.VIEW_APPOINTMENT,
+      { appointmentId: appointment.id }
+    );
+    navigate(navigationData);
   };
   
   return (

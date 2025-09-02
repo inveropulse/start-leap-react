@@ -13,9 +13,10 @@ import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
 import DashboardPage from "@/app/internal/dashboard/DashboardPage";
 import PatientPage from "@/app/internal/PatientPage";
+import { AppointmentPage } from "@/app/internal/appointment";
 
 const Clinics = <div />;
-const Appointments = <div />;
+
 const Sedationists = <div />;
 const Analytics = <div />;
 const Reports = <div />;
@@ -25,6 +26,7 @@ const SettingsScreen = <div />;
 export enum InternalQuickActionKey {
   ADD_PATIENT = "add_patient",
   NEW_APPOINTMENT = "new_appointment",
+  VIEW_APPOINTMENT = "view_appointment",
 }
 
 export enum InternalRoute {
@@ -58,7 +60,7 @@ const INTERNAL_ROUTES: AppRoute[] = [
     meta: { title: "Clinics", enabled: true, icon: Building2 },
   },
   {
-    element: Appointments,
+    element: <AppointmentPage />,
     path: InternalRoute.APPOINTMENTS,
     meta: { title: "Appointments", enabled: true, icon: Calendar },
   },
