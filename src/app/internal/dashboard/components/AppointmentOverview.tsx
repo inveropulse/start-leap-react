@@ -195,7 +195,7 @@ export const AppointmentOverview = ({ appointments, className, style }: Appointm
         <CardTitle className="text-lg">Appointment Overview</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="max-h-96 overflow-y-auto">
+        <div>
           {appointments.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
               <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
