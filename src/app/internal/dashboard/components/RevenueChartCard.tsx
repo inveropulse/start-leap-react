@@ -46,29 +46,90 @@ export const RevenueChartCard: React.FC<RevenueChartCardProps> = ({ data, classN
           
           {/* Chart Container */}
           <div className="h-64 w-full border rounded-lg bg-card/30 p-4">
-            <div className="h-full w-full flex items-end justify-between gap-2">
-              {data.data.map((point, index) => {
-                const height = Math.max((point.value / maxValue) * 100, 8); // Minimum 8% height
-                const barHeight = `${height}%`;
-                return (
-                  <div key={`revenue-${point.month}-${index}`} className="flex flex-col items-center gap-2 flex-1 min-w-0">
-                    <div className="w-full h-full flex items-end">
-                      <div 
-                        className="w-full bg-gradient-to-t from-primary/80 to-primary/60 rounded-t-md transition-all duration-300 hover:from-primary hover:to-primary/80 cursor-pointer group relative min-h-[8px] border border-primary/20"
-                        style={{ height: barHeight }}
-                      >
-                        {/* Tooltip */}
-                        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-popover text-popover-foreground px-3 py-1.5 rounded-md text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap border shadow-lg z-20">
-                          {formatCurrency(point.value)}
+            <div className="h-full w-full relative">
+              {/* SVG Line Chart */}
+              <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.8" />
+                    <stop offset="100%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.6" />
+                  </linearGradient>
+                  <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.2" />
+                    <stop offset="100%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.05" />
+                  </linearGradient>
+                </defs>
+                
+                {/* Area under the line */}
+                <path
+                  d={`M ${data.data.map((point, index) => {
+                    const x = (index / (data.data.length - 1)) * 100;
+                    const y = 100 - ((point.value / maxValue) * 80 + 10);
+                    return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+                  }).join(' ')} L 100 100 L 0 100 Z`}
+                  fill="url(#areaGradient)"
+                  className="animate-fade-in"
+                />
+                
+                {/* Main line */}
+                <path
+                  d={data.data.map((point, index) => {
+                    const x = (index / (data.data.length - 1)) * 100;
+                    const y = 100 - ((point.value / maxValue) * 80 + 10);
+                    return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+                  }).join(' ')}
+                  fill="none"
+                  stroke="url(#lineGradient)"
+                  strokeWidth="0.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="animate-fade-in"
+                  style={{
+                    filter: 'drop-shadow(0 2px 4px hsl(var(--primary) / 0.1))'
+                  }}
+                />
+              </svg>
+              
+              {/* Interactive Data Points */}
+              <div className="absolute inset-0 flex items-stretch">
+                {data.data.map((point, index) => {
+                  const x = (index / (data.data.length - 1)) * 100;
+                  const y = 100 - ((point.value / maxValue) * 80 + 10);
+                  return (
+                    <div
+                      key={`point-${point.month}-${index}`}
+                      className="absolute group cursor-pointer"
+                      style={{
+                        left: `${x}%`,
+                        top: `${y}%`,
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                    >
+                      {/* Data Point Marker */}
+                      <div className="w-3 h-3 bg-primary border-2 border-background rounded-full shadow-sm transition-all duration-200 hover:scale-125 hover:shadow-md hover:bg-primary/90">
+                        <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping opacity-0 group-hover:opacity-100" />
+                      </div>
+                      
+                      {/* Tooltip */}
+                      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-popover text-popover-foreground px-3 py-1.5 rounded-md text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap border shadow-lg z-20">
+                        <div className="text-center">
+                          <div className="font-semibold">{formatCurrency(point.value)}</div>
+                          <div className="text-muted-foreground">{point.month}</div>
                         </div>
                       </div>
                     </div>
-                    <span className="text-xs text-muted-foreground font-medium">
-                      {point.month}
-                    </span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+            </div>
+            
+            {/* Month Labels */}
+            <div className="flex justify-between items-center mt-4 px-2">
+              {data.data.map((point, index) => (
+                <span key={`label-${point.month}-${index}`} className="text-xs text-muted-foreground font-medium">
+                  {point.month}
+                </span>
+              ))}
             </div>
           </div>
           
