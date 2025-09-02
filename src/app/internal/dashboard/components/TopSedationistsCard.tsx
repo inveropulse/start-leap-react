@@ -61,7 +61,7 @@ const ChangeIndicator = ({ change, changeType }: { change: number; changeType: '
 
 export const TopSedationistsCard = ({ sedationists, className, style }: TopSedationistsCardProps) => {
   return (
-    <Card className={`h-fit ${className || ''}`} style={style}>
+    <Card className={`h-full ${className || ''}`} style={style}>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Top Sedationists</CardTitle>
         <p className="text-sm text-muted-foreground">Last 30 days - Completed appointments</p>

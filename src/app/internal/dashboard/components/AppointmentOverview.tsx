@@ -190,7 +190,7 @@ const AppointmentItemComponent = ({ appointment, isLast }: { appointment: Appoin
 
 export const AppointmentOverview = ({ appointments, className, style }: AppointmentOverviewProps) => {
   return (
-    <Card className={cn("", className)} style={style}>
+    <Card className={cn("h-full", className)} style={style}>
       <CardHeader className="pb-4">
         <CardTitle className="text-lg">Appointment Overview</CardTitle>
       </CardHeader>

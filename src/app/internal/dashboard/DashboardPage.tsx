@@ -81,7 +81,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Layout with Appointment Overview and Top Sedationists */}
-      <div className="grid grid-cols-1 lg:grid-cols-[57.5%_42.5%] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <section className="space-y-4">
           <h2 className="text-xl font-semibold">Appointment Overview</h2>
           <AppointmentOverview 
