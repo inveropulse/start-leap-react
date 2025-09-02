@@ -3,7 +3,7 @@ import { getPortalByType } from "@/routes/registry";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { MetricsGrid } from "./components/MetricsGrid";
 import { QuickActionCard } from "./components/QuickActionCard";
-import { ActivityFeed } from "./components/ActivityFeed";
+import { AppointmentOverview } from "./components/AppointmentOverview";
 import { RevenueChartCard } from "./components/RevenueChartCard";
 import { DashboardSkeletons } from "./components/LoadingSkeletons";
 import { AlertCircle } from "lucide-react";
@@ -79,12 +79,12 @@ export default function DashboardPage() {
         />
       </section>
 
-      {/* Recent Activity */}
+      {/* Appointment Overview */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Recent Activity</h2>
+        <h2 className="text-xl font-semibold">Appointment Overview</h2>
         <div className="max-w-2xl">
-          <ActivityFeed 
-            activities={data.recentActivity}
+          <AppointmentOverview 
+            appointments={data.appointments}
             className="animate-fade-in"
             style={{ animationDelay: '1000ms' } as React.CSSProperties}
           />

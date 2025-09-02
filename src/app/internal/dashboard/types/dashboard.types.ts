@@ -43,9 +43,28 @@ export interface ActivityItem {
   icon: string;
 }
 
+export interface AppointmentItem {
+  id: string;
+  reference: string;
+  patientName: string;
+  clinicName: string;
+  doctorName?: string;
+  sedationistName?: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'attention';
+  startTime: Date;
+  endTime: Date;
+  procedure?: string;
+  type: 'upcoming' | 'cancelled' | 'attention';
+  color: 'blue' | 'green' | 'yellow' | 'red' | 'purple';
+  icon: string;
+  requiresAttention?: boolean;
+  attentionReason?: string;
+}
+
 export interface DashboardData {
   metrics: DashboardMetric[];
   quickActions: QuickAction[];
   recentActivity: ActivityItem[];
+  appointments: AppointmentItem[];
   revenueChart: RevenueChartData;
 }

@@ -1,4 +1,4 @@
-import { DashboardData, DashboardMetric, QuickAction, ActivityItem, RevenueChartData, ChartDataPoint } from '../types/dashboard.types';
+import { DashboardData, DashboardMetric, QuickAction, ActivityItem, AppointmentItem, RevenueChartData, ChartDataPoint } from '../types/dashboard.types';
 import { formatCurrency } from '@/shared/utils/currency';
 
 // Mock metrics data with vibrant colors
@@ -194,6 +194,105 @@ const mockRecentActivity: ActivityItem[] = [
   }
 ];
 
+const mockAppointments: AppointmentItem[] = [
+  // Upcoming confirmed appointments
+  {
+    id: 'apt-001',
+    reference: 'REF-2024-001',
+    patientName: 'Sarah Wilson',
+    clinicName: 'City Dental Clinic',
+    doctorName: 'Johnson',
+    sedationistName: 'Dr. Smith',
+    status: 'confirmed',
+    startTime: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from now
+    endTime: new Date(Date.now() + 3 * 60 * 60 * 1000),
+    procedure: 'Wisdom tooth extraction with sedation',
+    type: 'upcoming',
+    color: 'green',
+    icon: 'Calendar'
+  },
+  {
+    id: 'apt-002',
+    reference: 'REF-2024-002',
+    patientName: 'Michael Brown',
+    clinicName: 'Harley Street Dental',
+    doctorName: 'Davis',
+    sedationistName: undefined,
+    status: 'attention',
+    startTime: new Date(Date.now() + 4 * 60 * 60 * 1000), // 4 hours from now
+    endTime: new Date(Date.now() + 5 * 60 * 60 * 1000),
+    procedure: 'Root canal treatment',
+    type: 'attention',
+    color: 'yellow',
+    icon: 'AlertTriangle',
+    requiresAttention: true,
+    attentionReason: 'Sedationist not assigned'
+  },
+  {
+    id: 'apt-003',
+    reference: 'REF-2024-003',
+    patientName: 'Emma Thompson',
+    clinicName: 'Brighton Dental Care',
+    doctorName: 'Williams',
+    sedationistName: 'Dr. Jones',
+    status: 'pending',
+    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
+    endTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+    procedure: 'Multiple extractions',
+    type: 'upcoming',
+    color: 'blue',
+    icon: 'Clock'
+  },
+  // Recently cancelled appointments
+  {
+    id: 'apt-004',
+    reference: 'REF-2024-004',
+    patientName: 'James Miller',
+    clinicName: 'Oxford Street Dental',
+    doctorName: 'Taylor',
+    sedationistName: 'Dr. Wilson',
+    status: 'cancelled',
+    startTime: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago (was scheduled)
+    endTime: new Date(Date.now() - 1 * 60 * 60 * 1000),
+    procedure: 'Implant placement',
+    type: 'cancelled',
+    color: 'red',
+    icon: 'X'
+  },
+  {
+    id: 'apt-005',
+    reference: 'REF-2024-005',
+    patientName: 'Lisa Garcia',
+    clinicName: 'West End Dental Practice',
+    doctorName: 'Anderson',
+    sedationistName: undefined,
+    status: 'attention',
+    startTime: new Date(Date.now() + 48 * 60 * 60 * 1000), // Day after tomorrow
+    endTime: new Date(Date.now() + 49 * 60 * 60 * 1000),
+    procedure: 'Oral surgery consultation',
+    type: 'attention',
+    color: 'yellow',
+    icon: 'AlertTriangle',
+    requiresAttention: true,
+    attentionReason: 'Patient pack incomplete'
+  },
+  {
+    id: 'apt-006',
+    reference: 'REF-2024-006',
+    patientName: 'Robert Lee',
+    clinicName: 'Central London Dental',
+    doctorName: 'Martinez',
+    sedationistName: 'Dr. Brown',
+    status: 'confirmed',
+    startTime: new Date(Date.now() + 26 * 60 * 60 * 1000), // Tomorrow afternoon
+    endTime: new Date(Date.now() + 27 * 60 * 60 * 1000),
+    procedure: 'Sedation for anxiety management',
+    type: 'upcoming',
+    color: 'green',
+    icon: 'Calendar'
+  }
+];
+
 // Simulate API call with loading time
 export const getMockDashboardData = (): Promise<DashboardData> => {
   return new Promise((resolve) => {
@@ -202,6 +301,7 @@ export const getMockDashboardData = (): Promise<DashboardData> => {
         metrics: mockMetrics,
         quickActions: mockQuickActions,
         recentActivity: mockRecentActivity,
+        appointments: mockAppointments,
         revenueChart: generateRevenueChartData()
       });
     }, 800); // Simulate network delay
