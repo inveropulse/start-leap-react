@@ -140,7 +140,7 @@ const AppointmentItemComponent = ({ appointment, isLast }: { appointment: Appoin
               {appointment.doctorName && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <User className="h-3 w-3" />
-                  <span>Dr. {appointment.doctorName}</span>
+                  <span>{appointment.doctorTitle || 'Dr'}. {appointment.doctorName}</span>
                 </div>
               )}
               {appointment.procedure && (

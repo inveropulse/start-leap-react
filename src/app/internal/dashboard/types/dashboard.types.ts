@@ -49,7 +49,9 @@ export interface AppointmentItem {
   patientTitle?: string;
   patientName: string;
   clinicName: string;
+  doctorTitle?: string;
   doctorName?: string;
+  sedationistTitle?: string;
   sedationistName: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'attention';
   startTime: Date;
