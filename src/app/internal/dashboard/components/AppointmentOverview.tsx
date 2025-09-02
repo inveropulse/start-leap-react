@@ -190,11 +190,11 @@ const AppointmentItemComponent = ({ appointment, isLast }: { appointment: Appoin
 
 export const AppointmentOverview = ({ appointments, className, style }: AppointmentOverviewProps) => {
   return (
-    <Card className={cn("h-full", className)} style={style}>
-      <CardHeader className="pb-4">
+    <Card className={cn("h-full max-h-96 flex flex-col", className)} style={style}>
+      <CardHeader className="pb-4 flex-shrink-0">
         <CardTitle className="text-lg">Appointment Overview</CardTitle>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-0 flex-1 overflow-y-auto">
         <div>
           {appointments.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
