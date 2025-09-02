@@ -26,3 +26,11 @@ export const formatCurrency = (
   const symbol = getCurrencySymbol(currency);
   return `${symbol}${amount.toLocaleString()}`;
 };
+
+export const formatCurrencyAxisValue = (
+  amount: number, 
+  currency: Currency = APP_CONFIG.currency
+): string => {
+  const symbol = getCurrencySymbol(currency);
+  return `${symbol}${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+};

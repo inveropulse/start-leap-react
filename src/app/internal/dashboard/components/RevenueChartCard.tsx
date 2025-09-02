@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { RevenueChartData } from '../types/dashboard.types';
-import { formatCurrency } from '@/shared/utils/currency';
+import { formatCurrency, formatCurrencyAxisValue } from '@/shared/utils/currency';
 import { cn } from '@/shared/utils/cn';
 
 interface RevenueChartCardProps {
@@ -68,7 +68,7 @@ export const RevenueChartCard: React.FC<RevenueChartCardProps> = ({ data, classN
               <div className="flex flex-col justify-between py-2 pr-3 w-16">
                 {yAxisTicks.reverse().map((tick, index) => (
                   <div key={`y-tick-${index}`} className="text-xs text-muted-foreground font-medium text-right">
-                    {formatCurrency(tick.value, undefined, false)}
+                    {formatCurrencyAxisValue(tick.value)}
                   </div>
                 ))}
               </div>
