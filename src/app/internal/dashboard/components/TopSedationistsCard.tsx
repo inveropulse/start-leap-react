@@ -62,11 +62,7 @@ const ChangeIndicator = ({ change, changeType }: { change: number; changeType: '
 export const TopSedationistsCard = ({ sedationists, className, style }: TopSedationistsCardProps) => {
   return (
     <Card className={`h-full max-h-96 flex flex-col ${className || ''}`} style={style}>
-      <CardHeader className="flex-shrink-0">
-        <CardTitle className="text-lg font-semibold">Top Sedationists</CardTitle>
-        <p className="text-sm text-muted-foreground">Last 30 days - Completed appointments</p>
-      </CardHeader>
-      <CardContent className="flex-1 overflow-y-auto">
+      <CardContent className="flex-1 overflow-y-auto p-6">
         <div className="space-y-4">
           {sedationists.map((sedationist) => (
             <div
