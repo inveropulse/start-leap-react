@@ -76,15 +76,30 @@ const mockMetrics: DashboardMetric[] = [
 // Mock revenue chart data
 const generateRevenueChartData = (): RevenueChartData => {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const baseRevenue = 85000;
+  
+  // Create more realistic revenue data with seasonal trends
+  const baseValues = [
+    95000,  // Jan - slower start
+    102000, // Feb - slight increase
+    118000, // Mar - spring growth
+    125000, // Apr - good month
+    130000, // May - peak spring
+    115000, // Jun - summer dip
+    108000, // Jul - summer continues
+    112000, // Aug - slight recovery
+    135000, // Sep - back to business
+    142000, // Oct - strong autumn
+    155000, // Nov - pre-holiday surge
+    138000  // Dec - holiday season
+  ];
   
   const data: ChartDataPoint[] = months.map((month, index) => ({
     month,
-    value: Math.floor(baseRevenue + (Math.random() - 0.3) * 40000 + (index * 2000)) // Growing trend with variation
+    value: baseValues[index] + Math.floor((Math.random() - 0.5) * 10000) // Add some variation
   }));
 
   const totalRevenue = data.reduce((sum, point) => sum + point.value, 0);
-  const previousTotalRevenue = totalRevenue * 0.92; // 8% less than current
+  const previousTotalRevenue = Math.floor(totalRevenue * 0.92); // 8% less than current
   const change = ((totalRevenue - previousTotalRevenue) / previousTotalRevenue) * 100;
 
   return {
