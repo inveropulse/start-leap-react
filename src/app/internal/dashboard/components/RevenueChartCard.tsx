@@ -51,24 +51,37 @@ export const RevenueChartCard: React.FC<RevenueChartCardProps> = ({ data, classN
               <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.8" />
-                    <stop offset="100%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.6" />
+                    <stop offset="0%" stopColor="hsl(220 70% 50%)" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="hsl(220 70% 60%)" stopOpacity="0.7" />
                   </linearGradient>
                   <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.6" />
-                    <stop offset="30%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.4" />
-                    <stop offset="70%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.2" />
-                    <stop offset="100%" className="[stop-color:hsl(var(--primary))]" stopOpacity="0.05" />
+                    <stop offset="0%" stopColor="hsl(220 70% 50%)" stopOpacity="0.8" />
+                    <stop offset="25%" stopColor="hsl(220 70% 55%)" stopOpacity="0.6" />
+                    <stop offset="50%" stopColor="hsl(220 70% 60%)" stopOpacity="0.4" />
+                    <stop offset="75%" stopColor="hsl(220 70% 65%)" stopOpacity="0.2" />
+                    <stop offset="100%" stopColor="hsl(220 70% 70%)" stopOpacity="0.1" />
                   </linearGradient>
                 </defs>
                 
                 {/* Area under the line */}
                 <path
-                  d={`M ${data.data.map((point, index) => {
-                    const x = (index / (data.data.length - 1)) * 100;
-                    const y = 100 - ((point.value / maxValue) * 80 + 10);
-                    return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
-                  }).join(' ')} L 100 100 L 0 100 Z`}
+                  d={(() => {
+                    const pathPoints = data.data.map((point, index) => {
+                      const x = (index / (data.data.length - 1)) * 100;
+                      const y = 100 - ((point.value / maxValue) * 80 + 10);
+                      return { x, y };
+                    });
+                    
+                    // Create area path: start from bottom-left, go through all points, then back to bottom-right
+                    const linePath = pathPoints.map((point, index) => 
+                      `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+                    ).join(' ');
+                    
+                    const lastPoint = pathPoints[pathPoints.length - 1];
+                    const firstPoint = pathPoints[0];
+                    
+                    return `${linePath} L ${lastPoint.x} 100 L ${firstPoint.x} 100 Z`;
+                  })()}
                   fill="url(#areaGradient)"
                   className="animate-fade-in"
                 />
@@ -82,12 +95,12 @@ export const RevenueChartCard: React.FC<RevenueChartCardProps> = ({ data, classN
                   }).join(' ')}
                   fill="none"
                   stroke="url(#lineGradient)"
-                  strokeWidth="0.5"
+                  strokeWidth="0.8"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className="animate-fade-in"
                   style={{
-                    filter: 'drop-shadow(0 2px 4px hsl(var(--primary) / 0.1))'
+                    filter: 'drop-shadow(0 2px 8px hsl(220 70% 50% / 0.2))'
                   }}
                 />
               </svg>
