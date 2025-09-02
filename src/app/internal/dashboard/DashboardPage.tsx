@@ -48,16 +48,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Revenue Chart */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Revenue Overview</h2>
-        <RevenueChartCard 
-          data={data.revenueChart}
-          className="animate-fade-in"
-          style={{ animationDelay: '400ms' } as React.CSSProperties}
-        />
-      </section>
-
       {/* Metrics Overview */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Key Metrics</h2>
@@ -77,6 +67,16 @@ export default function DashboardPage() {
             />
           ))}
         </div>
+      </section>
+
+      {/* Revenue Chart */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold">Revenue Overview</h2>
+        <RevenueChartCard 
+          data={data.revenueChart}
+          className="animate-fade-in"
+          style={{ animationDelay: '1200ms' } as React.CSSProperties}
+        />
       </section>
 
       {/* Recent Activity */}
