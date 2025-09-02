@@ -115,7 +115,7 @@ const AppointmentItemComponent = ({ appointment, isLast }: { appointment: Appoin
             {/* Header */}
             <div className="flex items-center gap-2 flex-wrap">
               <h4 className="font-medium text-sm text-foreground">
-                {appointment.patientName}
+                {appointment.patientTitle ? `${appointment.patientTitle}. ${appointment.patientName}` : appointment.patientName}
               </h4>
               <span className="text-xs text-muted-foreground">
                 #{appointment.reference}

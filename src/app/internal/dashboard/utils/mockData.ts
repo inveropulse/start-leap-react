@@ -1,4 +1,5 @@
 import { DashboardData, DashboardMetric, QuickAction, ActivityItem, AppointmentItem, RevenueChartData, ChartDataPoint } from '../types/dashboard.types';
+import { Title } from '../../../../api/generated/models/Title';
 import { formatCurrency } from '@/shared/utils/currency';
 
 // Mock metrics data with vibrant colors
@@ -194,99 +195,103 @@ const mockRecentActivity: ActivityItem[] = [
   }
 ];
 
-const mockAppointments: AppointmentItem[] = [
-  // Upcoming confirmed appointments
+export const mockAppointments: AppointmentItem[] = [
   {
-    id: 'apt-001',
-    reference: 'REF-2024-001',
-    patientName: 'Sarah Wilson',
-    clinicName: 'City Dental Clinic',
-    doctorName: 'Johnson',
-    sedationistName: 'Dr. Smith',
+    id: '1',
+    reference: 'APP-2024-001',
+    patientTitle: Title.MRS,
+    patientName: 'Sarah Johnson',
+    clinicName: 'Harley Street Dental',
+    doctorName: 'Dr. Emily Watson',
+    sedationistName: 'Dr. Michael Chen',
     status: 'confirmed',
-    startTime: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from now
-    endTime: new Date(Date.now() + 3 * 60 * 60 * 1000),
-    procedure: 'Wisdom tooth extraction with sedation',
+    startTime: new Date(2024, 0, 15, 9, 0),
+    endTime: new Date(2024, 0, 15, 10, 30),
+    procedure: 'Root Canal Treatment',
     type: 'upcoming',
     color: 'green',
     icon: 'Calendar'
   },
   {
-    id: 'apt-002',
-    reference: 'REF-2024-002',
-    patientName: 'Michael Brown',
-    clinicName: 'Harley Street Dental',
-    doctorName: 'Davis',
-    sedationistName: undefined,
-    status: 'attention',
-    startTime: new Date(Date.now() + 4 * 60 * 60 * 1000), // 4 hours from now
-    endTime: new Date(Date.now() + 5 * 60 * 60 * 1000),
-    procedure: 'Root canal treatment',
-    type: 'attention',
-    color: 'yellow',
-    icon: 'AlertTriangle',
-    requiresAttention: true,
-    attentionReason: 'Sedationist not assigned'
-  },
-  {
-    id: 'apt-003',
-    reference: 'REF-2024-003',
-    patientName: 'Emma Thompson',
-    clinicName: 'Brighton Dental Care',
-    doctorName: 'Williams',
-    sedationistName: 'Dr. Jones',
+    id: '2',
+    reference: 'APP-2024-002',
+    patientTitle: Title.MR,
+    patientName: 'James Wilson',
+    clinicName: 'City Dental Practice',
+    doctorName: 'Dr. Robert Smith',
+    sedationistName: 'Dr. Sarah Lee',
     status: 'pending',
-    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
-    endTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-    procedure: 'Multiple extractions',
+    startTime: new Date(2024, 0, 15, 14, 0),
+    endTime: new Date(2024, 0, 15, 15, 0),
+    procedure: 'Wisdom Tooth Extraction',
     type: 'upcoming',
     color: 'blue',
     icon: 'Clock'
   },
-  // Recently cancelled appointments
   {
-    id: 'apt-004',
-    reference: 'REF-2024-004',
-    patientName: 'James Miller',
-    clinicName: 'Oxford Street Dental',
-    doctorName: 'Taylor',
-    sedationistName: 'Dr. Wilson',
+    id: '3',
+    reference: 'APP-2024-003',
+    patientTitle: Title.MS,
+    patientName: 'Maria Garcia',
+    clinicName: 'Premier Dental Clinic',
+    doctorName: 'Dr. Amanda Brown',
+    sedationistName: 'Dr. Patricia Williams',
+    status: 'attention',
+    startTime: new Date(2024, 0, 16, 10, 0),
+    endTime: new Date(2024, 0, 16, 11, 30),
+    procedure: 'Dental Implant',
+    type: 'attention',
+    color: 'yellow',
+    icon: 'AlertTriangle',
+    requiresAttention: true,
+    attentionReason: 'Payment pending confirmation'
+  },
+  {
+    id: '4',
+    reference: 'APP-2024-004',
+    patientTitle: Title.MR,
+    patientName: 'David Thompson',
+    clinicName: 'Modern Dental Solutions',
+    doctorName: 'Dr. Lisa Chang',
+    sedationistName: 'Dr. James Miller',
+    status: 'attention',
+    startTime: new Date(2024, 0, 16, 15, 30),
+    endTime: new Date(2024, 0, 16, 16, 30),
+    procedure: 'Oral Surgery',
+    type: 'attention',
+    color: 'red',
+    icon: 'AlertCircle',
+    requiresAttention: true,
+    attentionReason: 'Patient pack incomplete'
+  },
+  {
+    id: '5',
+    reference: 'APP-2024-005',
+    patientTitle: Title.MISS,
+    patientName: 'Emma Taylor',
+    clinicName: 'Gentle Care Dentistry',
+    doctorName: 'Dr. Peter Wilson',
+    sedationistName: 'Dr. Anna Rodriguez',
     status: 'cancelled',
-    startTime: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago (was scheduled)
-    endTime: new Date(Date.now() - 1 * 60 * 60 * 1000),
-    procedure: 'Implant placement',
+    startTime: new Date(2024, 0, 17, 11, 0),
+    endTime: new Date(2024, 0, 17, 12, 0),
+    procedure: 'Periodontal Treatment',
     type: 'cancelled',
     color: 'red',
     icon: 'X'
   },
   {
-    id: 'apt-005',
-    reference: 'REF-2024-005',
-    patientName: 'Lisa Garcia',
-    clinicName: 'West End Dental Practice',
-    doctorName: 'Anderson',
-    sedationistName: undefined,
-    status: 'attention',
-    startTime: new Date(Date.now() + 48 * 60 * 60 * 1000), // Day after tomorrow
-    endTime: new Date(Date.now() + 49 * 60 * 60 * 1000),
-    procedure: 'Oral surgery consultation',
-    type: 'attention',
-    color: 'yellow',
-    icon: 'AlertTriangle',
-    requiresAttention: true,
-    attentionReason: 'Patient pack incomplete'
-  },
-  {
-    id: 'apt-006',
-    reference: 'REF-2024-006',
-    patientName: 'Robert Lee',
-    clinicName: 'Central London Dental',
-    doctorName: 'Martinez',
-    sedationistName: 'Dr. Brown',
+    id: '6',
+    reference: 'APP-2024-006',
+    patientTitle: Title.MR,
+    patientName: 'Oliver Martinez',
+    clinicName: 'Excellence Dental Care',
+    doctorName: 'Dr. Helen Davis',
+    sedationistName: 'Dr. Thomas Anderson',
     status: 'confirmed',
-    startTime: new Date(Date.now() + 26 * 60 * 60 * 1000), // Tomorrow afternoon
-    endTime: new Date(Date.now() + 27 * 60 * 60 * 1000),
-    procedure: 'Sedation for anxiety management',
+    startTime: new Date(2024, 0, 18, 13, 0),
+    endTime: new Date(2024, 0, 18, 14, 30),
+    procedure: 'Endodontic Therapy',
     type: 'upcoming',
     color: 'green',
     icon: 'Calendar'

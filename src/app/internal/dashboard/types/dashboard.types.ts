@@ -46,10 +46,11 @@ export interface ActivityItem {
 export interface AppointmentItem {
   id: string;
   reference: string;
+  patientTitle?: string;
   patientName: string;
   clinicName: string;
   doctorName?: string;
-  sedationistName?: string;
+  sedationistName: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'attention';
   startTime: Date;
   endTime: Date;
