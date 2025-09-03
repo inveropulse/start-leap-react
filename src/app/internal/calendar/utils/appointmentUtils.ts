@@ -153,33 +153,3 @@ export const getAppointmentSummary = (appointment: DiaryAppointmentDto): string 
   
   return patientName;
 };
-
-// Calculate how many time slots an appointment spans
-export const calculateAppointmentSpanSlots = (
-  appointment: DiaryAppointmentDto,
-  slotDurationMinutes = 60
-): number => {
-  if (!appointment.start || !appointment.end) return 1;
-  
-  try {
-    const appointmentStart = new Date(appointment.start);
-    const appointmentEnd = new Date(appointment.end);
-    
-    if (!isValid(appointmentStart) || !isValid(appointmentEnd)) return 1;
-    
-    const durationMinutes = (appointmentEnd.getTime() - appointmentStart.getTime()) / (1000 * 60);
-    return Math.max(1, Math.ceil(durationMinutes / slotDurationMinutes));
-  } catch (error) {
-    return 1;
-  }
-};
-
-// Get the visual height for an appointment card based on how many slots it spans
-export const getAppointmentVisualHeight = (
-  appointment: DiaryAppointmentDto,
-  slotHeight = 60,
-  slotDurationMinutes = 60
-): number => {
-  const spanSlots = calculateAppointmentSpanSlots(appointment, slotDurationMinutes);
-  return spanSlots * slotHeight;
-};
