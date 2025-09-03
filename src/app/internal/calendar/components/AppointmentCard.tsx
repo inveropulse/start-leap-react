@@ -8,7 +8,8 @@ import {
   getAppointmentStatusText, 
   formatAppointmentTime,
   formatPatientName,
-  getAppointmentSummary 
+  getAppointmentSummary,
+  getAppointmentLayoutMode
 } from "../utils/appointmentUtils";
 import { cn } from "@/shared/utils/cn";
 
@@ -34,11 +35,18 @@ export function AppointmentCard({
   const timeText = formatAppointmentTime(appointment.start, appointment.end);
   const patientName = formatPatientName(appointment);
   const summary = getAppointmentSummary(appointment);
+  const layoutMode = getAppointmentLayoutMode(fullHeight);
 
   const cardSizes = {
     sm: "p-2 text-xs",
     md: "p-3 text-sm",
     lg: "p-4 text-sm"
+  };
+
+  const adaptiveSizes = {
+    compact: "p-1 text-xs",
+    normal: "p-2 text-xs", 
+    expanded: cardSizes[size]
   };
 
   return (
@@ -56,73 +64,108 @@ export function AppointmentCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <CardContent className={cardSizes[size]}>
-        <div className="space-y-2">
-          {/* Header with time and status */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <Clock className="h-3 w-3" />
-              <span className="font-medium">{timeText}</span>
+      <CardContent className={fullHeight ? adaptiveSizes[layoutMode] : cardSizes[size]}>
+        {layoutMode === 'compact' && (
+          <div className="flex items-center justify-between h-full">
+            <span className="font-medium text-foreground truncate flex-1 pr-1 leading-tight">
+              {patientName}
+            </span>
+            <div className="text-[10px] text-muted-foreground whitespace-nowrap">
+              {timeText}
             </div>
-            <Badge 
-              variant="secondary" 
-              className={cn("text-xs", statusColor, "text-white")}
-            >
-              {statusText}
-            </Badge>
           </div>
+        )}
 
-          {/* Patient info */}
-          <div className="space-y-1">
-            <div className="flex items-center gap-1">
-              <User className="h-3 w-3 text-muted-foreground" />
-              <span className="font-semibold text-foreground truncate">
-                {patientName}
-              </span>
+        {layoutMode === 'normal' && (
+          <div className="space-y-1 h-full flex flex-col justify-center">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-muted-foreground font-medium">{timeText}</span>
+              <Badge 
+                variant="secondary" 
+                className={cn("text-[10px] px-1 py-0", statusColor, "text-white")}
+              >
+                {statusText}
+              </Badge>
             </div>
-            
+            <div className="font-semibold text-foreground truncate text-xs">
+              {patientName}
+            </div>
             {appointment.procedure && (
-              <div className="flex items-center gap-1">
-                <Stethoscope className="h-3 w-3 text-muted-foreground" />
-                <span className="text-muted-foreground truncate">
-                  {appointment.procedure}
-                </span>
+              <div className="text-[10px] text-muted-foreground truncate">
+                {appointment.procedure}
               </div>
             )}
           </div>
+        )}
 
-          {/* Doctor and clinic info for larger cards */}
-          {size === "lg" && (
-            <div className="space-y-1 text-xs">
-              {appointment.doctorName && (
-                <div className="text-muted-foreground">
-                  Dr. {appointment.doctorName}
-                </div>
-              )}
+        {layoutMode === 'expanded' && (
+          <div className="space-y-2">
+            {/* Header with time and status */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                <span className="font-medium">{timeText}</span>
+              </div>
+              <Badge 
+                variant="secondary" 
+                className={cn("text-xs", statusColor, "text-white")}
+              >
+                {statusText}
+              </Badge>
+            </div>
+
+            {/* Patient info */}
+            <div className="space-y-1">
+              <div className="flex items-center gap-1">
+                <User className="h-3 w-3 text-muted-foreground" />
+                <span className="font-semibold text-foreground truncate">
+                  {patientName}
+                </span>
+              </div>
               
-              {appointment.clinicName && (
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <MapPin className="h-3 w-3" />
-                  <span className="truncate">{appointment.clinicName}</span>
-                </div>
-              )}
-              
-              {appointment.patientPhoneNumber && (
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Phone className="h-3 w-3" />
-                  <span>{appointment.patientPhoneNumber}</span>
+              {appointment.procedure && (
+                <div className="flex items-center gap-1">
+                  <Stethoscope className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-muted-foreground truncate">
+                    {appointment.procedure}
+                  </span>
                 </div>
               )}
             </div>
-          )}
 
-          {/* Reference for smaller cards */}
-          {size !== "lg" && appointment.reference && (
-            <div className="text-xs text-muted-foreground">
-              Ref: {appointment.reference}
-            </div>
-          )}
-        </div>
+            {/* Doctor and clinic info for larger cards */}
+            {size === "lg" && (
+              <div className="space-y-1 text-xs">
+                {appointment.doctorName && (
+                  <div className="text-muted-foreground">
+                    Dr. {appointment.doctorName}
+                  </div>
+                )}
+                
+                {appointment.clinicName && (
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <MapPin className="h-3 w-3" />
+                    <span className="truncate">{appointment.clinicName}</span>
+                  </div>
+                )}
+                
+                {appointment.patientPhoneNumber && (
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <Phone className="h-3 w-3" />
+                    <span>{appointment.patientPhoneNumber}</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Reference for smaller cards */}
+            {size !== "lg" && appointment.reference && (
+              <div className="text-xs text-muted-foreground">
+                Ref: {appointment.reference}
+              </div>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

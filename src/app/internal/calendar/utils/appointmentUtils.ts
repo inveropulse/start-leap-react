@@ -160,3 +160,14 @@ export const calculateAppointmentHeight = (appointment: DiaryAppointmentDto, slo
   const slots = Math.ceil(duration / slotDurationMinutes);
   return slots * slotHeightPx;
 };
+
+/**
+ * Determines the layout mode based on card height
+ */
+export function getAppointmentLayoutMode(height?: number): 'compact' | 'normal' | 'expanded' {
+  if (!height) return 'expanded';
+  
+  if (height < 80) return 'compact';
+  if (height < 120) return 'normal';
+  return 'expanded';
+}
