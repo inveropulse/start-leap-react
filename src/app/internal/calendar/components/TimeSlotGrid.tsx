@@ -6,8 +6,8 @@ import { PortalType } from "@/shared/types";
 import { useCalendarAppointments, useCalendarAvailabilities } from "../hooks/useCalendarData";
 import { AppointmentCard } from "./AppointmentCard";
 import { AvailabilityCard } from "./AvailabilityCard";
-import { isAppointmentInTimeSlot, isAppointmentStartInSlot, isAppointmentContinuation, formatPatientName } from "../utils/appointmentUtils";
-import { isAvailabilityInTimeSlot, isAvailabilityStartInSlot, isAvailabilityContinuation } from "../utils/availabilityUtils";
+import { isAppointmentInTimeSlot, isAppointmentStartInSlot, isAppointmentContinuation, formatPatientName, calculateAppointmentHeight } from "../utils/appointmentUtils";
+import { isAvailabilityInTimeSlot, isAvailabilityStartInSlot, isAvailabilityContinuation, calculateAvailabilityHeight } from "../utils/availabilityUtils";
 
 interface TimeSlotGridProps {
   date: Date;
@@ -164,34 +164,53 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
 
                       const hasContent = startingAppointments.length > 0 || continuationAppointments.length > 0 || startingAvailabilities.length > 0 || continuationAvailabilities.length > 0;
 
+                      const slotHeightPx = 60;
+                      const slotDurationMinutes = APP_CONFIG.calendar.timeSlotDuration || 30;
+                      
                       return (
                         <div 
                           key={`${sedationist.id}-${slot.time}`}
-                          className="flex-shrink-0 w-[200px] min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
+                          className="relative flex-shrink-0 w-[200px] min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
                         >
-                          {hasContent ? (
-                            <div className="space-y-1 p-1">
-                              {/* Starting appointments */}
-                              {startingAppointments.map((appointment) => (
-                                <AppointmentCard
-                                  key={appointment.id}
-                                  appointment={appointment}
-                                  size="sm"
-                                  onClick={() => openAppointmentModal(appointment.id!)}
-                                />
-                              ))}
-                              
-                              {/* Starting availabilities */}
-                              {startingAvailabilities.map((availability) => (
-                                <AvailabilityCard
-                                  key={availability.id}
-                                  availability={availability}
-                                  size="sm"
-                                  onClick={() => openAvailabilityModal(availability.id!)}
-                                />
-                              ))}
-                              
-                              {/* Continuation appointments */}
+                          {/* Starting appointments with full height */}
+                          {startingAppointments.map((appointment) => {
+                            const height = calculateAppointmentHeight(appointment, slotHeightPx, slotDurationMinutes);
+                            return (
+                              <AppointmentCard
+                                key={appointment.id}
+                                appointment={appointment}
+                                size="sm"
+                                fullHeight={height}
+                                onClick={() => openAppointmentModal(appointment.id!)}
+                              />
+                            );
+                          })}
+                          
+                          {/* Starting availabilities with full height */}
+                          {startingAvailabilities.map((availability) => {
+                            const height = calculateAvailabilityHeight(availability, slotHeightPx, slotDurationMinutes);
+                            return (
+                              <AvailabilityCard
+                                key={availability.id}
+                                availability={availability}
+                                size="sm"
+                                fullHeight={height}
+                                onClick={() => openAvailabilityModal(availability.id!)}
+                              />
+                            );
+                          })}
+
+                          {/* Show "Available" text only if no starting items and no continuations */}
+                          {!hasContent && (
+                            <div className="h-full flex items-center justify-center text-xs text-muted-foreground/50">
+                              Available
+                            </div>
+                          )}
+
+                          {/* Show continuation indicators only if there are continuations but no starting items */}
+                          {(continuationAppointments.length > 0 || continuationAvailabilities.length > 0) && 
+                           startingAppointments.length === 0 && startingAvailabilities.length === 0 && (
+                            <div className="space-y-1 p-1 w-full">
                               {continuationAppointments.map((appointment) => (
                                 <div
                                   key={`${appointment.id}-continuation`}
@@ -202,7 +221,6 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                                 </div>
                               ))}
                               
-                              {/* Continuation availabilities */}
                               {continuationAvailabilities.map((availability) => (
                                 <div
                                   key={`${availability.id}-continuation`}
@@ -212,10 +230,6 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                                   {availability.sedationistName}
                                 </div>
                               ))}
-                            </div>
-                          ) : (
-                            <div className="h-full flex items-center justify-center text-xs text-muted-foreground/50">
-                              Available
                             </div>
                           )}
                         </div>

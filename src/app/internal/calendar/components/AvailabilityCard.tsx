@@ -14,6 +14,7 @@ interface AvailabilityCardProps {
   availability: DiaryAvailabilityDto;
   className?: string;
   size?: "sm" | "md" | "lg";
+  fullHeight?: number; // Height in pixels for spanning multiple slots
   onClick?: () => void;
 }
 
@@ -21,6 +22,7 @@ export function AvailabilityCard({
   availability, 
   className, 
   size = "md",
+  fullHeight,
   onClick 
 }: AvailabilityCardProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -42,8 +44,10 @@ export function AvailabilityCard({
         "bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/50",
         isHovered && "shadow-md transform scale-[1.02]",
         onClick && "hover:shadow-lg",
+        fullHeight && "absolute top-0 left-0 right-0 z-10",
         className
       )}
+      style={fullHeight ? { height: `${fullHeight}px` } : undefined}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}

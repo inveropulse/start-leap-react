@@ -127,3 +127,10 @@ export const getAvailabilitySummary = (availability: DiaryAvailabilityDto): stri
   
   return `${sedationistName} - ${statusText}`;
 };
+
+// Calculate visual height for an availability based on duration
+export const calculateAvailabilityHeight = (availability: DiaryAvailabilityDto, slotHeightPx: number = 60, slotDurationMinutes: number = 30): number => {
+  const duration = getAvailabilityDuration(availability.start, availability.end);
+  const slots = Math.ceil(duration / slotDurationMinutes);
+  return slots * slotHeightPx;
+};

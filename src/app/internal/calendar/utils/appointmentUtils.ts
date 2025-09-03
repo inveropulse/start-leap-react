@@ -153,3 +153,10 @@ export const getAppointmentSummary = (appointment: DiaryAppointmentDto): string 
   
   return patientName;
 };
+
+// Calculate visual height for an appointment based on duration
+export const calculateAppointmentHeight = (appointment: DiaryAppointmentDto, slotHeightPx: number = 60, slotDurationMinutes: number = 30): number => {
+  const duration = getAppointmentDuration(appointment.start, appointment.end);
+  const slots = Math.ceil(duration / slotDurationMinutes);
+  return slots * slotHeightPx;
+};

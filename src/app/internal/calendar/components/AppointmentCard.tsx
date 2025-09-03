@@ -16,6 +16,7 @@ interface AppointmentCardProps {
   appointment: DiaryAppointmentDto;
   className?: string;
   size?: "sm" | "md" | "lg";
+  fullHeight?: number; // Height in pixels for spanning multiple slots
   onClick?: () => void;
 }
 
@@ -23,6 +24,7 @@ export function AppointmentCard({
   appointment, 
   className, 
   size = "md",
+  fullHeight,
   onClick 
 }: AppointmentCardProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -46,8 +48,10 @@ export function AppointmentCard({
         statusColor.replace("bg-", "border-l-"),
         isHovered && "shadow-md transform scale-[1.02]",
         onClick && "hover:shadow-lg",
+        fullHeight && "absolute top-0 left-0 right-0 z-10",
         className
       )}
+      style={fullHeight ? { height: `${fullHeight}px` } : undefined}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
