@@ -5,13 +5,15 @@ import { PortalType } from "@/shared/types";
 import { addDays, subDays } from "date-fns";
 
 export function CalendarHeader() {
-  const {
-    selectedDate,
-    setSelectedDate,
-  } = useCalendarStore(PortalType.INTERNAL);
+  const { selectedDate, setSelectedDate } = useCalendarStore(
+    PortalType.INTERNAL
+  );
 
-  const navigateDate = (direction: 'prev' | 'next') => {
-    const newDate = direction === 'next' ? addDays(selectedDate, 1) : subDays(selectedDate, 1);
+  const navigateDate = (direction: "prev" | "next") => {
+    const newDate =
+      direction === "next"
+        ? addDays(selectedDate, 1)
+        : subDays(selectedDate, 1);
     setSelectedDate(newDate);
   };
 
@@ -20,39 +22,35 @@ export function CalendarHeader() {
   };
 
   const formatHeaderDate = () => {
-    return selectedDate.toLocaleDateString('en-US', { 
-      weekday: 'long',
-      month: 'long', 
-      day: 'numeric',
-      year: 'numeric' 
+    return selectedDate.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   return (
-    <div className="flex items-center justify-between p-4 border-b bg-card">
+    <div className="flex items-center justify-between py-4 bg-card">
       {/* Left side - Navigation */}
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
           size="sm"
-          onClick={() => navigateDate('prev')}
+          onClick={() => navigateDate("prev")}
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        
+
         <Button
           variant="outline"
           size="sm"
-          onClick={() => navigateDate('next')}
+          onClick={() => navigateDate("next")}
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={goToToday}
-        >
+
+        <Button variant="outline" size="sm" onClick={goToToday}>
           Today
         </Button>
       </div>
@@ -60,9 +58,7 @@ export function CalendarHeader() {
       {/* Center - Current date */}
       <div className="flex items-center gap-2">
         <CalendarDays className="h-5 w-5 text-muted-foreground" />
-        <h2 className="text-lg font-semibold">
-          {formatHeaderDate()}
-        </h2>
+        <h2 className="text-lg font-semibold">{formatHeaderDate()}</h2>
       </div>
 
       {/* Right side - Day view only */}

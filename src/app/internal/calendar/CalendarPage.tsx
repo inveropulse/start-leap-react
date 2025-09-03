@@ -48,9 +48,9 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex flex-col h-full overflow-x-hidden">
+    <div className="flex flex-col h-full overflow-x-hidden px-6">
       {/* Page Header */}
-      <div className="flex justify-center p-6 pb-4">
+      <div className="flex justify-center py-6 pb-4">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Calendar</h1>
           <p className="text-muted-foreground">
@@ -60,7 +60,7 @@ export default function CalendarPage() {
       </div>
 
       {/* Stats Cards Row */}
-      <div className="px-6 pb-4">
+      <div className="pb-4">
         <div className="flex items-center gap-4 mb-4">
           <SedationistMultiSelect />
         </div>
@@ -121,7 +121,7 @@ export default function CalendarPage() {
       <CalendarHeader />
 
       {/* Main Calendar Area */}
-      <div className="flex-1 px-6 pb-6">
+      <div className="flex-1 pb-6">
         <TimeSlotGrid date={selectedDate} />
       </div>
 
