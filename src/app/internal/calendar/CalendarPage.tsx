@@ -15,13 +15,11 @@ import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
 import { useCalendarAppointments } from "./hooks/useCalendarData";
 import { startOfDay, endOfDay } from "date-fns";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
-import { MobileSedationistChip } from "./components/mobile/MobileSedationistChip";
-import { MobileSedationistModal } from "./components/mobile/MobileSedationistModal";
+import { MobileSedationistSelect } from "./components/mobile/MobileSedationistSelect";
 import { MobileStatsCards } from "./components/mobile/MobileStatsCards";
 import { MobileDateNavigation } from "./components/mobile/MobileDateNavigation";
 
 export default function CalendarPage() {
-  const [isMobileSedationistModalOpen, setIsMobileSedationistModalOpen] = useState(false);
   const isMobile = useIsMobile();
   
   const {
@@ -69,9 +67,7 @@ export default function CalendarPage() {
 
         {/* Mobile Sedationist Selector */}
         <div className="pb-4">
-          <MobileSedationistChip 
-            onOpenModal={() => setIsMobileSedationistModalOpen(true)} 
-          />
+          <MobileSedationistSelect />
         </div>
 
         {/* Mobile Stats Cards */}
@@ -87,11 +83,6 @@ export default function CalendarPage() {
           <TimeSlotGrid date={selectedDate} />
         </div>
 
-        {/* Mobile Sedationist Modal */}
-        <MobileSedationistModal
-          isOpen={isMobileSedationistModalOpen}
-          onClose={() => setIsMobileSedationistModalOpen(false)}
-        />
 
         {/* Appointment Detail Modal */}
         <AppointmentDetailModal

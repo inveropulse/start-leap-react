@@ -1,4 +1,3 @@
-export { MobileSedationistChip } from "./MobileSedationistChip";
-export { MobileSedationistModal } from "./MobileSedationistModal";
+export { MobileSedationistSelect } from "./MobileSedationistSelect";
 export { MobileStatsCards } from "./MobileStatsCards";
 export { MobileDateNavigation } from "./MobileDateNavigation";
