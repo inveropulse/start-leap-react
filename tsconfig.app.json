@@ -23,15 +23,17 @@
 
     "baseUrl": ".",
     "paths": {
-         "@/*": ["./src/*"],
+      "@/*": ["./src/*"],
       "@/api/*": ["./src/api/*"],
       "@/app/*": ["./src/app/*"],
+      "@/routes/*": ["./src/routes/*"],
       "@/shared": ["./src/shared"],
-      "@/shared/components/*": ["src/shared/components/*"],
       "@/shared/utils/*": ["./src/shared/utils/*"],
-      "@/shared/providers/*": ["src/shared/providers/*"],
-      "@/shared/hooks/*": ["src/shared/hooks/*"],
-      "@/shared/services/*": ["src/shared/services/*"]
+      "@/shared/hooks/*": ["./src/shared/hooks/*"],
+      "@/shared/types/*": ["./src/shared/types/*"],
+      "@/shared/services/*": ["./src/shared/services/*"],
+      "@/shared/providers/*": ["./src/shared/providers/*"],
+      "@/shared/components/*": ["./src/shared/components/*"]
     }
   },
   "include": ["src"]

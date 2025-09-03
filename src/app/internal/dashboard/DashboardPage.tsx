@@ -1,13 +1,13 @@
+import { AlertCircle } from "lucide-react";
 import { PortalType } from "@/shared/types";
 import { getPortalByType } from "@/routes/registry";
-import { useDashboardData } from "./hooks/useDashboardData";
 import { MetricsGrid } from "./components/MetricsGrid";
+import { useDashboardData } from "./hooks/useDashboardData";
 import { QuickActionCard } from "./components/QuickActionCard";
-import { UpcomingAppointments } from "./components/UpcomingAppointments";
 import { RevenueChartCard } from "./components/RevenueChartCard";
-import { TopSedationistsCard } from "./components/TopSedationistsCard";
 import { DashboardSkeletons } from "./components/LoadingSkeletons";
-import { AlertCircle } from "lucide-react";
+import { TopSedationistsCard } from "./components/TopSedationistsCard";
+import { UpcomingAppointments } from "./components/UpcomingAppointments";
 
 export default function DashboardPage() {
   const portalConfig = getPortalByType(PortalType.INTERNAL);
@@ -24,9 +24,12 @@ export default function DashboardPage() {
           <div className="text-center space-y-4">
             <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
             <div>
-              <h3 className="text-lg font-semibold">Failed to load dashboard</h3>
+              <h3 className="text-lg font-semibold">
+                Failed to load dashboard
+              </h3>
               <p className="text-muted-foreground">
-                Please try refreshing the page or contact support if the problem persists.
+                Please try refreshing the page or contact support if the problem
+                persists.
               </p>
             </div>
           </div>
@@ -45,7 +48,8 @@ export default function DashboardPage() {
           Welcome to {portalConfig.name}
         </h1>
         <p className="text-muted-foreground text-lg">
-          {portalConfig.summaryDescription} - Monitor key metrics and manage operations efficiently.
+          {portalConfig.summaryDescription} - Monitor key metrics and manage
+          operations efficiently.
         </p>
       </div>
 
@@ -60,11 +64,15 @@ export default function DashboardPage() {
         <h2 className="text-xl font-semibold">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {data.quickActions.map((action, index) => (
-            <QuickActionCard 
-              key={action.id} 
+            <QuickActionCard
+              key={action.id}
               action={action}
               className="animate-fade-in"
-              style={{ animationDelay: `${(index + 6) * 100}ms` } as React.CSSProperties}
+              style={
+                {
+                  animationDelay: `${(index + 6) * 100}ms`,
+                } as React.CSSProperties
+              }
             />
           ))}
         </div>
@@ -73,10 +81,10 @@ export default function DashboardPage() {
       {/* Revenue Chart */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Revenue Overview</h2>
-        <RevenueChartCard 
+        <RevenueChartCard
           data={data.revenueChart}
           className="animate-fade-in"
-          style={{ animationDelay: '1200ms' } as React.CSSProperties}
+          style={{ animationDelay: "1200ms" } as React.CSSProperties}
         />
       </section>
 
@@ -84,19 +92,19 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <section className="space-y-4">
           <h2 className="text-xl font-semibold">Upcoming Appointments</h2>
-          <UpcomingAppointments 
+          <UpcomingAppointments
             appointments={data.appointments}
             className="animate-fade-in"
-            style={{ animationDelay: '1000ms' } as React.CSSProperties}
+            style={{ animationDelay: "1000ms" } as React.CSSProperties}
           />
         </section>
 
         <section className="space-y-4">
           <h2 className="text-xl font-semibold">Top Sedationists</h2>
-          <TopSedationistsCard 
+          <TopSedationistsCard
             sedationists={data.topSedationists}
             className="animate-fade-in"
-            style={{ animationDelay: '1400ms' } as React.CSSProperties}
+            style={{ animationDelay: "1400ms" } as React.CSSProperties}
           />
         </section>
       </div>
