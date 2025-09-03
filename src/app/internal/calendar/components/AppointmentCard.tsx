@@ -1,95 +1,121 @@
-import { Card, CardContent } from "@/shared/components/ui/card";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
-import { Clock, User, MapPin } from "lucide-react";
-
-// Mock appointment type for now - will be replaced with actual API types in Phase 4
-interface MockAppointment {
-  id: string;
-  patientName: string;
-  startTime: string;
-  endTime: string;
-  status: 'scheduled' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
-  location?: string;
-  type: string;
-}
+import { Clock, User, MapPin, Stethoscope, Phone } from "lucide-react";
+import { DiaryAppointmentDto } from "@/api/generated/models/DiaryAppointmentDto";
+import { 
+  getAppointmentStatusColor, 
+  getAppointmentStatusText, 
+  formatAppointmentTime,
+  formatPatientName,
+  getAppointmentSummary 
+} from "../utils/appointmentUtils";
+import { cn } from "@/shared/utils/cn";
 
 interface AppointmentCardProps {
-  appointment: MockAppointment;
+  appointment: DiaryAppointmentDto;
+  className?: string;
+  size?: "sm" | "md" | "lg";
   onClick?: () => void;
 }
 
-export function AppointmentCard({ appointment, onClick }: AppointmentCardProps) {
-  const getStatusColor = (status: MockAppointment['status']) => {
-    switch (status) {
-      case 'scheduled':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'confirmed':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'in-progress':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'completed':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
+export function AppointmentCard({ 
+  appointment, 
+  className, 
+  size = "md",
+  onClick 
+}: AppointmentCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const statusColor = getAppointmentStatusColor(appointment.status);
+  const statusText = getAppointmentStatusText(appointment.status);
+  const timeText = formatAppointmentTime(appointment.start, appointment.end);
+  const patientName = formatPatientName(appointment);
+  const summary = getAppointmentSummary(appointment);
 
-  const getStatusLabel = (status: MockAppointment['status']) => {
-    switch (status) {
-      case 'scheduled':
-        return 'Scheduled';
-      case 'confirmed':
-        return 'Confirmed';
-      case 'in-progress':
-        return 'In Progress';
-      case 'completed':
-        return 'Completed';
-      case 'cancelled':
-        return 'Cancelled';
-      default:
-        return 'Unknown';
-    }
+  const cardSizes = {
+    sm: "p-2 text-xs",
+    md: "p-3 text-sm",
+    lg: "p-4 text-sm"
   };
 
   return (
     <Card 
-      className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-primary"
+      className={cn(
+        "cursor-pointer transition-all duration-200 border-l-4",
+        statusColor.replace("bg-", "border-l-"),
+        isHovered && "shadow-md transform scale-[1.02]",
+        onClick && "hover:shadow-lg",
+        className
+      )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <CardContent className="p-3">
+      <CardContent className={cardSizes[size]}>
         <div className="space-y-2">
           {/* Header with time and status */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 text-sm font-medium">
+            <div className="flex items-center gap-1 text-muted-foreground">
               <Clock className="h-3 w-3" />
-              {appointment.startTime} - {appointment.endTime}
+              <span className="font-medium">{timeText}</span>
             </div>
             <Badge 
-              variant="outline"
-              className={`text-xs ${getStatusColor(appointment.status)}`}
+              variant="secondary" 
+              className={cn("text-xs", statusColor, "text-white")}
             >
-              {getStatusLabel(appointment.status)}
+              {statusText}
             </Badge>
           </div>
 
           {/* Patient info */}
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium text-sm">{appointment.patientName}</span>
+          <div className="space-y-1">
+            <div className="flex items-center gap-1">
+              <User className="h-3 w-3 text-muted-foreground" />
+              <span className="font-semibold text-foreground truncate">
+                {patientName}
+              </span>
+            </div>
+            
+            {appointment.procedure && (
+              <div className="flex items-center gap-1">
+                <Stethoscope className="h-3 w-3 text-muted-foreground" />
+                <span className="text-muted-foreground truncate">
+                  {appointment.procedure}
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* Appointment type */}
-          <div className="text-xs text-muted-foreground">
-            {appointment.type}
-          </div>
+          {/* Doctor and clinic info for larger cards */}
+          {size === "lg" && (
+            <div className="space-y-1 text-xs">
+              {appointment.doctorName && (
+                <div className="text-muted-foreground">
+                  Dr. {appointment.doctorName}
+                </div>
+              )}
+              
+              {appointment.clinicName && (
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <MapPin className="h-3 w-3" />
+                  <span className="truncate">{appointment.clinicName}</span>
+                </div>
+              )}
+              
+              {appointment.patientPhoneNumber && (
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <Phone className="h-3 w-3" />
+                  <span>{appointment.patientPhoneNumber}</span>
+                </div>
+              )}
+            </div>
+          )}
 
-          {/* Location if available */}
-          {appointment.location && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" />
-              {appointment.location}
+          {/* Reference for smaller cards */}
+          {size !== "lg" && appointment.reference && (
+            <div className="text-xs text-muted-foreground">
+              Ref: {appointment.reference}
             </div>
           )}
         </div>

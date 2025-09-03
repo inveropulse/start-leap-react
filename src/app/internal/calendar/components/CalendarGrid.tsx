@@ -1,147 +1,165 @@
-import { Card, CardContent } from "@/shared/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Badge } from "@/shared/components/ui/badge";
+import { format, isSameMonth, isSameDay, isToday } from "date-fns";
 import { useCalendarStore } from "../store/calendarStore";
 import { PortalType } from "@/shared/types";
+import { useAppointmentsByDate } from "../hooks/useCalendarAppointments";
+import { AppointmentCard } from "./AppointmentCard";
+import { cn } from "@/shared/utils/cn";
 
 interface CalendarGridProps {
   date: Date;
 }
 
 export function CalendarGrid({ date }: CalendarGridProps) {
-  const {
+  const { selectedSedationistIds, setSelectedDate, viewMode } = useCalendarStore(PortalType.INTERNAL);
+  
+  const { appointmentsByDate, isLoading } = useAppointmentsByDate({
+    selectedDate: date,
+    viewMode,
     selectedSedationistIds,
-    sedationists,
-    setSelectedDate,
-  } = useCalendarStore(PortalType.INTERNAL);
+  });
 
-  const selectedSedationistsList = sedationists?.filter(s => 
-    selectedSedationistIds.includes(s.id)
-  ) || [];
-
-  // Generate calendar days for the month
-  const generateCalendarDays = () => {
+  // Generate 42 days for consistent 6x7 grid
+  const generateCalendarDays = (date: Date): Date[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
     
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    // First day of the month
+    const firstDayOfMonth = new Date(year, month, 1);
+    // First day to show (might be from previous month)
+    const firstDayOfWeek = firstDayOfMonth.getDay();
+    const startDate = new Date(firstDayOfMonth);
+    startDate.setDate(startDate.getDate() - firstDayOfWeek);
     
-    const days = [];
-    const currentDate = new Date(startDate);
-    
-    // Generate 42 days (6 weeks) for consistent grid
+    const days: Date[] = [];
     for (let i = 0; i < 42; i++) {
-      days.push(new Date(currentDate));
-      currentDate.setDate(currentDate.getDate() + 1);
+      const day = new Date(startDate);
+      day.setDate(day.getDate() + i);
+      days.push(day);
     }
     
     return days;
   };
 
-  const calendarDays = generateCalendarDays();
-  const today = new Date();
-  const currentMonth = date.getMonth();
-
-  const isToday = (day: Date) => {
-    return day.toDateString() === today.toDateString();
-  };
-
-  const isCurrentMonth = (day: Date) => {
-    return day.getMonth() === currentMonth;
-  };
-
-  const isSelected = (day: Date) => {
-    return day.toDateString() === date.toDateString();
-  };
+  const calendarDays = generateCalendarDays(date);
 
   const handleDateClick = (day: Date) => {
     setSelectedDate(day);
   };
 
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Loading calendar...</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="animate-pulse">
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                <div key={day} className="h-8 bg-muted rounded"></div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-2">
+              {Array.from({ length: 42 }).map((_, i) => (
+                <div key={i} className="h-24 bg-muted rounded"></div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
-      <CardContent className="p-4">
-        <div className="grid grid-cols-7 gap-1">
+      <CardHeader>
+        <CardTitle>{format(date, 'MMMM yyyy')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
           {/* Day headers */}
-          {dayNames.map((dayName) => (
-            <div 
-              key={dayName}
-              className="h-10 flex items-center justify-center font-medium text-sm text-muted-foreground border-b"
-            >
-              {dayName}
-            </div>
-          ))}
-
-          {/* Calendar days */}
-          {calendarDays.map((day, index) => {
-            const dayNumber = day.getDate();
-            const isCurrentMonthDay = isCurrentMonth(day);
-            const isTodayDay = isToday(day);
-            const isSelectedDay = isSelected(day);
-            
-            return (
-              <div
-                key={index}
-                onClick={() => handleDateClick(day)}
-                className={`
-                  h-24 p-1 border border-muted/30 cursor-pointer transition-colors hover:bg-muted/20
-                  ${!isCurrentMonthDay ? 'bg-muted/5 text-muted-foreground/50' : 'bg-background'}
-                  ${isTodayDay ? 'bg-primary/10 border-primary/30' : ''}
-                  ${isSelectedDay ? 'bg-primary/20 border-primary' : ''}
-                `}
+          <div className="grid grid-cols-7 gap-2">
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((dayName) => (
+              <div 
+                key={dayName} 
+                className="text-center font-semibold text-sm text-muted-foreground py-2"
               >
-                <div className="w-full h-full flex flex-col">
-                  {/* Day number */}
-                  <div className={`
-                    text-sm font-medium mb-1
-                    ${isTodayDay ? 'text-primary' : ''}
-                    ${isSelectedDay ? 'text-primary font-bold' : ''}
-                    ${!isCurrentMonthDay ? 'text-muted-foreground/50' : ''}
-                  `}>
-                    {dayNumber}
+                {dayName}
+              </div>
+            ))}
+          </div>
+
+          {/* Calendar grid */}
+          <div className="grid grid-cols-7 gap-2">
+            {calendarDays.map((day) => {
+              const dayKey = format(day, 'yyyy-MM-dd');
+              const appointments = appointmentsByDate[dayKey] || [];
+              const isCurrentMonth = isSameMonth(day, date);
+              const isSelectedDay = isSameDay(day, date);
+              const isDayToday = isToday(day);
+              
+              return (
+                <div
+                  key={day.toISOString()}
+                  onClick={() => handleDateClick(day)}
+                  className={cn(
+                    "min-h-[100px] p-2 border rounded-lg cursor-pointer transition-colors",
+                    "hover:bg-accent/50",
+                    isCurrentMonth ? "bg-background" : "bg-muted/30 text-muted-foreground",
+                    isSelectedDay && "ring-2 ring-primary",
+                    isDayToday && "bg-primary/10 border-primary/30"
+                  )}
+                >
+                  {/* Date number */}
+                  <div className={cn(
+                    "text-sm font-medium mb-2",
+                    isDayToday && "font-bold text-primary"
+                  )}>
+                    {format(day, 'd')}
                   </div>
 
-                  {/* Appointment indicators */}
-                  <div className="flex-1 space-y-1">
-                    {selectedSedationistsList.length > 0 && isCurrentMonthDay && (
-                      <div className="space-y-1">
-                        {selectedSedationistsList.slice(0, 3).map((sedationist, idx) => (
-                          <div 
-                            key={sedationist.id}
-                            className="h-1 bg-primary/60 rounded-full"
-                            style={{ width: `${80 - idx * 10}%` }}
-                          />
-                        ))}
-                        {selectedSedationistsList.length > 3 && (
-                          <div className="text-xs text-muted-foreground">
-                            +{selectedSedationistsList.length - 3} more
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  {/* Appointments */}
+                  {selectedSedationistIds.length > 0 ? (
+                    <div className="space-y-1">
+                      {appointments.slice(0, 3).map((appointment) => (
+                        <AppointmentCard
+                          key={appointment.id}
+                          appointment={appointment}
+                          size="sm"
+                          className="h-auto"
+                          onClick={() => {
+                            // TODO: Open appointment details modal
+                            console.log('Open appointment:', appointment.id);
+                          }}
+                        />
+                      ))}
+                      
+                      {appointments.length > 3 && (
+                        <div className="text-xs text-muted-foreground text-center py-1">
+                          +{appointments.length - 3} more
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-xs text-muted-foreground/50 text-center py-4">
+                      {isCurrentMonth ? 'Select sedationists' : ''}
+                    </div>
+                  )}
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
 
-        {selectedSedationistsList.length === 0 && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted/30 flex items-center justify-center">
-                📅
-              </div>
-              <h3 className="font-medium mb-1">No sedationists selected</h3>
-              <p className="text-sm text-muted-foreground">
-                Select sedationists from the filter to view appointments
+          {selectedSedationistIds.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">
+                Please select sedationists to view appointments
               </p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </CardContent>
     </Card>
   );
