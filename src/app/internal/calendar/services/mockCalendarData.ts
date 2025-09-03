@@ -59,6 +59,10 @@ export const generateMockAppointments = (
     "Tooth extraction",
     "Periodontal surgery",
     "Bone graft procedure",
+    "Full mouth reconstruction",
+    "Complex oral surgery",
+    "Multiple implant placement",
+    "Jaw reconstruction surgery",
   ];
   
   const clinics = [
@@ -102,7 +106,9 @@ export const generateMockAppointments = (
         const availableHours = [9, 10, 11, 13, 14, 15, 16, 17, 18];
         const startHour = availableHours[Math.floor(Math.random() * availableHours.length)];
         const startMinute = [0, 30][Math.floor(Math.random() * 2)]; // On the hour or half hour
-        const duration = [60, 90, 120][Math.floor(Math.random() * 3)]; // 1-2 hours
+        // Varied appointment durations from 30 minutes to 6 hours
+        const durationOptions = [30, 45, 60, 90, 120, 150, 180, 240, 300, 360]; // 30min to 6 hours
+        const duration = durationOptions[Math.floor(Math.random() * durationOptions.length)];
         
         const appointmentStart = new Date(currentDate);
         appointmentStart.setHours(startHour, startMinute, 0, 0);
