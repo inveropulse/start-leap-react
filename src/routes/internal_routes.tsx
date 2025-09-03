@@ -36,6 +36,7 @@ export enum InternalQuickActionKey {
   ADD_PATIENT = "add_patient",
   NEW_APPOINTMENT = "new_appointment",
   VIEW_APPOINTMENT = "view_appointment",
+  VIEW_CALENDAR = "view_calendar",
 }
 
 export enum InternalRoute {
@@ -128,10 +129,17 @@ export const INTERNAL_PORTAL: PortalConfig = {
     },
     {
       enabled: true,
+      icon: CalendarDays,
+      title: "New Appointment",
+      path: InternalRoute.APPOINTMENTS,
+      actionKey: InternalQuickActionKey.NEW_APPOINTMENT,
+    },
+    {
+      enabled: true,
       icon: Calendar,
       title: "View Calendar",
       path: InternalRoute.CALENDAR,
-      actionKey: InternalQuickActionKey.NEW_APPOINTMENT,
+      actionKey: InternalQuickActionKey.VIEW_CALENDAR,
     },
   ] as const,
 } as const;
