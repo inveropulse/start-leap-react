@@ -5,7 +5,7 @@ import { useCalendarStore } from "../store/calendarStore";
 import { PortalType } from "@/shared/types";
 import { useCalendarAppointments } from "../hooks/useCalendarData";
 import { AppointmentCard } from "./AppointmentCard";
-import { isAppointmentInTimeSlot, isAppointmentStartInSlot, isAppointmentContinuation, formatPatientName } from "../utils/appointmentUtils";
+import { isAppointmentStartInSlot, calculateAppointmentSpanSlots } from "../utils/appointmentUtils";
 
 interface TimeSlotGridProps {
   date: Date;
@@ -112,62 +112,53 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
           </div>
 
           {/* Time slots and appointments */}
-          <div className="space-y-0">
-            {timeSlots.map((slot) => (
-              <div key={slot.time} className="flex gap-4">
+          <div className="relative space-y-0">
+            {timeSlots.map((slot, slotIndex) => (
+              <div key={slot.time} className="flex gap-4 relative">
                 {/* Time label */}
-                <div className="w-[100px] text-sm text-muted-foreground font-medium py-2">
+                <div className="w-[100px] text-sm text-muted-foreground font-medium py-2 h-[60px] flex items-center">
                   {slot.displayTime}
                 </div>
                 
                 {/* Scrollable appointment slots */}
                 <div className="flex-1 overflow-x-auto">
-                  <div className="flex gap-2" style={{ minWidth: `${selectedSedationistsList.length * 200}px` }}>
-                    {selectedSedationistsList.map((sedationist) => {
-                      // Find appointments for this sedationist in this time slot
-                      const sedationistAppointments = appointments?.filter(apt => 
+                  <div className="flex gap-2 relative" style={{ minWidth: `${selectedSedationistsList.length * 200}px` }}>
+                    {selectedSedationistsList.map((sedationist, sedationistIndex) => {
+                      // Find appointments that START in this time slot for this sedationist
+                      const startingAppointments = appointments?.filter(apt => 
                         apt.sedationistId === sedationist.id &&
-                        isAppointmentInTimeSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
-                      ) || [];
-
-                      // Separate appointments that start in this slot vs continuations
-                      const startingAppointments = sedationistAppointments.filter(apt => 
                         isAppointmentStartInSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
-                      );
-                      
-                      const continuationAppointments = sedationistAppointments.filter(apt => 
-                        isAppointmentContinuation(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
-                      );
+                      ) || [];
 
                       return (
                         <div 
                           key={`${sedationist.id}-${slot.time}`}
-                          className="flex-shrink-0 w-[200px] min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
+                          className="flex-shrink-0 w-[200px] h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors relative"
                         >
                           {startingAppointments.length > 0 ? (
-                            <div className="space-y-1 p-1">
-                              {startingAppointments.map((appointment) => (
-                                <AppointmentCard
-                                  key={appointment.id}
-                                  appointment={appointment}
-                                  size="sm"
-                                  onClick={() => {
-                                    // TODO: Open appointment details modal
-                                    console.log('Open appointment:', appointment.id);
-                                  }}
-                                />
-                              ))}
-                            </div>
-                          ) : continuationAppointments.length > 0 ? (
-                            <div className="h-full flex items-center justify-center p-1">
-                              {continuationAppointments.map((appointment) => (
-                                <div
-                                  key={`${appointment.id}-continuation`}
-                                  className="w-full h-full bg-primary/20 border-l-4 border-primary rounded-sm flex items-center justify-center text-xs text-primary font-medium"
-                                >
-                                  {formatPatientName(appointment)}
-                                </div>
-                              ))}
+                            <div className="relative w-full h-full">
+                              {startingAppointments.map((appointment) => {
+                                const spanSlots = calculateAppointmentSpanSlots(appointment, APP_CONFIG.calendar.timeSlotDuration || 60);
+                                const height = spanSlots * 60; // 60px per slot
+                                
+                                return (
+                                  <div
+                                    key={appointment.id}
+                                    className="absolute left-0 top-0 w-full z-10"
+                                    style={{ height: `${height}px` }}
+                                  >
+                                    <AppointmentCard
+                                      appointment={appointment}
+                                      size="sm"
+                                      className="h-full"
+                                      onClick={() => {
+                                        // TODO: Open appointment details modal
+                                        console.log('Open appointment:', appointment.id);
+                                      }}
+                                    />
+                                  </div>
+                                );
+                              })}
                             </div>
                           ) : (
                             <div className="h-full flex items-center justify-center text-xs text-muted-foreground/50">
