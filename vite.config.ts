@@ -25,24 +25,15 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 650,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
           // Node modules - keep the detailed chunking here since they're stable
           if (id.includes("node_modules")) {
-            // Core React - keep small and separate
-            if (
-              id.includes("react/") &&
-              !id.includes("react-dom") &&
-              !id.includes("react-router")
-            ) {
-              return "react-core";
-            }
-
-            // React DOM - largest React dependency
-            if (id.includes("react-dom")) {
-              return "react-dom";
+            // Keep React and React-DOM together - they have internal dependencies
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "react-vendor";
             }
 
             // React Router - routing logic
@@ -93,11 +84,6 @@ export default defineConfig(({ mode }) => ({
             // Routes configuration - small and stable
             if (id.includes("src/routes/")) {
               return "routes";
-            }
-
-            // Shared utilities and components - changes less frequently
-            if (id.includes("src/shared/")) {
-              return "shared";
             }
 
             // Application pages split by portal - users only access one portal
