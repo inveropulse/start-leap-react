@@ -24,8 +24,8 @@ const DashboardPage = lazy(
   () => import("@/app/internal/dashboard/DashboardPage")
 );
 const PatientPage = lazy(() => import("@/app/internal/PatientPage"));
-const AppointmentPage = lazy(
-  () => import("@/app/internal/appointment/AppointmentPage")
+const CalendarPage = lazy(
+  () => import("@/app/internal/calendar/CalendarPage")
 );
 
 export enum InternalQuickActionKey {
@@ -39,7 +39,7 @@ export enum InternalRoute {
   DASHBOARD = `${InternalRoute.ROOT}/dashboard`,
   PATIENTS = `${InternalRoute.ROOT}/patients`,
   CLINICS = `${InternalRoute.ROOT}/clinics`,
-  APPOINTMENTS = `${InternalRoute.ROOT}/appointments`,
+  CALENDAR = `${InternalRoute.ROOT}/calendar`,
   SEDATIONISTS = `${InternalRoute.ROOT}/sedationists`,
   ANALYTICS = `${InternalRoute.ROOT}/analytics`,
   REPORTS = `${InternalRoute.ROOT}/reports`,
@@ -65,9 +65,9 @@ const INTERNAL_ROUTES: AppRoute[] = [
     meta: { title: "Clinics", enabled: true, icon: Building2 },
   },
   {
-    element: <AppointmentPage />,
-    path: InternalRoute.APPOINTMENTS,
-    meta: { title: "Appointments", enabled: true, icon: Calendar },
+    element: <CalendarPage />,
+    path: InternalRoute.CALENDAR,
+    meta: { title: "Calendar", enabled: true, icon: Calendar },
   },
   {
     element: Sedationists,
@@ -119,8 +119,8 @@ export const INTERNAL_PORTAL: PortalConfig = {
     {
       enabled: true,
       icon: Calendar,
-      title: "New Appointment",
-      path: InternalRoute.APPOINTMENTS,
+      title: "View Calendar",
+      path: InternalRoute.CALENDAR,
       actionKey: InternalQuickActionKey.NEW_APPOINTMENT,
     },
   ] as const,

@@ -41,6 +41,13 @@ export type AppConfig = {
     readonly maxLogSize: number;
     readonly logRetentionDays: number;
   };
+  readonly calendar: {
+    readonly defaultStartHour: number;
+    readonly defaultEndHour: number;
+    readonly timeSlotDuration: number;
+    readonly refreshInterval: number;
+    readonly maxSedationistsDisplay: number;
+  };
 };
 
 const DEFAULT_CONFIG: AppConfig = {
@@ -67,7 +74,7 @@ const DEFAULT_CONFIG: AppConfig = {
     enableHSTS: false, // false for development, true for production
     maxRequestSize: 10 * 1024 * 1024, // 10MB
     rateLimit: {
-      enabled: true,
+      enabled: true,  
       maxRequests: 100,
       windowMs: 15 * 60 * 1000, // 15 minutes
     },
@@ -78,6 +85,13 @@ const DEFAULT_CONFIG: AppConfig = {
     enableRemote: false, // false for development
     maxLogSize: 1 * 1024 * 1024, // 1MB
     logRetentionDays: 7,
+  },
+  calendar: {
+    defaultStartHour: 6, // 6 AM
+    defaultEndHour: 21, // 9 PM
+    timeSlotDuration: 30, // 30 minutes
+    refreshInterval: 5 * 60 * 1000, // 5 minutes
+    maxSedationistsDisplay: 6, // Max sedationists in day view
   },
 } as const;
 
@@ -231,6 +245,34 @@ export class ApplicationConfig {
         logRetentionDays: getEnvValue(
           "VITE_LOG_RETENTION_DAYS",
           DEFAULT_CONFIG.logging.logRetentionDays,
+          Number
+        ),
+      },
+
+      calendar: {
+        defaultStartHour: getEnvValue(
+          "VITE_CALENDAR_START_HOUR",
+          DEFAULT_CONFIG.calendar.defaultStartHour,
+          Number
+        ),
+        defaultEndHour: getEnvValue(
+          "VITE_CALENDAR_END_HOUR", 
+          DEFAULT_CONFIG.calendar.defaultEndHour,
+          Number
+        ),
+        timeSlotDuration: getEnvValue(
+          "VITE_CALENDAR_TIME_SLOT",
+          DEFAULT_CONFIG.calendar.timeSlotDuration,
+          Number
+        ),
+        refreshInterval: getEnvValue(
+          "VITE_CALENDAR_REFRESH_INTERVAL",
+          DEFAULT_CONFIG.calendar.refreshInterval,
+          Number
+        ),
+        maxSedationistsDisplay: getEnvValue(
+          "VITE_CALENDAR_MAX_SEDATIONISTS",
+          DEFAULT_CONFIG.calendar.maxSedationistsDisplay,
           Number
         ),
       },

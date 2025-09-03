@@ -92,7 +92,7 @@ const AppointmentItemComponent = ({ appointment, isLast }: { appointment: Appoin
   
   const handleViewDetails = () => {
     const navigationData = quickActionTo(
-      InternalRoute.APPOINTMENTS, 
+      InternalRoute.CALENDAR, 
       InternalQuickActionKey.VIEW_APPOINTMENT,
       { appointmentId: appointment.id }
     );
