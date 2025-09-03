@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PortalType } from "@/shared/types";
 import { calendarStorage } from "@/shared/services/storage/CalendarStorageService";
 import { SedationistDto } from "@/api/generated/models/SedationistDto";
-import { mockSedationists } from "../services/mockCalendarData";
+import { useSedationists } from "../hooks/useCalendarData";
 
 export interface CalendarState {
   // Portal context
@@ -31,6 +31,7 @@ export interface CalendarState {
   setLoading: (loading: boolean) => void;
   setSedationists: (sedationists: SedationistDto[]) => void;
   setLoadingSedationists: (loading: boolean) => void;
+  refreshSedationists: () => Promise<void>;
   
   // Persistence
   loadPersistedState: (portal: PortalType) => void;
@@ -100,6 +101,11 @@ const createCalendarStore = (portal: PortalType) => {
       set({ isLoadingSedationists: loading });
     },
 
+    refreshSedationists: async () => {
+      // This will be overridden by the hook
+      return Promise.resolve();
+    },
+
     // Persistence
     loadPersistedState: (targetPortal: PortalType) => {
       const selectedDate = calendarStorage.getSelectedDate(targetPortal);
@@ -138,15 +144,7 @@ export const useCalendarStore = (portal: PortalType) => {
   const state = useStore();
   
   // Auto-load sedationists when store is accessed
-  const { data: sedationists, isLoading: isLoadingSedationists } = useQuery({
-    queryKey: ["sedationists", portal],
-    queryFn: async (): Promise<SedationistDto[]> => {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      return mockSedationists;
-    },
-    staleTime: 30 * 60 * 1000, // 30 minutes
-    gcTime: 60 * 60 * 1000, // 1 hour
-  });
+  const { data: sedationists, isLoading: isLoadingSedationists, refetch } = useSedationists();
 
   // Update store when sedationists data changes
   if (sedationists && sedationists !== state.sedationists) {
@@ -161,5 +159,8 @@ export const useCalendarStore = (portal: PortalType) => {
     ...state,
     sedationists: sedationists || [],
     isLoadingSedationists,
+    refreshSedationists: async () => {
+      await refetch();
+    },
   };
 };

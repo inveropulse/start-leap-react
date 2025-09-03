@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Check, ChevronDown, Search, Users, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Check, ChevronDown, Search, Users, X, RefreshCw } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Checkbox } from "@/shared/components/ui/checkbox";
@@ -21,14 +21,40 @@ export function SedationistMultiSelect() {
     selectedSedationistIds,
     setSelectedSedationists,
     isLoadingSedationists,
+    refreshSedationists,
   } = useCalendarStore(PortalType.INTERNAL);
 
-  const filteredSedationists = sedationists?.filter(sedationist =>
-    `${sedationist.firstName} ${sedationist.lastName}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase()) ||
-    sedationist.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredSedationists = sedationists?.filter(sedationist => {
+    const searchLower = searchTerm.toLowerCase();
+    
+    // Search through multiple fields
+    const searchableFields = [
+      `${sedationist.firstName} ${sedationist.lastName}`,
+      sedationist.firstName,
+      sedationist.lastName,
+      sedationist.email,
+      sedationist.phoneNumber,
+      sedationist.notes
+    ].filter(Boolean);
+    
+    return searchableFields.some(field => 
+      field?.toLowerCase().includes(searchLower)
+    );
+  }) || [];
+
+  // Debug logging
+  useEffect(() => {
+    if (searchTerm) {
+      console.log('Search term:', searchTerm);
+      console.log('Total sedationists:', sedationists?.length || 0);
+      console.log('Filtered results:', filteredSedationists.length);
+      console.log('Filtered sedationists:', filteredSedationists.map(s => ({
+        name: `${s.firstName} ${s.lastName}`,
+        email: s.email,
+        notes: s.notes
+      })));
+    }
+  }, [searchTerm, filteredSedationists, sedationists]);
 
   const handleSedationistToggle = (sedationistId: string) => {
     const newSelection = selectedSedationistIds.includes(sedationistId)
@@ -39,8 +65,16 @@ export function SedationistMultiSelect() {
   };
 
   const selectAll = () => {
-    const allIds = filteredSedationists.map(s => s.id);
+    const allIds = filteredSedationists.map(s => s.id).filter(Boolean);
     setSelectedSedationists(allIds);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
+  const handleRefresh = async () => {
+    await refreshSedationists();
   };
 
   const selectNone = () => {
@@ -93,14 +127,46 @@ export function SedationistMultiSelect() {
           sideOffset={4}
         >
           <div className="p-3 border-b border-border bg-muted/30">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Users className="h-3 w-3" />
+                <span>
+                  {searchTerm 
+                    ? `${filteredSedationists.length} of ${sedationists?.length || 0}` 
+                    : `${sedationists?.length || 0} total`
+                  }
+                </span>
+              </div>
+              <Button
+                variant="ghost" 
+                size="sm"
+                onClick={handleRefresh}
+                disabled={isLoadingSedationists}
+                className="h-6 w-6 p-0 ml-auto"
+                title="Refresh sedationists"
+              >
+                <RefreshCw className={cn("h-3 w-3", isLoadingSedationists && "animate-spin")} />
+              </Button>
+            </div>
             <div className="relative">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search sedationists..."
+                placeholder="Search by name, email, phone, or specialization..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 h-8"
+                className="pl-8 pr-8 h-8"
               />
+              {searchTerm && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearSearch}
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                  title="Clear search"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              )}
             </div>
           </div>
 
@@ -153,6 +219,11 @@ export function SedationistMultiSelect() {
                             {sedationist.email}
                           </p>
                         )}
+                        {sedationist.notes && (
+                          <p className="text-xs text-muted-foreground truncate mt-0.5 opacity-75">
+                            {sedationist.notes}
+                          </p>
+                        )}
                       </div>
 
                       {isSelected && (
@@ -166,8 +237,13 @@ export function SedationistMultiSelect() {
               <div className="p-4 text-center text-muted-foreground">
                 <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">
-                  {searchTerm ? 'No sedationists match your search' : 'No sedationists available'}
+                  {searchTerm ? `No sedationists match "${searchTerm}"` : 'No sedationists available'}
                 </p>
+                {searchTerm && (
+                  <p className="text-xs mt-1 opacity-75">
+                    Try searching by name, email, phone, or specialization
+                  </p>
+                )}
               </div>
             )}
           </div>

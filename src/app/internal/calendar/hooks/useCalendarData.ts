@@ -12,8 +12,8 @@ export const useSedationists = () => {
       await new Promise(resolve => setTimeout(resolve, 300));
       return mockSedationists;
     },
-    staleTime: 30 * 60 * 1000, // 30 minutes
-    gcTime: 60 * 60 * 1000, // 1 hour
+    staleTime: 2 * 60 * 1000, // 2 minutes - reduced for testing
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 };
 
