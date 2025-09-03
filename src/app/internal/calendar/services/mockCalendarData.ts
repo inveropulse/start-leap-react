@@ -1,6 +1,8 @@
 import { SedationistDto } from "@/api/generated/models/SedationistDto";
 import { DiaryAppointmentDto } from "@/api/generated/models/DiaryAppointmentDto";
+import { DiaryAvailabilityDto } from "@/api/generated/models/DiaryAvailabilityDto";
 import { AppointmentStatus } from "@/api/generated/models/AppointmentStatus";
+import { AvailabilityStatus } from "@/api/generated/models/AvailabilityStatus";
 import { Title } from "@/api/generated/models/Title";
 
 // Mock sedationists data
@@ -468,4 +470,100 @@ export const generateMockAppointments = (
   });
 
   return appointments.sort((a, b) => new Date(a.start!).getTime() - new Date(b.start!).getTime());
+};
+
+// Generate comprehensive mock availabilities
+export const generateMockAvailabilities = (
+  startDate: Date,
+  endDate: Date,
+  sedationistIds: string[]
+): DiaryAvailabilityDto[] => {
+  const availabilities: DiaryAvailabilityDto[] = [];
+
+  // Add the specific Michelle Lee Meeting availability before her appointment
+  const today = new Date();
+  if (startDate <= today && endDate >= today && sedationistIds.includes("sed-14")) {
+    const michelleStart = new Date(today);
+    michelleStart.setHours(8, 30, 0, 0);
+    const michelleEnd = new Date(today);
+    michelleEnd.setHours(9, 15, 0, 0);
+
+    availabilities.push({
+      id: `avail-michelle-meeting-${today.getTime()}`,
+      sedationistId: "sed-14",
+      sedationistName: "Michelle Lee",
+      status: AvailabilityStatus.MEETING,
+      start: michelleStart.toISOString(),
+      end: michelleEnd.toISOString(),
+      notes: "Team meeting - unavailable for appointments",
+      sedationistEmail: "m.lee@example.com",
+    });
+  }
+
+  // Generate random availabilities for other sedationists
+  sedationistIds.forEach((sedationistId) => {
+    const sedationist = mockSedationists.find(s => s.id === sedationistId);
+    if (!sedationist) return;
+
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      // Skip today for Michelle Lee as we already added specific availability
+      if (currentDate.toDateString() === today.toDateString() && sedationistId === "sed-14") {
+        currentDate.setDate(currentDate.getDate() + 1);
+        continue;
+      }
+
+      // 30% chance of having availability on any given day
+      if (Math.random() < 0.3) {
+        const availabilityStatuses = [
+          AvailabilityStatus.UNAVAILABLE,
+          AvailabilityStatus.ON_LEAVE,
+          AvailabilityStatus.MEETING,
+          AvailabilityStatus.ATTENDING_WORKSHOP,
+          AvailabilityStatus.CANCELLED,
+          AvailabilityStatus.RESCHEDULED,
+          AvailabilityStatus.PERSONAL_REASON,
+        ];
+
+        const status = availabilityStatuses[Math.floor(Math.random() * availabilityStatuses.length)];
+        
+        // Random start time between 8:00 AM and 6:00 PM
+        const startHour = Math.floor(Math.random() * 10) + 8; // 8-17
+        const startMinute = Math.random() < 0.5 ? 0 : 30;
+        
+        const availabilityStart = new Date(currentDate);
+        availabilityStart.setHours(startHour, startMinute, 0, 0);
+        
+        // Random duration between 30 minutes and 4 hours
+        const durationMinutes = (Math.floor(Math.random() * 8) + 1) * 30; // 30min to 4 hours
+        const availabilityEnd = new Date(availabilityStart);
+        availabilityEnd.setMinutes(availabilityEnd.getMinutes() + durationMinutes);
+
+        const availabilityNotes = {
+          [AvailabilityStatus.UNAVAILABLE]: "Not available for appointments",
+          [AvailabilityStatus.ON_LEAVE]: "On scheduled leave",
+          [AvailabilityStatus.MEETING]: "Team meeting",
+          [AvailabilityStatus.ATTENDING_WORKSHOP]: "Professional development workshop",
+          [AvailabilityStatus.CANCELLED]: "Previously scheduled appointment cancelled",
+          [AvailabilityStatus.RESCHEDULED]: "Appointment rescheduled",
+          [AvailabilityStatus.PERSONAL_REASON]: "Personal unavailability",
+        };
+
+        availabilities.push({
+          id: `avail-${sedationistId}-${currentDate.getTime()}-${Math.random().toString(36).substr(2, 9)}`,
+          sedationistId,
+          sedationistName: `${sedationist.firstName} ${sedationist.lastName}`,
+          status,
+          start: availabilityStart.toISOString(),
+          end: availabilityEnd.toISOString(),
+          notes: availabilityNotes[status],
+          sedationistEmail: sedationist.email,
+        });
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  });
+
+  return availabilities.sort((a, b) => new Date(a.start!).getTime() - new Date(b.start!).getTime());
 };

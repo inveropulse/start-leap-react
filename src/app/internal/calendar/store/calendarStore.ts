@@ -20,6 +20,8 @@ export interface CalendarState {
   // Modal state
   selectedAppointmentId: string | null;
   isAppointmentModalOpen: boolean;
+  selectedAvailabilityId: string | null;
+  isAvailabilityModalOpen: boolean;
   
   // UI state
   isLoading: boolean;
@@ -41,6 +43,8 @@ export interface CalendarState {
   // Modal actions
   openAppointmentModal: (appointmentId: string) => void;
   closeAppointmentModal: () => void;
+  openAvailabilityModal: (availabilityId: string) => void;
+  closeAvailabilityModal: () => void;
   
   // Persistence
   loadPersistedState: (portal: PortalType) => void;
@@ -60,6 +64,8 @@ const createCalendarStore = (portal: PortalType) => {
     selectedSedationistIds: [],
     selectedAppointmentId: null,
     isAppointmentModalOpen: false,
+    selectedAvailabilityId: null,
+    isAvailabilityModalOpen: false,
     isLoading: false,
     isLoadingSedationists: false,
 
@@ -131,6 +137,14 @@ const createCalendarStore = (portal: PortalType) => {
       set({ selectedAppointmentId: null, isAppointmentModalOpen: false });
     },
 
+    openAvailabilityModal: (availabilityId: string) => {
+      set({ selectedAvailabilityId: availabilityId, isAvailabilityModalOpen: true });
+    },
+
+    closeAvailabilityModal: () => {
+      set({ selectedAvailabilityId: null, isAvailabilityModalOpen: false });
+    },
+
     // Persistence
     loadPersistedState: (targetPortal: PortalType) => {
       const selectedDate = calendarStorage.getSelectedDate(targetPortal);
@@ -153,6 +167,8 @@ const createCalendarStore = (portal: PortalType) => {
         selectedSedationistIds: [],
         selectedAppointmentId: null,
         isAppointmentModalOpen: false,
+        selectedAvailabilityId: null,
+        isAvailabilityModalOpen: false,
       });
     },
   }));

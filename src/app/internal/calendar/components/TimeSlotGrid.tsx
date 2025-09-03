@@ -3,27 +3,37 @@ import { format, startOfDay, endOfDay } from "date-fns";
 import { APP_CONFIG } from "@/shared/AppConfig";
 import { useCalendarStore } from "../store/calendarStore";
 import { PortalType } from "@/shared/types";
-import { useCalendarAppointments } from "../hooks/useCalendarData";
+import { useCalendarAppointments, useCalendarAvailabilities } from "../hooks/useCalendarData";
 import { AppointmentCard } from "./AppointmentCard";
+import { AvailabilityCard } from "./AvailabilityCard";
 import { isAppointmentInTimeSlot, isAppointmentStartInSlot, isAppointmentContinuation, formatPatientName } from "../utils/appointmentUtils";
+import { isAvailabilityInTimeSlot, isAvailabilityStartInSlot, isAvailabilityContinuation } from "../utils/availabilityUtils";
 
 interface TimeSlotGridProps {
   date: Date;
 }
 
 export function TimeSlotGrid({ date }: TimeSlotGridProps) {
-  const { selectedSedationistIds, sedationists, openAppointmentModal } = useCalendarStore(PortalType.INTERNAL);
+  const { selectedSedationistIds, sedationists, openAppointmentModal, openAvailabilityModal } = useCalendarStore(PortalType.INTERNAL);
   
   const selectedSedationistsList = sedationists?.filter(s => 
     selectedSedationistIds.includes(s.id!)
   ) || [];
   
-  // Use mock data hook instead of API
-  const { data: appointments, isLoading } = useCalendarAppointments(
+  // Use mock data hooks instead of API
+  const { data: appointments, isLoading: isLoadingAppointments } = useCalendarAppointments(
     selectedSedationistIds,
     startOfDay(date),
     endOfDay(date)
   );
+
+  const { data: availabilities, isLoading: isLoadingAvailabilities } = useCalendarAvailabilities(
+    selectedSedationistIds,
+    startOfDay(date),
+    endOfDay(date)
+  );
+
+  const isLoading = isLoadingAppointments || isLoadingAvailabilities;
 
   // Generate time slots from config
   const generateTimeSlots = () => {
@@ -128,6 +138,12 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                         isAppointmentInTimeSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
                       ) || [];
 
+                      // Find availabilities for this sedationist in this time slot
+                      const sedationistAvailabilities = availabilities?.filter(avail => 
+                        avail.sedationistId === sedationist.id &&
+                        isAvailabilityInTimeSlot(avail, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                      ) || [];
+
                       // Separate appointments that start in this slot vs continuations
                       const startingAppointments = sedationistAppointments.filter(apt => 
                         isAppointmentStartInSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
@@ -137,13 +153,25 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                         isAppointmentContinuation(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
                       );
 
+                      // Separate availabilities that start in this slot vs continuations
+                      const startingAvailabilities = sedationistAvailabilities.filter(avail => 
+                        isAvailabilityStartInSlot(avail, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                      );
+                      
+                      const continuationAvailabilities = sedationistAvailabilities.filter(avail => 
+                        isAvailabilityContinuation(avail, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                      );
+
+                      const hasContent = startingAppointments.length > 0 || continuationAppointments.length > 0 || startingAvailabilities.length > 0 || continuationAvailabilities.length > 0;
+
                       return (
                         <div 
                           key={`${sedationist.id}-${slot.time}`}
                           className="flex-shrink-0 w-[200px] min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
                         >
-                          {startingAppointments.length > 0 ? (
+                          {hasContent ? (
                             <div className="space-y-1 p-1">
+                              {/* Starting appointments */}
                               {startingAppointments.map((appointment) => (
                                 <AppointmentCard
                                   key={appointment.id}
@@ -152,15 +180,36 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                                   onClick={() => openAppointmentModal(appointment.id!)}
                                 />
                               ))}
-                            </div>
-                          ) : continuationAppointments.length > 0 ? (
-                            <div className="h-full flex items-center justify-center p-1">
+                              
+                              {/* Starting availabilities */}
+                              {startingAvailabilities.map((availability) => (
+                                <AvailabilityCard
+                                  key={availability.id}
+                                  availability={availability}
+                                  size="sm"
+                                  onClick={() => openAvailabilityModal(availability.id!)}
+                                />
+                              ))}
+                              
+                              {/* Continuation appointments */}
                               {continuationAppointments.map((appointment) => (
                                 <div
                                   key={`${appointment.id}-continuation`}
-                                  className="w-full h-full bg-primary/20 border-l-4 border-primary rounded-sm flex items-center justify-center text-xs text-primary font-medium"
+                                  className="w-full h-6 bg-primary/20 border-l-4 border-primary rounded-sm flex items-center justify-center text-xs text-primary font-medium cursor-pointer hover:bg-primary/30"
+                                  onClick={() => openAppointmentModal(appointment.id!)}
                                 >
                                   {formatPatientName(appointment)}
+                                </div>
+                              ))}
+                              
+                              {/* Continuation availabilities */}
+                              {continuationAvailabilities.map((availability) => (
+                                <div
+                                  key={`${availability.id}-continuation`}
+                                  className="w-full h-6 bg-purple-200 border-l-4 border-purple-500 rounded-sm flex items-center justify-center text-xs text-purple-700 font-medium cursor-pointer hover:bg-purple-300 dark:bg-purple-900/50 dark:text-purple-300"
+                                  onClick={() => openAvailabilityModal(availability.id!)}
+                                >
+                                  {availability.sedationistName}
                                 </div>
                               ))}
                             </div>

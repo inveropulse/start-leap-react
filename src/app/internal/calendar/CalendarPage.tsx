@@ -12,7 +12,8 @@ import { CalendarHeader } from "./components/CalendarHeader";
 import { SedationistMultiSelect } from "./components/SedationistMultiSelect";
 import { TimeSlotGrid } from "./components/TimeSlotGrid";
 import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
-import { useCalendarAppointments } from "./hooks/useCalendarData";
+import { AvailabilityDetailModal } from "./components/AvailabilityDetailModal";
+import { useCalendarAppointments, useCalendarAvailabilities } from "./hooks/useCalendarData";
 import { startOfDay, endOfDay } from "date-fns";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { MobileSedationistSelect } from "./components/mobile/MobileSedationistSelect";
@@ -31,10 +32,19 @@ export default function CalendarPage() {
     selectedAppointmentId,
     isAppointmentModalOpen,
     closeAppointmentModal,
+    selectedAvailabilityId,
+    isAvailabilityModalOpen,
+    closeAvailabilityModal,
   } = useCalendarStore(PortalType.INTERNAL);
 
-  // Get appointment data for modal
+  // Get appointment and availability data for modals
   const { data: appointments } = useCalendarAppointments(
+    selectedSedationistIds,
+    startOfDay(selectedDate),
+    endOfDay(selectedDate)
+  );
+
+  const { data: availabilities } = useCalendarAvailabilities(
     selectedSedationistIds,
     startOfDay(selectedDate),
     endOfDay(selectedDate)
@@ -42,6 +52,9 @@ export default function CalendarPage() {
 
   const selectedAppointment =
     appointments?.find((apt) => apt.id === selectedAppointmentId) || null;
+
+  const selectedAvailability =
+    availabilities?.find((avail) => avail.id === selectedAvailabilityId) || null;
 
   if (isLoadingSedationists) {
     return (
@@ -89,6 +102,13 @@ export default function CalendarPage() {
           isOpen={isAppointmentModalOpen}
           onClose={closeAppointmentModal}
           appointment={selectedAppointment}
+        />
+
+        {/* Availability Detail Modal */}
+        <AvailabilityDetailModal
+          isOpen={isAvailabilityModalOpen}
+          onClose={closeAvailabilityModal}
+          availability={selectedAvailability}
         />
       </div>
     );
@@ -177,6 +197,13 @@ export default function CalendarPage() {
         isOpen={isAppointmentModalOpen}
         onClose={closeAppointmentModal}
         appointment={selectedAppointment}
+      />
+
+      {/* Availability Detail Modal */}
+      <AvailabilityDetailModal
+        isOpen={isAvailabilityModalOpen}
+        onClose={closeAvailabilityModal}
+        availability={selectedAvailability}
       />
     </div>
   );

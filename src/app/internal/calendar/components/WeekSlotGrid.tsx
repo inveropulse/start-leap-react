@@ -3,16 +3,18 @@ import { format, startOfWeek, endOfWeek, eachDayOfInterval, addDays, startOfDay,
 import { APP_CONFIG } from "@/shared/AppConfig";
 import { useCalendarStore } from "../store/calendarStore";
 import { PortalType } from "@/shared/types";
-import { useCalendarAppointments } from "../hooks/useCalendarData";
+import { useCalendarAppointments, useCalendarAvailabilities } from "../hooks/useCalendarData";
 import { AppointmentCard } from "./AppointmentCard";
+import { AvailabilityCard } from "./AvailabilityCard";
 import { isAppointmentInTimeSlot, isAppointmentStartInSlot, isAppointmentContinuation, formatPatientName } from "../utils/appointmentUtils";
+import { isAvailabilityInTimeSlot, isAvailabilityStartInSlot, isAvailabilityContinuation } from "../utils/availabilityUtils";
 
 interface WeekSlotGridProps {
   date: Date;
 }
 
 export function WeekSlotGrid({ date }: WeekSlotGridProps) {
-  const { selectedSedationistIds, sedationists, openAppointmentModal } = useCalendarStore(PortalType.INTERNAL);
+  const { selectedSedationistIds, sedationists, openAppointmentModal, openAvailabilityModal } = useCalendarStore(PortalType.INTERNAL);
   
   const selectedSedationistsList = sedationists?.filter(s => 
     selectedSedationistIds.includes(s.id!)
@@ -23,12 +25,20 @@ export function WeekSlotGrid({ date }: WeekSlotGridProps) {
   const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
   const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
   
-  // Fetch appointments for the entire week
-  const { data: appointments, isLoading } = useCalendarAppointments(
+  // Fetch appointments and availabilities for the entire week
+  const { data: appointments, isLoading: isLoadingAppointments } = useCalendarAppointments(
     selectedSedationistIds,
     startOfDay(weekStart),
     endOfDay(weekEnd)
   );
+
+  const { data: availabilities, isLoading: isLoadingAvailabilities } = useCalendarAvailabilities(
+    selectedSedationistIds,
+    startOfDay(weekStart),
+    endOfDay(weekEnd)
+  );
+
+  const isLoading = isLoadingAppointments || isLoadingAvailabilities;
 
   // Generate time slots from config
   const generateTimeSlots = () => {
@@ -100,8 +110,25 @@ export function WeekSlotGrid({ date }: WeekSlotGridProps) {
     return acc;
   }, {} as Record<string, typeof appointments>) || {};
 
+  // Group availabilities by date and sedationist for easier lookup
+  const availabilitiesByDateAndSedationist = availabilities?.reduce((acc, avail) => {
+    const dateKey = format(new Date(avail.start!), 'yyyy-MM-dd');
+    const sedationistId = avail.sedationistId!;
+    const key = `${dateKey}-${sedationistId}`;
+    
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(avail);
+    return acc;
+  }, {} as Record<string, typeof availabilities>) || {};
+
   const handleAppointmentClick = (appointmentId: string) => {
     openAppointmentModal(appointmentId);
+  };
+
+  const handleAvailabilityClick = (availabilityId: string) => {
+    openAvailabilityModal(availabilityId);
   };
 
   return (
@@ -155,10 +182,16 @@ export function WeekSlotGrid({ date }: WeekSlotGridProps) {
                         const dateKey = format(day, 'yyyy-MM-dd');
                         const appointmentKey = `${dateKey}-${sedationist.id}`;
                         const dayAppointments = appointmentsByDateAndSedationist[appointmentKey] || [];
+                        const dayAvailabilities = availabilitiesByDateAndSedationist[appointmentKey] || [];
                         
                         // Find appointments for this sedationist in this time slot
                         const slotAppointments = dayAppointments.filter(apt => 
                           isAppointmentInTimeSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                        );
+
+                        // Find availabilities for this sedationist in this time slot
+                        const slotAvailabilities = dayAvailabilities.filter(avail => 
+                          isAvailabilityInTimeSlot(avail, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
                         );
 
                         // Separate appointments that start in this slot vs continuations
@@ -170,13 +203,25 @@ export function WeekSlotGrid({ date }: WeekSlotGridProps) {
                           isAppointmentContinuation(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
                         );
 
+                        // Separate availabilities that start in this slot vs continuations
+                        const startingAvailabilities = slotAvailabilities.filter(avail => 
+                          isAvailabilityStartInSlot(avail, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                        );
+                        
+                        const continuationAvailabilities = slotAvailabilities.filter(avail => 
+                          isAvailabilityContinuation(avail, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                        );
+
+                        const hasContent = startingAppointments.length > 0 || continuationAppointments.length > 0 || startingAvailabilities.length > 0 || continuationAvailabilities.length > 0;
+
                         return (
                           <div 
                             key={`${sedationist.id}-${slot.time}-${dateKey}`}
                             className="flex-1 min-w-[180px] min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
                           >
-                            {startingAppointments.length > 0 ? (
+                            {hasContent ? (
                               <div className="space-y-1 p-1">
+                                {/* Starting appointments */}
                                 {startingAppointments.map((appointment) => (
                                   <AppointmentCard
                                     key={appointment.id}
@@ -185,16 +230,36 @@ export function WeekSlotGrid({ date }: WeekSlotGridProps) {
                                     onClick={() => handleAppointmentClick(appointment.id!)}
                                   />
                                 ))}
-                              </div>
-                            ) : continuationAppointments.length > 0 ? (
-                              <div className="h-full flex items-center justify-center p-1">
+                                
+                                {/* Starting availabilities */}
+                                {startingAvailabilities.map((availability) => (
+                                  <AvailabilityCard
+                                    key={availability.id}
+                                    availability={availability}
+                                    size="sm"
+                                    onClick={() => handleAvailabilityClick(availability.id!)}
+                                  />
+                                ))}
+                                
+                                {/* Continuation appointments */}
                                 {continuationAppointments.map((appointment) => (
                                   <div
                                     key={`${appointment.id}-continuation`}
-                                    className="w-full h-full bg-primary/20 border-l-4 border-primary rounded-sm flex items-center justify-center text-xs text-primary font-medium cursor-pointer hover:bg-primary/30 transition-colors"
+                                    className="w-full h-6 bg-primary/20 border-l-4 border-primary rounded-sm flex items-center justify-center text-xs text-primary font-medium cursor-pointer hover:bg-primary/30 transition-colors"
                                     onClick={() => handleAppointmentClick(appointment.id!)}
                                   >
                                     {formatPatientName(appointment)}
+                                  </div>
+                                ))}
+                                
+                                {/* Continuation availabilities */}
+                                {continuationAvailabilities.map((availability) => (
+                                  <div
+                                    key={`${availability.id}-continuation`}
+                                    className="w-full h-6 bg-purple-200 border-l-4 border-purple-500 rounded-sm flex items-center justify-center text-xs text-purple-700 font-medium cursor-pointer hover:bg-purple-300 dark:bg-purple-900/50 dark:text-purple-300"
+                                    onClick={() => handleAvailabilityClick(availability.id!)}
+                                  >
+                                    {availability.sedationistName}
                                   </div>
                                 ))}
                               </div>
