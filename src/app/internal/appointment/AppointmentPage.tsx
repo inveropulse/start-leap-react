@@ -1,4 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { CalendarDays, Clock, Users, MapPin } from "lucide-react";
 
 export default function AppointmentPage() {
@@ -7,7 +12,6 @@ export default function AppointmentPage() {
       {/* Header */}
       <div className="flex justify-center">
         <div className="flex items-center gap-3">
-          <CalendarDays className="h-8 w-8 text-primary" />
           <div className="text-center">
             <h1 className="text-2xl font-bold">Appointments</h1>
             <p className="text-muted-foreground">
@@ -88,10 +92,13 @@ export default function AppointmentPage() {
         <CardContent>
           <div className="text-center py-12">
             <CalendarDays className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">Appointment Features Coming Soon</h3>
+            <h3 className="text-lg font-medium mb-2">
+              Appointment Features Coming Soon
+            </h3>
             <p className="text-muted-foreground max-w-md mx-auto">
-              This will be the dedicated appointments view where you can manage individual appointments, 
-              view details, update statuses, and handle patient communications.
+              This will be the dedicated appointments view where you can manage
+              individual appointments, view details, update statuses, and handle
+              patient communications.
             </p>
           </div>
         </CardContent>
