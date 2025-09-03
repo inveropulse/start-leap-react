@@ -2,17 +2,24 @@ import { Button } from "@/shared/components/ui/button";
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { useCalendarStore } from "../store/calendarStore";
 import { PortalType } from "@/shared/types";
+import { addDays, addWeeks, subDays, subWeeks, startOfWeek, endOfWeek } from "date-fns";
 
 export function CalendarHeader() {
   const {
     selectedDate,
     setSelectedDate,
+    viewMode,
+    setViewMode,
   } = useCalendarStore(PortalType.INTERNAL);
 
   const navigateDate = (direction: 'prev' | 'next') => {
-    const newDate = new Date(selectedDate);
-    newDate.setDate(newDate.getDate() + (direction === 'next' ? 1 : -1));
-    setSelectedDate(newDate);
+    if (viewMode === "day") {
+      const newDate = direction === 'next' ? addDays(selectedDate, 1) : subDays(selectedDate, 1);
+      setSelectedDate(newDate);
+    } else { // week mode
+      const newDate = direction === 'next' ? addWeeks(selectedDate, 1) : subWeeks(selectedDate, 1);
+      setSelectedDate(newDate);
+    }
   };
 
   const goToToday = () => {
@@ -20,12 +27,20 @@ export function CalendarHeader() {
   };
 
   const formatHeaderDate = () => {
-    return selectedDate.toLocaleDateString('en-US', { 
-      weekday: 'long',
-      month: 'long', 
-      day: 'numeric',
-      year: 'numeric' 
-    });
+    if (viewMode === "day") {
+      return selectedDate.toLocaleDateString('en-US', { 
+        weekday: 'long',
+        month: 'long', 
+        day: 'numeric',
+        year: 'numeric' 
+      });
+    } else {
+      // Week mode - show week range
+      const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday
+      const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 }); // Sunday
+      
+      return `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    }
   };
 
   return (
@@ -65,10 +80,21 @@ export function CalendarHeader() {
         </h2>
       </div>
 
-      {/* Right side - Day view only */}
-      <div className="flex items-center">
-        <Button variant="default" size="sm" disabled>
-          Day View
+      {/* Right side - View mode toggle */}
+      <div className="flex items-center gap-2">
+        <Button 
+          variant={viewMode === "day" ? "default" : "outline"} 
+          size="sm"
+          onClick={() => setViewMode("day")}
+        >
+          Day
+        </Button>
+        <Button 
+          variant={viewMode === "week" ? "default" : "outline"} 
+          size="sm"
+          onClick={() => setViewMode("week")}
+        >
+          Week
         </Button>
       </div>
     </div>

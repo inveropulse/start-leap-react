@@ -10,12 +10,16 @@ export interface CalendarState {
   portal: PortalType;
   
   // View state
-  viewMode: "day";
+  viewMode: "day" | "week";
   selectedDate: Date;
   
   // Sedationist data
   sedationists: SedationistDto[];
   selectedSedationistIds: string[];
+  
+  // Modal state
+  selectedAppointmentId: string | null;
+  isAppointmentModalOpen: boolean;
   
   // UI state
   isLoading: boolean;
@@ -23,6 +27,7 @@ export interface CalendarState {
   
   // Actions
   setPortal: (portal: PortalType) => void;
+  setViewMode: (mode: "day" | "week") => void;
   setSelectedDate: (date: Date) => void;
   setSelectedSedationists: (ids: string[]) => void;
   addSedationist: (id: string) => void;
@@ -32,6 +37,10 @@ export interface CalendarState {
   setSedationists: (sedationists: SedationistDto[]) => void;
   setLoadingSedationists: (loading: boolean) => void;
   refreshSedationists: () => Promise<void>;
+  
+  // Modal actions
+  openAppointmentModal: (appointmentId: string) => void;
+  closeAppointmentModal: () => void;
   
   // Persistence
   loadPersistedState: (portal: PortalType) => void;
@@ -49,6 +58,8 @@ const createCalendarStore = (portal: PortalType) => {
     selectedDate: new Date(),
     sedationists: [],
     selectedSedationistIds: [],
+    selectedAppointmentId: null,
+    isAppointmentModalOpen: false,
     isLoading: false,
     isLoadingSedationists: false,
 
@@ -58,6 +69,11 @@ const createCalendarStore = (portal: PortalType) => {
       get().loadPersistedState(newPortal);
     },
 
+    setViewMode: (mode: "day" | "week") => {
+      const { portal } = get();
+      calendarStorage.setViewMode(portal, mode);
+      set({ viewMode: mode });
+    },
 
     setSelectedDate: (date: Date) => {
       const { portal } = get();
@@ -106,13 +122,23 @@ const createCalendarStore = (portal: PortalType) => {
       return Promise.resolve();
     },
 
+    // Modal actions
+    openAppointmentModal: (appointmentId: string) => {
+      set({ selectedAppointmentId: appointmentId, isAppointmentModalOpen: true });
+    },
+
+    closeAppointmentModal: () => {
+      set({ selectedAppointmentId: null, isAppointmentModalOpen: false });
+    },
+
     // Persistence
     loadPersistedState: (targetPortal: PortalType) => {
       const selectedDate = calendarStorage.getSelectedDate(targetPortal);
       const selectedSedationistIds = calendarStorage.getSelectedSedationists(targetPortal);
+      const viewMode = calendarStorage.getViewMode(targetPortal);
 
       set({
-        viewMode: "day", // Always day view now
+        viewMode,
         selectedDate,
         selectedSedationistIds,
       });
@@ -125,6 +151,8 @@ const createCalendarStore = (portal: PortalType) => {
         viewMode: "day",
         selectedDate: new Date(),
         selectedSedationistIds: [],
+        selectedAppointmentId: null,
+        isAppointmentModalOpen: false,
       });
     },
   }));

@@ -12,7 +12,7 @@ interface TimeSlotGridProps {
 }
 
 export function TimeSlotGrid({ date }: TimeSlotGridProps) {
-  const { selectedSedationistIds, sedationists } = useCalendarStore(PortalType.INTERNAL);
+  const { selectedSedationistIds, sedationists, openAppointmentModal } = useCalendarStore(PortalType.INTERNAL);
   
   const selectedSedationistsList = sedationists?.filter(s => 
     selectedSedationistIds.includes(s.id!)
@@ -87,15 +87,15 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
         <CardTitle>Day Schedule - {formatDate(date)}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-4">
-          {/* Header with fixed time column and scrollable sedationist columns */}
-          <div className="flex gap-4">
-            <div className="w-[100px] font-semibold text-sm text-muted-foreground">
-              Time
-            </div>
-            
-            {/* Scrollable sedationist headers */}
-            <div className="flex-1 overflow-x-auto">
+        <div className="overflow-x-auto">
+          <div className="flex flex-col gap-4">
+            {/* Header with fixed time column and scrollable sedationist columns */}
+            <div className="flex gap-4">
+              <div className="w-[100px] font-semibold text-sm text-muted-foreground">
+                Time
+              </div>
+              
+              {/* Scrollable sedationist headers */}
               <div className="flex gap-2" style={{ minWidth: `${selectedSedationistsList.length * 200}px` }}>
                 {selectedSedationistsList.map((sedationist) => (
                   <div key={sedationist.id} className="flex-shrink-0 w-[200px] text-center">
@@ -109,19 +109,17 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Time slots and appointments */}
-          <div className="space-y-0">
-            {timeSlots.map((slot) => (
-              <div key={slot.time} className="flex gap-4">
-                {/* Time label */}
-                <div className="w-[100px] text-sm text-muted-foreground font-medium py-2">
-                  {slot.displayTime}
-                </div>
-                
-                {/* Scrollable appointment slots */}
-                <div className="flex-1 overflow-x-auto">
+            {/* Time slots and appointments */}
+            <div className="space-y-0">
+              {timeSlots.map((slot) => (
+                <div key={slot.time} className="flex gap-4">
+                  {/* Time label */}
+                  <div className="w-[100px] text-sm text-muted-foreground font-medium py-2">
+                    {slot.displayTime}
+                  </div>
+                  
+                  {/* Scrollable appointment slots */}
                   <div className="flex gap-2" style={{ minWidth: `${selectedSedationistsList.length * 200}px` }}>
                     {selectedSedationistsList.map((sedationist) => {
                       // Find appointments for this sedationist in this time slot
@@ -151,10 +149,7 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                                   key={appointment.id}
                                   appointment={appointment}
                                   size="sm"
-                                  onClick={() => {
-                                    // TODO: Open appointment details modal
-                                    console.log('Open appointment:', appointment.id);
-                                  }}
+                                  onClick={() => openAppointmentModal(appointment.id!)}
                                 />
                               ))}
                             </div>
@@ -179,8 +174,8 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                     })}
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </CardContent>

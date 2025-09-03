@@ -6,7 +6,10 @@ import { useCalendarStore } from "./store/calendarStore";
 import { CalendarHeader } from "./components/CalendarHeader";
 import { SedationistMultiSelect } from "./components/SedationistMultiSelect";
 import { TimeSlotGrid } from "./components/TimeSlotGrid";
-import { CalendarGrid } from "./components/CalendarGrid";
+import { WeekSlotGrid } from "./components/WeekSlotGrid";
+import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
+import { useCalendarAppointments } from "./hooks/useCalendarData";
+import { startOfDay, endOfDay, startOfWeek, endOfWeek } from "date-fns";
 
 export default function CalendarPage() {
   const {
@@ -16,7 +19,10 @@ export default function CalendarPage() {
     viewMode,
     selectedDate,
     sedationists,
-    isLoadingSedationists
+    isLoadingSedationists,
+    selectedAppointmentId,
+    isAppointmentModalOpen,
+    closeAppointmentModal
   } = useCalendarStore(PortalType.INTERNAL);
 
   // Initialize calendar for internal portal
@@ -24,6 +30,19 @@ export default function CalendarPage() {
     setPortal(PortalType.INTERNAL);
     loadPersistedState(PortalType.INTERNAL);
   }, [setPortal, loadPersistedState]);
+
+  // Get appointment data for modal
+  const appointmentDateRange = viewMode === "week" 
+    ? { start: startOfWeek(selectedDate, { weekStartsOn: 1 }), end: endOfWeek(selectedDate, { weekStartsOn: 1 }) }
+    : { start: startOfDay(selectedDate), end: endOfDay(selectedDate) };
+    
+  const { data: appointments } = useCalendarAppointments(
+    selectedSedationistIds,
+    appointmentDateRange.start,
+    appointmentDateRange.end
+  );
+
+  const selectedAppointment = appointments?.find(apt => apt.id === selectedAppointmentId) || null;
 
   if (isLoadingSedationists) {
     return (
@@ -37,7 +56,7 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-x-hidden">
       {/* Page Header */}
       <div className="flex justify-center p-6 pb-4">
         <div className="text-center">
@@ -48,11 +67,21 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {/* Stats Cards Row */}
+      {/* Stats Cards Row - Always visible */}
       <div className="px-6 pb-4">
-        <div className="flex items-center gap-4 mb-4">
-          <SedationistMultiSelect />
-        </div>
+        {/* Sedationist selection - only show in week mode when no sedationists selected */}
+        {viewMode === "week" && selectedSedationistIds.length === 0 && (
+          <div className="flex items-center gap-4 mb-4">
+            <SedationistMultiSelect />
+          </div>
+        )}
+        
+        {/* Sedationist selection - show in day mode or when sedationists are selected in week mode */}
+        {(viewMode === "day" || (viewMode === "week" && selectedSedationistIds.length > 0)) && (
+          <div className="flex items-center gap-4 mb-4">
+            <SedationistMultiSelect />
+          </div>
+        )}
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
@@ -107,8 +136,34 @@ export default function CalendarPage() {
 
       {/* Main Calendar Area */}
       <div className="flex-1 px-6 pb-6">
-        <TimeSlotGrid date={selectedDate} />
+        {viewMode === "day" ? (
+          <TimeSlotGrid date={selectedDate} />
+        ) : viewMode === "week" && selectedSedationistIds.length === 0 ? (
+          /* Week mode with no sedationists selected - show prompt */
+          <Card>
+            <CardHeader>
+              <CardTitle>Week View</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-12">
+                <p className="text-muted-foreground mb-4">
+                  Please select sedationists above to view their week schedule
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          /* Week mode with sedationists selected */
+          <WeekSlotGrid date={selectedDate} />
+        )}
       </div>
+
+      {/* Appointment Detail Modal */}
+      <AppointmentDetailModal
+        isOpen={isAppointmentModalOpen}
+        onClose={closeAppointmentModal}
+        appointment={selectedAppointment}
+      />
     </div>
   );
 }
