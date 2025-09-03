@@ -48,9 +48,6 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {/* Calendar Header with navigation */}
-      <CalendarHeader />
-
       {/* Stats Cards Row */}
       <div className="px-6 pb-4">
         <div className="flex items-center gap-4 mb-4">
@@ -104,6 +101,9 @@ export default function CalendarPage() {
           </Card>
         </div>
       </div>
+
+      {/* Calendar Header with navigation */}
+      <CalendarHeader />
 
       {/* Main Calendar Area */}
       <div className="flex-1 px-6 pb-6">
