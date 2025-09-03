@@ -3,6 +3,7 @@ import {
   Shield,
   Settings,
   Calendar,
+  CalendarDays,
   FileText,
   Activity,
   Building2,
@@ -27,6 +28,9 @@ const PatientPage = lazy(() => import("@/app/internal/PatientPage"));
 const CalendarPage = lazy(
   () => import("@/app/internal/calendar/CalendarPage")
 );
+const AppointmentPage = lazy(
+  () => import("@/app/internal/appointment/AppointmentPage")
+);
 
 export enum InternalQuickActionKey {
   ADD_PATIENT = "add_patient",
@@ -40,6 +44,7 @@ export enum InternalRoute {
   PATIENTS = `${InternalRoute.ROOT}/patients`,
   CLINICS = `${InternalRoute.ROOT}/clinics`,
   CALENDAR = `${InternalRoute.ROOT}/calendar`,
+  APPOINTMENTS = `${InternalRoute.ROOT}/appointments`,
   SEDATIONISTS = `${InternalRoute.ROOT}/sedationists`,
   ANALYTICS = `${InternalRoute.ROOT}/analytics`,
   REPORTS = `${InternalRoute.ROOT}/reports`,
@@ -68,6 +73,11 @@ const INTERNAL_ROUTES: AppRoute[] = [
     element: <CalendarPage />,
     path: InternalRoute.CALENDAR,
     meta: { title: "Calendar", enabled: true, icon: Calendar },
+  },
+  {
+    element: <AppointmentPage />,
+    path: InternalRoute.APPOINTMENTS,
+    meta: { title: "Appointments", enabled: true, icon: CalendarDays },
   },
   {
     element: Sedationists,

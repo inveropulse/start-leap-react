@@ -3,11 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui
 import { Calendar, Users, Clock } from "lucide-react";
 import { PortalType } from "@/shared/types";
 import { useCalendarStore } from "./store/calendarStore";
-import { useSedationists } from "./hooks/useCalendarData";
 
 export default function CalendarPage() {
-  const { setPortal, loadPersistedState, selectedSedationistIds, viewMode, selectedDate } = useCalendarStore();
-  const { data: sedationists, isLoading: isLoadingSedationists } = useSedationists();
+  const {
+    setPortal,
+    loadPersistedState,
+    selectedSedationistIds,
+    viewMode,
+    selectedDate,
+    sedationists,
+    isLoadingSedationists
+  } = useCalendarStore(PortalType.INTERNAL);
 
   // Initialize calendar for internal portal
   useEffect(() => {
@@ -29,10 +35,10 @@ export default function CalendarPage() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-center">
         <div className="flex items-center gap-3">
           <Calendar className="h-8 w-8 text-primary" />
-          <div>
+          <div className="text-center">
             <h1 className="text-2xl font-bold">Calendar</h1>
             <p className="text-muted-foreground">
               Manage sedationist schedules and appointments
