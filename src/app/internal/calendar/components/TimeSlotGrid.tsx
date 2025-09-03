@@ -87,73 +87,81 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
         <CardTitle>Day Schedule - {formatDate(date)}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-[100px_1fr] gap-4">
-          {/* Time column header */}
-          <div className="font-semibold text-sm text-muted-foreground">
-            Time
+        <div className="flex flex-col gap-4">
+          {/* Header with fixed time column and scrollable sedationist columns */}
+          <div className="flex gap-4">
+            <div className="w-[100px] font-semibold text-sm text-muted-foreground">
+              Time
+            </div>
+            
+            {/* Scrollable sedationist headers */}
+            <div className="flex-1 overflow-x-auto">
+              <div className="flex gap-2" style={{ minWidth: `${selectedSedationistsList.length * 200}px` }}>
+                {selectedSedationistsList.map((sedationist) => (
+                  <div key={sedationist.id} className="flex-shrink-0 w-[200px] text-center">
+                    <div className="font-semibold text-sm">
+                      {sedationist.firstName} {sedationist.lastName}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {formatDate(date)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          
-          {/* Sedationist headers */}
-          <div className={`grid grid-cols-${selectedSedationistsList.length} gap-2`}>
-            {selectedSedationistsList.map((sedationist) => (
-              <div key={sedationist.id} className="text-center">
-                <div className="font-semibold text-sm">
-                  {sedationist.firstName} {sedationist.lastName}
+
+          {/* Time slots and appointments */}
+          <div className="space-y-0">
+            {timeSlots.map((slot) => (
+              <div key={slot.time} className="flex gap-4">
+                {/* Time label */}
+                <div className="w-[100px] text-sm text-muted-foreground font-medium py-2">
+                  {slot.displayTime}
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  {formatDate(date)}
+                
+                {/* Scrollable appointment slots */}
+                <div className="flex-1 overflow-x-auto">
+                  <div className="flex gap-2" style={{ minWidth: `${selectedSedationistsList.length * 200}px` }}>
+                    {selectedSedationistsList.map((sedationist) => {
+                      // Find appointments for this sedationist in this time slot
+                      const sedationistAppointments = appointments?.filter(apt => 
+                        apt.sedationistId === sedationist.id &&
+                        isAppointmentInTimeSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                      ) || [];
+
+                      return (
+                        <div 
+                          key={`${sedationist.id}-${slot.time}`}
+                          className="flex-shrink-0 w-[200px] min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
+                        >
+                          {sedationistAppointments.length > 0 ? (
+                            <div className="space-y-1 p-1">
+                              {sedationistAppointments.map((appointment) => (
+                                <AppointmentCard
+                                  key={appointment.id}
+                                  appointment={appointment}
+                                  size="sm"
+                                  onClick={() => {
+                                    // TODO: Open appointment details modal
+                                    console.log('Open appointment:', appointment.id);
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="h-full flex items-center justify-center text-xs text-muted-foreground/50">
+                              Available
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Time slots and appointments */}
-          {timeSlots.map((slot) => (
-            <div key={slot.time} className="contents">
-              {/* Time label */}
-              <div className="text-sm text-muted-foreground font-medium py-2">
-                {slot.displayTime}
-              </div>
-              
-              {/* Appointment slots for each sedationist */}
-              <div className={`grid grid-cols-${selectedSedationistsList.length} gap-2`}>
-                {selectedSedationistsList.map((sedationist) => {
-                  // Find appointments for this sedationist in this time slot
-                  const sedationistAppointments = appointments?.filter(apt => 
-                    apt.sedationistId === sedationist.id &&
-                    isAppointmentInTimeSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
-                  ) || [];
-
-                  return (
-                    <div 
-                      key={`${sedationist.id}-${slot.time}`}
-                      className="min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
-                    >
-                      {sedationistAppointments.length > 0 ? (
-                        <div className="space-y-1 p-1">
-                          {sedationistAppointments.map((appointment) => (
-                            <AppointmentCard
-                              key={appointment.id}
-                              appointment={appointment}
-                              size="sm"
-                              onClick={() => {
-                                // TODO: Open appointment details modal
-                                console.log('Open appointment:', appointment.id);
-                              }}
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="h-full flex items-center justify-center text-xs text-muted-foreground/50">
-                          Available
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
         </div>
       </CardContent>
     </Card>

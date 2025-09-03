@@ -87,6 +87,58 @@ export const generateMockAppointments = (
     "Dr. Davis", "Dr. Miller", "Dr. Wilson", "Dr. Moore",
   ];
 
+  // Add specific overlapping appointments for Michael Chen and Sarah Williams for today
+  const today = new Date();
+  if (startDate <= today && endDate >= today) {
+    // Michael Chen (sed-1) - 3 hour appointment: 10:00 AM - 1:00 PM
+    if (sedationistIds.includes("sed-1")) {
+      const michaelStart = new Date(today);
+      michaelStart.setHours(10, 0, 0, 0);
+      const michaelEnd = new Date(michaelStart);
+      michaelEnd.setHours(13, 0, 0, 0); // 3 hours
+
+      appointments.push({
+        id: `app-michael-special-${today.getTime()}`,
+        patientName: "Alexander Moore",
+        clinicName: "Harley Street Dental",
+        sedationistName: "Michael Chen",
+        sedationistId: "sed-1",
+        procedure: "Full mouth reconstruction",
+        start: michaelStart.toISOString(),
+        end: michaelEnd.toISOString(),
+        status: AppointmentStatus.CONFIRMED,
+        patientTitle: Title.MR,
+        doctorName: "Dr. Williams",
+        clinicAddress: "123 Harley Street, London",
+        notes: "Complex full mouth reconstruction - requires extended sedation monitoring",
+      });
+    }
+
+    // Sarah Williams (sed-2) - 6 hour appointment: 12:00 PM - 6:00 PM (overlaps with Michael 12-1 PM)
+    if (sedationistIds.includes("sed-2")) {
+      const sarahStart = new Date(today);
+      sarahStart.setHours(12, 0, 0, 0);
+      const sarahEnd = new Date(sarahStart);
+      sarahEnd.setHours(18, 0, 0, 0); // 6 hours
+
+      appointments.push({
+        id: `app-sarah-special-${today.getTime()}`,
+        patientName: "Jessica White",
+        clinicName: "Westminster Oral Surgery",
+        sedationistName: "Sarah Williams",
+        sedationistId: "sed-2",
+        procedure: "Jaw reconstruction surgery",
+        start: sarahStart.toISOString(),
+        end: sarahEnd.toISOString(),
+        status: AppointmentStatus.CONFIRMED,
+        patientTitle: Title.MS,
+        doctorName: "Dr. Smith",
+        clinicAddress: "456 Westminster Avenue, London",
+        notes: "Major jaw reconstruction - extensive sedation and monitoring required",
+      });
+    }
+  }
+
   // Generate appointments for each sedationist
   sedationistIds.forEach((sedationistId) => {
     const sedationist = mockSedationists.find(s => s.id === sedationistId);
@@ -98,7 +150,7 @@ export const generateMockAppointments = (
       // More appointments for today and near dates
       const isToday = currentDate.toDateString() === new Date().toDateString();
       const appointmentsPerDay = isToday ? 
-        Math.floor(Math.random() * 4) + 3 : // 3-6 for today
+        Math.floor(Math.random() * 2) + 1 : // 1-2 for today (reduced since we added specific ones)
         Math.floor(Math.random() * 3) + 1;   // 1-3 for other days
 
       for (let i = 0; i < appointmentsPerDay; i++) {
