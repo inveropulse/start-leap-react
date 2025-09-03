@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { Badge } from "@/shared/components/ui/badge";
-import { format } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import { APP_CONFIG } from "@/shared/AppConfig";
 import { useCalendarStore } from "../store/calendarStore";
 import { PortalType } from "@/shared/types";
-import { useAppointmentsByDate } from "../hooks/useCalendarAppointments";
+import { useCalendarAppointments } from "../hooks/useCalendarData";
 import { AppointmentCard } from "./AppointmentCard";
 import { isAppointmentInTimeSlot } from "../utils/appointmentUtils";
 
@@ -13,17 +12,18 @@ interface TimeSlotGridProps {
 }
 
 export function TimeSlotGrid({ date }: TimeSlotGridProps) {
-  const { selectedSedationistIds, sedationists, viewMode } = useCalendarStore(PortalType.INTERNAL);
+  const { selectedSedationistIds, sedationists } = useCalendarStore(PortalType.INTERNAL);
   
   const selectedSedationistsList = sedationists?.filter(s => 
-    selectedSedationistIds.includes(s.id)
+    selectedSedationistIds.includes(s.id!)
   ) || [];
   
-  const { appointmentsByDate, eventsData, isLoading } = useAppointmentsByDate({
-    selectedDate: date,
-    viewMode,
+  // Use mock data hook instead of API
+  const { data: appointments, isLoading } = useCalendarAppointments(
     selectedSedationistIds,
-  });
+    startOfDay(date),
+    endOfDay(date)
+  );
 
   // Generate time slots from config
   const generateTimeSlots = () => {
@@ -46,7 +46,6 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
 
   const timeSlots = generateTimeSlots();
   const formatDate = (date: Date) => format(date, 'MMM dd, yyyy');
-  const dateKey = format(date, 'yyyy-MM-dd');
 
   if (isLoading) {
     return (
@@ -56,7 +55,7 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="h-16 bg-muted rounded"></div>
             ))}
           </div>
@@ -120,8 +119,8 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
               <div className={`grid grid-cols-${selectedSedationistsList.length} gap-2`}>
                 {selectedSedationistsList.map((sedationist) => {
                   // Find appointments for this sedationist in this time slot
-                  const sedationistEvents = eventsData?.find(e => e.sedationistId === sedationist.id);
-                  const appointments = sedationistEvents?.diaryAppointmentEntries?.filter(apt => 
+                  const sedationistAppointments = appointments?.filter(apt => 
+                    apt.sedationistId === sedationist.id &&
                     isAppointmentInTimeSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
                   ) || [];
 
@@ -130,9 +129,9 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                       key={`${sedationist.id}-${slot.time}`}
                       className="min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
                     >
-                      {appointments.length > 0 ? (
+                      {sedationistAppointments.length > 0 ? (
                         <div className="space-y-1 p-1">
-                          {appointments.map((appointment) => (
+                          {sedationistAppointments.map((appointment) => (
                             <AppointmentCard
                               key={appointment.id}
                               appointment={appointment}

@@ -43,7 +43,7 @@ export const mockSedationists: SedationistDto[] = [
   },
 ];
 
-// Helper to generate mock appointments for a given date range
+// Generate comprehensive mock appointments with more realistic data
 export const generateMockAppointments = (
   startDate: Date,
   endDate: Date,
@@ -56,6 +56,9 @@ export const generateMockAppointments = (
     "Root canal treatment",
     "Multiple extractions",
     "Oral surgery",
+    "Tooth extraction",
+    "Periodontal surgery",
+    "Bone graft procedure",
   ];
   
   const clinics = [
@@ -64,35 +67,45 @@ export const generateMockAppointments = (
     "Mayfair Dental Practice",
     "Westminster Oral Surgery",
     "Bloomsbury Dentistry",
+    "City Dental Centre",
+    "Royal Dental Practice",
   ];
 
   const patientNames = [
-    "Sarah Johnson",
-    "David Smith", 
-    "Emma Brown",
-    "Michael Wilson",
-    "Lisa Taylor",
-    "Robert Jones",
-    "Maria Garcia",
-    "John Davis",
+    "Sarah Johnson", "David Smith", "Emma Brown", "Michael Wilson",
+    "Lisa Taylor", "Robert Jones", "Maria Garcia", "John Davis",
+    "Sophie Chen", "Alexander Moore", "Jessica White", "Daniel Clark",
+    "Rachel Green", "Thomas Anderson", "Amy Rodriguez", "James Miller",
+  ];
+
+  const doctorNames = [
+    "Dr. Smith", "Dr. Johnson", "Dr. Williams", "Dr. Brown",
+    "Dr. Davis", "Dr. Miller", "Dr. Wilson", "Dr. Moore",
   ];
 
   // Generate appointments for each sedationist
-  sedationistIds.forEach((sedationistId, index) => {
+  sedationistIds.forEach((sedationistId) => {
     const sedationist = mockSedationists.find(s => s.id === sedationistId);
     if (!sedationist) return;
 
-    // Generate 2-4 appointments per day for each sedationist
+    // Generate appointments for the date range
     const currentDate = new Date(startDate);
     while (currentDate <= endDate) {
-      const appointmentsPerDay = Math.floor(Math.random() * 3) + 2; // 2-4 appointments
+      // More appointments for today and near dates
+      const isToday = currentDate.toDateString() === new Date().toDateString();
+      const appointmentsPerDay = isToday ? 
+        Math.floor(Math.random() * 4) + 3 : // 3-6 for today
+        Math.floor(Math.random() * 3) + 1;   // 1-3 for other days
 
       for (let i = 0; i < appointmentsPerDay; i++) {
-        const startHour = 9 + Math.floor(Math.random() * 8); // 9 AM - 5 PM
+        // Realistic appointment times (9 AM - 6 PM)
+        const availableHours = [9, 10, 11, 13, 14, 15, 16, 17, 18];
+        const startHour = availableHours[Math.floor(Math.random() * availableHours.length)];
+        const startMinute = [0, 30][Math.floor(Math.random() * 2)]; // On the hour or half hour
         const duration = [60, 90, 120][Math.floor(Math.random() * 3)]; // 1-2 hours
         
         const appointmentStart = new Date(currentDate);
-        appointmentStart.setHours(startHour, 0, 0, 0);
+        appointmentStart.setHours(startHour, startMinute, 0, 0);
         
         const appointmentEnd = new Date(appointmentStart);
         appointmentEnd.setMinutes(appointmentEnd.getMinutes() + duration);
@@ -100,6 +113,15 @@ export const generateMockAppointments = (
         const patientName = patientNames[Math.floor(Math.random() * patientNames.length)];
         const clinic = clinics[Math.floor(Math.random() * clinics.length)];
         const procedure = appointmentTypes[Math.floor(Math.random() * appointmentTypes.length)];
+        const doctorName = doctorNames[Math.floor(Math.random() * doctorNames.length)];
+        
+        // More realistic status distribution
+        const statusOptions = [
+          AppointmentStatus.CONFIRMED,
+          AppointmentStatus.CONFIRMED, // Higher chance of confirmed
+          AppointmentStatus.CONFIRMED,
+          AppointmentStatus.PENDING,
+        ];
         
         appointments.push({
           id: `app-${sedationistId}-${currentDate.getTime()}-${i}`,
@@ -110,11 +132,11 @@ export const generateMockAppointments = (
           procedure,
           start: appointmentStart.toISOString(),
           end: appointmentEnd.toISOString(),
-          status: [AppointmentStatus.CONFIRMED, AppointmentStatus.PENDING][Math.floor(Math.random() * 2)],
-          patientTitle: Title.MRS,
-          doctorName: "Dr. Smith",
-          clinicAddress: "123 Medical Street, London",
-          notes: `${procedure} with IV sedation`,
+          status: statusOptions[Math.floor(Math.random() * statusOptions.length)],
+          patientTitle: [Title.MR, Title.MRS, Title.MS, Title.DR][Math.floor(Math.random() * 4)],
+          doctorName,
+          clinicAddress: `${Math.floor(Math.random() * 999) + 1} Medical Street, London`,
+          notes: `${procedure} with IV sedation - ${sedationist.notes}`,
         });
       }
 

@@ -17,7 +17,7 @@ export const useSedationists = () => {
   });
 };
 
-// Hook to fetch appointments for specific sedationists and date range
+// Hook to fetch appointments for specific sedationists and date range  
 export const useCalendarAppointments = (
   sedationistIds: string[],
   startDate: Date,
@@ -26,8 +26,8 @@ export const useCalendarAppointments = (
   return useQuery({
     queryKey: ["calendar-appointments", sedationistIds, startDate.toISOString(), endDate.toISOString()],
     queryFn: async (): Promise<DiaryAppointmentDto[]> => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Simulate API delay for realistic UX
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       if (sedationistIds.length === 0) {
         return [];
@@ -36,7 +36,7 @@ export const useCalendarAppointments = (
       return generateMockAppointments(startDate, endDate, sedationistIds);
     },
     enabled: sedationistIds.length > 0,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 15 * 60 * 1000, // 15 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes - shorter for demo
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 };

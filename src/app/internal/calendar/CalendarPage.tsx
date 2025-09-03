@@ -107,11 +107,7 @@ export default function CalendarPage() {
 
       {/* Main Calendar Area */}
       <div className="flex-1 px-6 pb-6">
-        {viewMode === 'month' ? (
-          <CalendarGrid date={selectedDate} />
-        ) : (
-          <TimeSlotGrid date={selectedDate} />
-        )}
+        <TimeSlotGrid date={selectedDate} />
       </div>
     </div>
   );

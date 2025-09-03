@@ -10,7 +10,7 @@ export interface CalendarState {
   portal: PortalType;
   
   // View state
-  viewMode: "day" | "week";
+  viewMode: "day";
   selectedDate: Date;
   
   // Sedationist data
@@ -23,7 +23,6 @@ export interface CalendarState {
   
   // Actions
   setPortal: (portal: PortalType) => void;
-  setViewMode: (mode: "day" | "week") => void;
   setSelectedDate: (date: Date) => void;
   setSelectedSedationists: (ids: string[]) => void;
   addSedationist: (id: string) => void;
@@ -58,11 +57,6 @@ const createCalendarStore = (portal: PortalType) => {
       get().loadPersistedState(newPortal);
     },
 
-    setViewMode: (mode: "day" | "week") => {
-      const { portal } = get();
-      calendarStorage.setViewMode(portal, mode);
-      set({ viewMode: mode });
-    },
 
     setSelectedDate: (date: Date) => {
       const { portal } = get();
@@ -108,12 +102,11 @@ const createCalendarStore = (portal: PortalType) => {
 
     // Persistence
     loadPersistedState: (targetPortal: PortalType) => {
-      const viewMode = calendarStorage.getViewMode(targetPortal);
       const selectedDate = calendarStorage.getSelectedDate(targetPortal);
       const selectedSedationistIds = calendarStorage.getSelectedSedationists(targetPortal);
 
       set({
-        viewMode,
+        viewMode: "day", // Always day view now
         selectedDate,
         selectedSedationistIds,
       });
