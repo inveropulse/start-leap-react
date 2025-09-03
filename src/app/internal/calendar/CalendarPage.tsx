@@ -4,23 +4,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import { Users, Clock, UserCheck, Eye, Calendar } from "lucide-react";
+import { Users, Clock, UserCheck } from "lucide-react";
 import { PortalType } from "@/shared/types";
 import { useCalendarStore } from "./store/calendarStore";
 import { CalendarHeader } from "./components/CalendarHeader";
 import { SedationistMultiSelect } from "./components/SedationistMultiSelect";
 import { TimeSlotGrid } from "./components/TimeSlotGrid";
 import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
-import { MobileCalendarHeader } from "./components/mobile/MobileCalendarHeader";
-import { MobileTimeSlotGrid } from "./components/mobile/MobileTimeSlotGrid";
-import { MobileSedationistSelect } from "./components/mobile/MobileSedationistSelect";
-import { MobileStatsCards } from "./components/mobile/MobileStatsCards";
 import { useCalendarAppointments } from "./hooks/useCalendarData";
-import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { startOfDay, endOfDay } from "date-fns";
 
 export default function CalendarPage() {
-  const isMobile = useIsMobile();
   const {
     selectedSedationistIds,
     viewMode,
@@ -44,66 +38,11 @@ export default function CalendarPage() {
 
   if (isLoadingSedationists) {
     return (
-      <div className={`flex flex-col h-full overflow-x-hidden ${!isMobile ? 'px-6' : ''}`}>
-        <div className={`flex justify-center ${isMobile ? 'py-4 px-4' : 'py-6'} pb-4`}>
-          <div className="text-center">
-            <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold`}>Calendar</h1>
-            <p className="text-muted-foreground">Loading sedationist data...</p>
-          </div>
+      <div className="p-6 space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
+          <div className="h-32 bg-muted rounded"></div>
         </div>
-        
-        <div className={`pb-4 ${isMobile ? 'px-4' : ''}`}>
-          <div className="animate-pulse space-y-4">
-            <div className={`h-10 bg-muted rounded ${isMobile ? 'w-full' : 'w-[280px]'}`}></div>
-            <div className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-3 gap-4'}`}>
-              {Array.from({ length: isMobile ? 1 : 3 }).map((_, i) => (
-                <div key={i} className={`${isMobile ? 'h-16' : 'h-20'} bg-muted rounded`}></div>
-              ))}
-            </div>
-            <div className="h-[400px] bg-muted rounded"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isMobile) {
-    return (
-      <div className="flex flex-col h-full overflow-x-hidden">
-        {/* Mobile Header */}
-        <div className="flex justify-center py-4 px-4 pb-3">
-          <div className="text-center">
-            <h1 className="text-xl font-bold">Calendar</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage schedules and appointments
-            </p>
-          </div>
-        </div>
-
-        {/* Mobile Sedationist Selection */}
-        <div className="px-4 pb-3">
-          <MobileSedationistSelect />
-        </div>
-
-        {/* Mobile Stats Cards */}
-        <div className="pb-4">
-          <MobileStatsCards />
-        </div>
-
-        {/* Mobile Calendar Header */}
-        <MobileCalendarHeader />
-
-        {/* Mobile Calendar Grid */}
-        <div className="flex-1 py-4 overflow-y-auto">
-          <MobileTimeSlotGrid date={selectedDate} />
-        </div>
-
-        {/* Appointment Detail Modal */}
-        <AppointmentDetailModal
-          isOpen={isAppointmentModalOpen}
-          onClose={closeAppointmentModal}
-          appointment={selectedAppointment}
-        />
       </div>
     );
   }
