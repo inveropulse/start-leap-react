@@ -37,7 +37,7 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-x-hidden">
       {/* Page Header */}
       <div className="flex justify-center p-6 pb-4">
         <div className="text-center">
