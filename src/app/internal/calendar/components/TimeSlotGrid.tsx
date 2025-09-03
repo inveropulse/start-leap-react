@@ -82,30 +82,32 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
   }
 
   return (
-    <Card className="max-w-full">
+    <Card>
       <CardHeader>
         <CardTitle>Day Schedule - {formatDate(date)}</CardTitle>
       </CardHeader>
-      <CardContent className="overflow-x-auto">
-        <div className="flex flex-col gap-4" style={{ minWidth: `${selectedSedationistsList.length * 200 + 120}px` }}>
+      <CardContent>
+        <div className="flex flex-col gap-4">
           {/* Header with fixed time column and scrollable sedationist columns */}
           <div className="flex gap-4">
-            <div className="w-[100px] flex-shrink-0 font-semibold text-sm text-muted-foreground">
+            <div className="w-[100px] font-semibold text-sm text-muted-foreground">
               Time
             </div>
             
-            {/* Sedationist headers */}
-            <div className="flex gap-2">
-              {selectedSedationistsList.map((sedationist) => (
-                <div key={sedationist.id} className="flex-shrink-0 w-[200px] text-center">
-                  <div className="font-semibold text-sm">
-                    {sedationist.firstName} {sedationist.lastName}
+            {/* Scrollable sedationist headers */}
+            <div className="flex-1 overflow-x-auto">
+              <div className="flex gap-2" style={{ minWidth: `${selectedSedationistsList.length * 200}px` }}>
+                {selectedSedationistsList.map((sedationist) => (
+                  <div key={sedationist.id} className="flex-shrink-0 w-[200px] text-center">
+                    <div className="font-semibold text-sm">
+                      {sedationist.firstName} {sedationist.lastName}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {formatDate(date)}
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {formatDate(date)}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
@@ -114,66 +116,68 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
             {timeSlots.map((slot) => (
               <div key={slot.time} className="flex gap-4">
                 {/* Time label */}
-                <div className="w-[100px] flex-shrink-0 text-sm text-muted-foreground font-medium py-2">
+                <div className="w-[100px] text-sm text-muted-foreground font-medium py-2">
                   {slot.displayTime}
                 </div>
                 
-                {/* Appointment slots */}
-                <div className="flex gap-2">
-                  {selectedSedationistsList.map((sedationist) => {
-                    // Find appointments for this sedationist in this time slot
-                    const sedationistAppointments = appointments?.filter(apt => 
-                      apt.sedationistId === sedationist.id &&
-                      isAppointmentInTimeSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
-                    ) || [];
+                {/* Scrollable appointment slots */}
+                <div className="flex-1 overflow-x-auto">
+                  <div className="flex gap-2" style={{ minWidth: `${selectedSedationistsList.length * 200}px` }}>
+                    {selectedSedationistsList.map((sedationist) => {
+                      // Find appointments for this sedationist in this time slot
+                      const sedationistAppointments = appointments?.filter(apt => 
+                        apt.sedationistId === sedationist.id &&
+                        isAppointmentInTimeSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                      ) || [];
 
-                    // Separate appointments that start in this slot vs continuations
-                    const startingAppointments = sedationistAppointments.filter(apt => 
-                      isAppointmentStartInSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
-                    );
-                    
-                    const continuationAppointments = sedationistAppointments.filter(apt => 
-                      isAppointmentContinuation(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
-                    );
+                      // Separate appointments that start in this slot vs continuations
+                      const startingAppointments = sedationistAppointments.filter(apt => 
+                        isAppointmentStartInSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                      );
+                      
+                      const continuationAppointments = sedationistAppointments.filter(apt => 
+                        isAppointmentContinuation(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                      );
 
-                    return (
-                      <div 
-                        key={`${sedationist.id}-${slot.time}`}
-                        className="flex-shrink-0 w-[200px] min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
-                      >
-                        {startingAppointments.length > 0 ? (
-                          <div className="space-y-1 p-1">
-                            {startingAppointments.map((appointment) => (
-                              <AppointmentCard
-                                key={appointment.id}
-                                appointment={appointment}
-                                size="sm"
-                                onClick={() => {
-                                  // TODO: Open appointment details modal
-                                  console.log('Open appointment:', appointment.id);
-                                }}
-                              />
-                            ))}
-                          </div>
-                        ) : continuationAppointments.length > 0 ? (
-                          <div className="h-full flex items-center justify-center p-1">
-                            {continuationAppointments.map((appointment) => (
-                              <div
-                                key={`${appointment.id}-continuation`}
-                                className="w-full h-full bg-primary/20 border-l-4 border-primary rounded-sm flex items-center justify-center text-xs text-primary font-medium"
-                              >
-                                {formatPatientName(appointment)}
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="h-full flex items-center justify-center text-xs text-muted-foreground/50">
-                            Available
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                      return (
+                        <div 
+                          key={`${sedationist.id}-${slot.time}`}
+                          className="flex-shrink-0 w-[200px] min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
+                        >
+                          {startingAppointments.length > 0 ? (
+                            <div className="space-y-1 p-1">
+                              {startingAppointments.map((appointment) => (
+                                <AppointmentCard
+                                  key={appointment.id}
+                                  appointment={appointment}
+                                  size="sm"
+                                  onClick={() => {
+                                    // TODO: Open appointment details modal
+                                    console.log('Open appointment:', appointment.id);
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          ) : continuationAppointments.length > 0 ? (
+                            <div className="h-full flex items-center justify-center p-1">
+                              {continuationAppointments.map((appointment) => (
+                                <div
+                                  key={`${appointment.id}-continuation`}
+                                  className="w-full h-full bg-primary/20 border-l-4 border-primary rounded-sm flex items-center justify-center text-xs text-primary font-medium"
+                                >
+                                  {formatPatientName(appointment)}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="h-full flex items-center justify-center text-xs text-muted-foreground/50">
+                              Available
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             ))}
