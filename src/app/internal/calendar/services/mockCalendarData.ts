@@ -144,96 +144,133 @@ export const generateMockAppointments = (
     return apt1Start < apt2End && apt2Start < apt1End;
   };
 
+  // Track all appointments per sedationist to prevent conflicts
+  const sedationistAppointments = new Map<string, DiaryAppointmentDto[]>();
+
+  // Initialize tracking for each sedationist
+  sedationistIds.forEach(id => {
+    sedationistAppointments.set(id, appointments.filter(apt => apt.sedationistId === id));
+  });
+
   // Generate appointments for each sedationist
   sedationistIds.forEach((sedationistId) => {
     const sedationist = mockSedationists.find(s => s.id === sedationistId);
     if (!sedationist) return;
 
+    const existingAppointments = sedationistAppointments.get(sedationistId) || [];
+
     // Generate appointments for the date range
     const currentDate = new Date(startDate);
     while (currentDate <= endDate) {
-      // Track existing appointments for this sedationist on this day
-      const dayAppointments = appointments.filter(apt => 
-        apt.sedationistId === sedationistId && 
-        new Date(apt.start!).toDateString() === currentDate.toDateString()
-      );
-
       // More appointments for today and near dates
       const isToday = currentDate.toDateString() === new Date().toDateString();
       const appointmentsPerDay = isToday ? 
         Math.floor(Math.random() * 2) + 1 : // 1-2 for today (reduced since we added specific ones)
         Math.floor(Math.random() * 3) + 1;   // 1-3 for other days
 
-      let attemptsForDay = 0;
-      const maxAttemptsPerDay = 20; // Prevent infinite loops
-
-      for (let i = 0; i < appointmentsPerDay && attemptsForDay < maxAttemptsPerDay; i++) {
-        let appointmentCreated = false;
-        let attempts = 0;
-        const maxAttempts = 10;
-
-        while (!appointmentCreated && attempts < maxAttempts) {
-          attempts++;
-          attemptsForDay++;
-
-          // Realistic appointment times (9 AM - 6 PM)
-          const availableHours = [9, 10, 11, 13, 14, 15, 16, 17, 18];
-          const startHour = availableHours[Math.floor(Math.random() * availableHours.length)];
-          const startMinute = [0, 30][Math.floor(Math.random() * 2)]; // On the hour or half hour
-          // Varied appointment durations from 30 minutes to 6 hours
-          const durationOptions = [30, 45, 60, 90, 120, 150, 180, 240, 300, 360]; // 30min to 6 hours
-          const duration = durationOptions[Math.floor(Math.random() * durationOptions.length)];
+      // Generate time slots for the day to ensure no overlaps
+      const dayTimeSlots: { start: Date; end: Date; used: boolean }[] = [];
+      
+      // Create 30-minute time slots from 9 AM to 9 PM
+      for (let hour = 9; hour <= 21; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+          const slotStart = new Date(currentDate);
+          slotStart.setHours(hour, minute, 0, 0);
+          const slotEnd = new Date(slotStart);
+          slotEnd.setMinutes(slotEnd.getMinutes() + 30);
           
-          const appointmentStart = new Date(currentDate);
-          appointmentStart.setHours(startHour, startMinute, 0, 0);
-          
-          const appointmentEnd = new Date(appointmentStart);
-          appointmentEnd.setMinutes(appointmentEnd.getMinutes() + duration);
+          dayTimeSlots.push({ start: slotStart, end: slotEnd, used: false });
+        }
+      }
 
-          // Check for conflicts with existing appointments for this sedationist
-          const hasConflict = dayAppointments.some(existingApt => 
-            appointmentsOverlap(
-              appointmentStart,
-              appointmentEnd,
-              new Date(existingApt.start!),
-              new Date(existingApt.end!)
-            )
+      // Mark slots as used for existing appointments
+      existingAppointments.forEach(apt => {
+        const aptStart = new Date(apt.start!);
+        const aptEnd = new Date(apt.end!);
+        
+        if (aptStart.toDateString() === currentDate.toDateString()) {
+          dayTimeSlots.forEach(slot => {
+            if (appointmentsOverlap(slot.start, slot.end, aptStart, aptEnd)) {
+              slot.used = true;
+            }
+          });
+        }
+      });
+
+      let appointmentsCreated = 0;
+      let attempts = 0;
+      const maxAttempts = 50;
+
+      while (appointmentsCreated < appointmentsPerDay && attempts < maxAttempts) {
+        attempts++;
+
+        // Find available consecutive slots
+        const availableSlots = dayTimeSlots.filter(slot => !slot.used);
+        if (availableSlots.length === 0) break;
+
+        // Pick a random starting slot
+        const startSlotIndex = Math.floor(Math.random() * availableSlots.length);
+        const startSlot = availableSlots[startSlotIndex];
+        
+        // Determine appointment duration (1-8 slots = 30min to 4 hours)
+        const maxDurationSlots = Math.min(8, availableSlots.length - startSlotIndex);
+        const durationSlots = Math.floor(Math.random() * maxDurationSlots) + 1;
+        
+        const appointmentStart = new Date(startSlot.start);
+        const appointmentEnd = new Date(startSlot.start);
+        appointmentEnd.setMinutes(appointmentEnd.getMinutes() + (durationSlots * 30));
+
+        // Check if all required slots are available
+        let canCreateAppointment = true;
+        const requiredSlots: typeof dayTimeSlots = [];
+        
+        for (let i = 0; i < durationSlots; i++) {
+          const slotIndex = dayTimeSlots.findIndex(slot => 
+            slot.start.getTime() === startSlot.start.getTime() + (i * 30 * 60 * 1000)
           );
-
-          if (!hasConflict) {
-            const patientName = patientNames[Math.floor(Math.random() * patientNames.length)];
-            const clinic = clinics[Math.floor(Math.random() * clinics.length)];
-            const procedure = appointmentTypes[Math.floor(Math.random() * appointmentTypes.length)];
-            const doctorName = doctorNames[Math.floor(Math.random() * doctorNames.length)];
-            
-            // More realistic status distribution
-            const statusOptions = [
-              AppointmentStatus.CONFIRMED,
-              AppointmentStatus.CONFIRMED, // Higher chance of confirmed
-              AppointmentStatus.CONFIRMED,
-              AppointmentStatus.PENDING,
-            ];
-            
-            const newAppointment = {
-              id: `app-${sedationistId}-${currentDate.getTime()}-${i}`,
-              patientName,
-              clinicName: clinic,
-              sedationistName: `${sedationist.firstName} ${sedationist.lastName}`,
-              sedationistId,
-              procedure,
-              start: appointmentStart.toISOString(),
-              end: appointmentEnd.toISOString(),
-              status: statusOptions[Math.floor(Math.random() * statusOptions.length)],
-              patientTitle: [Title.MR, Title.MRS, Title.MS, Title.DR][Math.floor(Math.random() * 4)],
-              doctorName,
-              clinicAddress: `${Math.floor(Math.random() * 999) + 1} Medical Street, London`,
-              notes: `${procedure} with IV sedation - ${sedationist.notes}`,
-            };
-
-            appointments.push(newAppointment);
-            dayAppointments.push(newAppointment); // Track for future conflict checking
-            appointmentCreated = true;
+          
+          if (slotIndex === -1 || dayTimeSlots[slotIndex].used) {
+            canCreateAppointment = false;
+            break;
           }
+          requiredSlots.push(dayTimeSlots[slotIndex]);
+        }
+
+        if (canCreateAppointment) {
+          // Mark slots as used
+          requiredSlots.forEach(slot => slot.used = true);
+
+          const patientName = patientNames[Math.floor(Math.random() * patientNames.length)];
+          const clinic = clinics[Math.floor(Math.random() * clinics.length)];
+          const procedure = appointmentTypes[Math.floor(Math.random() * appointmentTypes.length)];
+          const doctorName = doctorNames[Math.floor(Math.random() * doctorNames.length)];
+          
+          const statusOptions = [
+            AppointmentStatus.CONFIRMED,
+            AppointmentStatus.CONFIRMED,
+            AppointmentStatus.CONFIRMED,
+            AppointmentStatus.PENDING,
+          ];
+          
+          const newAppointment: DiaryAppointmentDto = {
+            id: `app-${sedationistId}-${currentDate.getTime()}-${appointmentsCreated}`,
+            patientName,
+            clinicName: clinic,
+            sedationistName: `${sedationist.firstName} ${sedationist.lastName}`,
+            sedationistId,
+            procedure,
+            start: appointmentStart.toISOString(),
+            end: appointmentEnd.toISOString(),
+            status: statusOptions[Math.floor(Math.random() * statusOptions.length)],
+            patientTitle: [Title.MR, Title.MRS, Title.MS, Title.DR][Math.floor(Math.random() * 4)],
+            doctorName,
+            clinicAddress: `${Math.floor(Math.random() * 999) + 1} Medical Street, London`,
+            notes: `${procedure} with IV sedation - ${sedationist.notes}`,
+          };
+
+          appointments.push(newAppointment);
+          existingAppointments.push(newAppointment);
+          appointmentsCreated++;
         }
       }
 
