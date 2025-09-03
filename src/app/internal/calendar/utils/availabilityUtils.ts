@@ -136,12 +136,12 @@ export const calculateAvailabilityHeight = (availability: DiaryAvailabilityDto, 
 };
 
 /**
- * Determines the layout mode based on card height
+ * Determines the layout mode based on card height (30min minimum slots)
  */
 export function getAvailabilityLayoutMode(height?: number): 'compact' | 'normal' | 'expanded' {
   if (!height) return 'expanded';
   
-  if (height < 80) return 'compact';
-  if (height < 120) return 'normal';
+  if (height < 90) return 'compact';  // 30min slots = 60px, adjusted for better fit
+  if (height < 130) return 'normal';  // 60min+ slots
   return 'expanded';
 }

@@ -62,11 +62,19 @@ export function AvailabilityCard({
     >
       <CardContent className={fullHeight ? adaptiveSizes[layoutMode] : cardSizes[size]}>
         {layoutMode === 'compact' && (
-          <div className="flex items-center justify-between h-full">
-            <span className="font-medium text-foreground truncate flex-1 pr-1 leading-tight">
-              {availability.sedationistName || "Available"}
-            </span>
-            <div className="text-[10px] text-muted-foreground whitespace-nowrap">
+          <div className="h-full flex flex-col justify-center space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-foreground truncate flex-1 pr-1 text-xs leading-tight">
+                {availability.sedationistName || "Available"}
+              </span>
+              <Badge 
+                variant="secondary" 
+                className="text-[8px] px-1 py-0 shrink-0 bg-purple-500 text-white hover:bg-purple-600"
+              >
+                {statusText}
+              </Badge>
+            </div>
+            <div className="text-[10px] text-muted-foreground">
               {timeText}
             </div>
           </div>
