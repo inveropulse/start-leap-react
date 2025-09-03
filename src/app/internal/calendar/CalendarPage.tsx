@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -17,8 +16,6 @@ import { startOfDay, endOfDay } from "date-fns";
 
 export default function CalendarPage() {
   const {
-    setPortal,
-    loadPersistedState,
     selectedSedationistIds,
     viewMode,
     selectedDate,
@@ -28,12 +25,6 @@ export default function CalendarPage() {
     isAppointmentModalOpen,
     closeAppointmentModal,
   } = useCalendarStore(PortalType.INTERNAL);
-
-  // Initialize calendar for internal portal
-  useEffect(() => {
-    setPortal(PortalType.INTERNAL);
-    loadPersistedState(PortalType.INTERNAL);
-  }, [setPortal, loadPersistedState]);
 
   // Get appointment data for modal
   const { data: appointments } = useCalendarAppointments(
