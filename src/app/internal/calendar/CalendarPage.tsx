@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -13,8 +14,16 @@ import { TimeSlotGrid } from "./components/TimeSlotGrid";
 import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
 import { useCalendarAppointments } from "./hooks/useCalendarData";
 import { startOfDay, endOfDay } from "date-fns";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
+import { MobileSedationistChip } from "./components/mobile/MobileSedationistChip";
+import { MobileSedationistModal } from "./components/mobile/MobileSedationistModal";
+import { MobileStatsCards } from "./components/mobile/MobileStatsCards";
+import { MobileDateNavigation } from "./components/mobile/MobileDateNavigation";
 
 export default function CalendarPage() {
+  const [isMobileSedationistModalOpen, setIsMobileSedationistModalOpen] = useState(false);
+  const isMobile = useIsMobile();
+  
   const {
     selectedSedationistIds,
     viewMode,
@@ -43,6 +52,53 @@ export default function CalendarPage() {
           <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
           <div className="h-32 bg-muted rounded"></div>
         </div>
+      </div>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-full overflow-x-hidden px-4">
+        {/* Page Header */}
+        <div className="text-center py-4">
+          <h1 className="text-xl font-bold">Calendar</h1>
+          <p className="text-sm text-muted-foreground">
+            Manage schedules and appointments
+          </p>
+        </div>
+
+        {/* Mobile Sedationist Selector */}
+        <div className="pb-4">
+          <MobileSedationistChip 
+            onOpenModal={() => setIsMobileSedationistModalOpen(true)} 
+          />
+        </div>
+
+        {/* Mobile Stats Cards */}
+        <div className="pb-4">
+          <MobileStatsCards />
+        </div>
+
+        {/* Mobile Date Navigation */}
+        <MobileDateNavigation />
+
+        {/* Main Calendar Area */}
+        <div className="flex-1 pb-6">
+          <TimeSlotGrid date={selectedDate} />
+        </div>
+
+        {/* Mobile Sedationist Modal */}
+        <MobileSedationistModal
+          isOpen={isMobileSedationistModalOpen}
+          onClose={() => setIsMobileSedationistModalOpen(false)}
+        />
+
+        {/* Appointment Detail Modal */}
+        <AppointmentDetailModal
+          isOpen={isAppointmentModalOpen}
+          onClose={closeAppointmentModal}
+          appointment={selectedAppointment}
+        />
       </div>
     );
   }
