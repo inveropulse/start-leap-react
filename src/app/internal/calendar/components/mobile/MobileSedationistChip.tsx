@@ -15,13 +15,13 @@ export function MobileSedationistChip({ onOpenModal }: MobileSedationistChipProp
     <Button
       variant="outline"
       onClick={onOpenModal}
-      className="flex items-center gap-2 h-12 px-4 border-2 border-border hover:border-primary/50 transition-colors"
+      className="w-full flex items-center gap-2 h-12 px-4 border-2 border-border hover:border-primary/50 transition-colors"
     >
       <Users className="h-4 w-4 text-muted-foreground" />
       <span className="text-sm">
         {selectedSedationistIds.length} selected
       </span>
-      <Badge variant="default" className="ml-1 h-6 min-w-[1.5rem] text-xs">
+      <Badge variant="default" className="ml-auto h-6 min-w-[1.5rem] text-xs">
         {selectedSedationistIds.length}
       </Badge>
     </Button>

@@ -50,7 +50,7 @@ export function MobileSedationistModal({ isOpen, onClose }: MobileSedationistMod
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-md mx-4 h-[80vh] max-h-none p-0 gap-0">
+      <DialogContent className="bottom-sheet-modal h-[85vh] rounded-t-2xl rounded-b-none p-0 gap-0 border-0 bg-background shadow-2xl data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 duration-300">
         <DialogHeader className="p-4 pb-2 border-b">
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2 text-lg">
