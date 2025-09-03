@@ -1,5 +1,11 @@
 import { Control, FieldPath, FieldValues } from "react-hook-form";
-import { Select, type SelectProps } from "@/shared/components/ui/select";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
 import { Loader2 } from "lucide-react";
 import {
   FormControl,
@@ -15,8 +21,7 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface FormSelectProps<T extends FieldValues>
-  extends Omit<SelectProps, "name" | "control" | "onChange" | "value"> {
+export interface FormSelectProps<T extends FieldValues> {
   control: Control<T>;
   name: FieldPath<T>;
   label: string;
@@ -24,6 +29,8 @@ export interface FormSelectProps<T extends FieldValues>
   options: SelectOption[];
   loading?: boolean;
   required?: boolean;
+  disabled?: boolean;
+  className?: string;
 }
 
 export function FormSelect<T extends FieldValues>({
@@ -36,7 +43,6 @@ export function FormSelect<T extends FieldValues>({
   required = false,
   disabled,
   className,
-  ...selectProps
 }: FormSelectProps<T>) {
   return (
     <FormField
@@ -50,26 +56,25 @@ export function FormSelect<T extends FieldValues>({
           </FormLabel>
           <FormControl>
             <div className="relative">
-              <Select
-                {...selectProps}
-                {...field}
+              <Select 
+                onValueChange={field.onChange} 
+                defaultValue={field.value}
                 disabled={disabled || loading}
-                className={`${loading ? "pr-10" : ""} ${className || ""}`}
               >
-                {placeholder && (
-                  <option value="" disabled>
-                    {placeholder}
-                  </option>
-                )}
-                {options.map((option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                    disabled={option.disabled}
-                  >
-                    {option.label}
-                  </option>
-                ))}
+                <SelectTrigger className={className}>
+                  <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+                <SelectContent>
+                  {options.map((option) => (
+                    <SelectItem
+                      key={option.value}
+                      value={option.value}
+                      disabled={option.disabled}
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
               {loading && (
                 <div className="absolute right-8 top-1/2 transform -translate-y-1/2 pointer-events-none">

@@ -1,8 +1,12 @@
 import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { Calendar, Users, Clock } from "lucide-react";
+import { Users, Clock } from "lucide-react";
 import { PortalType } from "@/shared/types";
 import { useCalendarStore } from "./store/calendarStore";
+import { CalendarHeader } from "./components/CalendarHeader";
+import { SedationistFilter } from "./components/SedationistFilter";
+import { TimeSlotGrid } from "./components/TimeSlotGrid";
+import { CalendarGrid } from "./components/CalendarGrid";
 
 export default function CalendarPage() {
   const {
@@ -33,9 +37,9 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-center">
+    <div className="flex flex-col h-full">
+      {/* Page Header */}
+      <div className="flex justify-center p-6 pb-4">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Calendar</h1>
           <p className="text-muted-foreground">
@@ -44,71 +48,59 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Available Sedationists
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{sedationists?.length || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Ready for scheduling
-            </p>
-          </CardContent>
-        </Card>
+      {/* Calendar Header with navigation */}
+      <CalendarHeader />
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Selected Sedationists
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{selectedSedationistIds.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Currently viewing
-            </p>
-          </CardContent>
-        </Card>
+      {/* Main Content Area */}
+      <div className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
+        {/* Left Sidebar - Filters and Stats */}
+        <div className="space-y-6">
+          {/* Sedationist Filter */}
+          <SedationistFilter />
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              View Mode
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold capitalize">{viewMode}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {selectedDate.toLocaleDateString()}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+          {/* Quick Stats */}
+          <div className="space-y-3">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Available Sedationists
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{sedationists?.length || 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Ready for scheduling
+                </p>
+              </CardContent>
+            </Card>
 
-      {/* Main Calendar Area - Placeholder for now */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Calendar View</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-12">
-            <Calendar className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">Calendar Features Coming Soon</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              The calendar interface is being built. You can see the persistent storage working - 
-              your selected sedationists ({selectedSedationistIds.length}) and view mode ({viewMode}) 
-              are saved securely for the Internal portal.
-            </p>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  View Mode
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold capitalize">{viewMode}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {selectedDate.toLocaleDateString()}
+                </p>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Right Main Calendar Area */}
+        <div className="flex-1">
+          {viewMode === 'month' ? (
+            <CalendarGrid date={selectedDate} />
+          ) : (
+            <TimeSlotGrid date={selectedDate} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
