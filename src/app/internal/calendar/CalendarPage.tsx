@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { Users, Clock } from "lucide-react";
+import { Users, Clock, UserCheck } from "lucide-react";
 import { PortalType } from "@/shared/types";
 import { useCalendarStore } from "./store/calendarStore";
 import { CalendarHeader } from "./components/CalendarHeader";
-import { SedationistFilter } from "./components/SedationistFilter";
+import { SedationistMultiSelect } from "./components/SedationistMultiSelect";
 import { TimeSlotGrid } from "./components/TimeSlotGrid";
 import { CalendarGrid } from "./components/CalendarGrid";
 
@@ -51,55 +51,67 @@ export default function CalendarPage() {
       {/* Calendar Header with navigation */}
       <CalendarHeader />
 
-      {/* Main Content Area */}
-      <div className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
-        {/* Left Sidebar - Filters and Stats */}
-        <div className="space-y-6">
-          {/* Sedationist Filter */}
-          <SedationistFilter />
-
-          {/* Quick Stats */}
-          <div className="space-y-3">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Available Sedationists
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{sedationists?.length || 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Ready for scheduling
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  View Mode
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold capitalize">{viewMode}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {selectedDate.toLocaleDateString()}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+      {/* Stats Cards Row */}
+      <div className="px-6 pb-4">
+        <div className="flex items-center gap-4 mb-4">
+          <SedationistMultiSelect />
         </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <UserCheck className="h-4 w-4" />
+                Selected Sedationists
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{selectedSedationistIds.length}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Currently selected
+              </p>
+            </CardContent>
+          </Card>
 
-        {/* Right Main Calendar Area */}
-        <div className="flex-1">
-          {viewMode === 'month' ? (
-            <CalendarGrid date={selectedDate} />
-          ) : (
-            <TimeSlotGrid date={selectedDate} />
-          )}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Available Sedationists
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{sedationists?.length || 0}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Ready for scheduling
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                View Mode
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold capitalize">{viewMode}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {selectedDate.toLocaleDateString()}
+              </p>
+            </CardContent>
+          </Card>
         </div>
+      </div>
+
+      {/* Main Calendar Area */}
+      <div className="flex-1 px-6 pb-6">
+        {viewMode === 'month' ? (
+          <CalendarGrid date={selectedDate} />
+        ) : (
+          <TimeSlotGrid date={selectedDate} />
+        )}
       </div>
     </div>
   );
