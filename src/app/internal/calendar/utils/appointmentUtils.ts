@@ -79,27 +79,59 @@ export const isAppointmentInTimeSlot = (
   slotTime: string,
   slotDurationMinutes = 60
 ): boolean => {
+  if (!appointment.start || !appointment.end) return false;
+  
+  try {
+    const appointmentStart = new Date(appointment.start);
+    const appointmentEnd = new Date(appointment.end);
+    
+    if (!isValid(appointmentStart) || !isValid(appointmentEnd)) return false;
+    
+    // Convert appointment times to minutes since midnight
+    const appointmentStartMinutes = appointmentStart.getHours() * 60 + appointmentStart.getMinutes();
+    const appointmentEndMinutes = appointmentEnd.getHours() * 60 + appointmentEnd.getMinutes();
+    
+    // Parse slot time (e.g., "09:00") and calculate slot range
+    const [slotHour, slotMinute] = slotTime.split(":").map(Number);
+    const slotStartMinutes = slotHour * 60 + slotMinute;
+    const slotEndMinutes = slotStartMinutes + slotDurationMinutes;
+    
+    // Check for overlap: appointment overlaps slot if appointmentStart < slotEnd AND appointmentEnd > slotStart
+    return appointmentStartMinutes < slotEndMinutes && appointmentEndMinutes > slotStartMinutes;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const isAppointmentStartInSlot = (
+  appointment: DiaryAppointmentDto,
+  slotTime: string,
+  slotDurationMinutes = 60
+): boolean => {
   if (!appointment.start) return false;
   
   try {
     const appointmentStart = new Date(appointment.start);
     if (!isValid(appointmentStart)) return false;
     
-    const appointmentHour = appointmentStart.getHours();
-    const appointmentMinute = appointmentStart.getMinutes();
-    const appointmentTimeInMinutes = appointmentHour * 60 + appointmentMinute;
-    
-    // Parse slot time (e.g., "09:00")
+    const appointmentStartMinutes = appointmentStart.getHours() * 60 + appointmentStart.getMinutes();
     const [slotHour, slotMinute] = slotTime.split(":").map(Number);
-    const slotTimeInMinutes = slotHour * 60 + slotMinute;
+    const slotStartMinutes = slotHour * 60 + slotMinute;
+    const slotEndMinutes = slotStartMinutes + slotDurationMinutes;
     
-    return (
-      appointmentTimeInMinutes >= slotTimeInMinutes &&
-      appointmentTimeInMinutes < slotTimeInMinutes + slotDurationMinutes
-    );
+    return appointmentStartMinutes >= slotStartMinutes && appointmentStartMinutes < slotEndMinutes;
   } catch (error) {
     return false;
   }
+};
+
+export const isAppointmentContinuation = (
+  appointment: DiaryAppointmentDto,
+  slotTime: string,
+  slotDurationMinutes = 60
+): boolean => {
+  return isAppointmentInTimeSlot(appointment, slotTime, slotDurationMinutes) && 
+         !isAppointmentStartInSlot(appointment, slotTime, slotDurationMinutes);
 };
 
 export const formatPatientName = (appointment: DiaryAppointmentDto): string => {

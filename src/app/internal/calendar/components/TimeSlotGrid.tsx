@@ -5,7 +5,7 @@ import { useCalendarStore } from "../store/calendarStore";
 import { PortalType } from "@/shared/types";
 import { useCalendarAppointments } from "../hooks/useCalendarData";
 import { AppointmentCard } from "./AppointmentCard";
-import { isAppointmentInTimeSlot } from "../utils/appointmentUtils";
+import { isAppointmentInTimeSlot, isAppointmentStartInSlot, isAppointmentContinuation, formatPatientName } from "../utils/appointmentUtils";
 
 interface TimeSlotGridProps {
   date: Date;
@@ -130,14 +130,23 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                         isAppointmentInTimeSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
                       ) || [];
 
+                      // Separate appointments that start in this slot vs continuations
+                      const startingAppointments = sedationistAppointments.filter(apt => 
+                        isAppointmentStartInSlot(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                      );
+                      
+                      const continuationAppointments = sedationistAppointments.filter(apt => 
+                        isAppointmentContinuation(apt, slot.time, APP_CONFIG.calendar.timeSlotDuration || 60)
+                      );
+
                       return (
                         <div 
                           key={`${sedationist.id}-${slot.time}`}
                           className="flex-shrink-0 w-[200px] min-h-[60px] border border-dashed border-muted-foreground/20 rounded-sm hover:bg-accent/30 transition-colors"
                         >
-                          {sedationistAppointments.length > 0 ? (
+                          {startingAppointments.length > 0 ? (
                             <div className="space-y-1 p-1">
-                              {sedationistAppointments.map((appointment) => (
+                              {startingAppointments.map((appointment) => (
                                 <AppointmentCard
                                   key={appointment.id}
                                   appointment={appointment}
@@ -147,6 +156,17 @@ export function TimeSlotGrid({ date }: TimeSlotGridProps) {
                                     console.log('Open appointment:', appointment.id);
                                   }}
                                 />
+                              ))}
+                            </div>
+                          ) : continuationAppointments.length > 0 ? (
+                            <div className="h-full flex items-center justify-center p-1">
+                              {continuationAppointments.map((appointment) => (
+                                <div
+                                  key={`${appointment.id}-continuation`}
+                                  className="w-full h-full bg-primary/20 border-l-4 border-primary rounded-sm flex items-center justify-center text-xs text-primary font-medium"
+                                >
+                                  {formatPatientName(appointment)}
+                                </div>
                               ))}
                             </div>
                           ) : (
