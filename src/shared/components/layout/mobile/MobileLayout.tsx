@@ -97,7 +97,7 @@ export default function MobileLayout(props: PropsWithChildren) {
       </header>
 
       {/* Mobile Main Content */}
-      <main className="flex-1 overflow-y-auto overflow-x-hidden py-4 px-4">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden py-4">
         {props.children}
       </main>
     </div>

@@ -1,5 +1,10 @@
 import { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { Users, Clock, UserCheck } from "lucide-react";
 import { PortalType } from "@/shared/types";
 import { useCalendarStore } from "./store/calendarStore";
@@ -21,7 +26,7 @@ export default function CalendarPage() {
     isLoadingSedationists,
     selectedAppointmentId,
     isAppointmentModalOpen,
-    closeAppointmentModal
+    closeAppointmentModal,
   } = useCalendarStore(PortalType.INTERNAL);
 
   // Initialize calendar for internal portal
@@ -37,7 +42,8 @@ export default function CalendarPage() {
     endOfDay(selectedDate)
   );
 
-  const selectedAppointment = appointments?.find(apt => apt.id === selectedAppointmentId) || null;
+  const selectedAppointment =
+    appointments?.find((apt) => apt.id === selectedAppointmentId) || null;
 
   if (isLoadingSedationists) {
     return (
@@ -67,7 +73,7 @@ export default function CalendarPage() {
         <div className="flex items-center gap-4 mb-4">
           <SedationistMultiSelect />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardHeader className="pb-3">
@@ -77,7 +83,9 @@ export default function CalendarPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{selectedSedationistIds.length}</div>
+              <div className="text-2xl font-bold">
+                {selectedSedationistIds.length}
+              </div>
               <p className="text-xs text-muted-foreground mt-1">
                 Currently selected
               </p>
@@ -92,7 +100,9 @@ export default function CalendarPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{sedationists?.length || 0}</div>
+              <div className="text-2xl font-bold">
+                {sedationists?.length || 0}
+              </div>
               <p className="text-xs text-muted-foreground mt-1">
                 Ready for scheduling
               </p>

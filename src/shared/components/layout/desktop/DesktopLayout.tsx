@@ -38,7 +38,7 @@ export default function DesktopLayout(props: PropsWithChildren) {
     <SidebarProvider defaultOpen={true}>
       <div className={cn("min-h-screen w-full flex", theme.backgroundClass)}>
         <AppSidebar portal={currentPortal} />
-        <SidebarInset className="flex flex-col">
+        <SidebarInset className="flex flex-col overflow-x-hidden">
           {/* Desktop Header - Sticky to top */}
           <header
             className={cn(

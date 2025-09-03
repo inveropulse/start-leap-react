@@ -24,48 +24,52 @@ export function SedationistMultiSelect() {
     refreshSedationists,
   } = useCalendarStore(PortalType.INTERNAL);
 
-  const filteredSedationists = sedationists?.filter(sedationist => {
-    const searchLower = searchTerm.toLowerCase();
-    
-    // Search through multiple fields
-    const searchableFields = [
-      `${sedationist.firstName} ${sedationist.lastName}`,
-      sedationist.firstName,
-      sedationist.lastName,
-      sedationist.email,
-      sedationist.phoneNumber,
-      sedationist.notes
-    ].filter(Boolean);
-    
-    return searchableFields.some(field => 
-      field?.toLowerCase().includes(searchLower)
-    );
-  }) || [];
+  const filteredSedationists =
+    sedationists?.filter((sedationist) => {
+      const searchLower = searchTerm.toLowerCase();
+
+      // Search through multiple fields
+      const searchableFields = [
+        `${sedationist.firstName} ${sedationist.lastName}`,
+        sedationist.firstName,
+        sedationist.lastName,
+        sedationist.email,
+        sedationist.phoneNumber,
+        sedationist.notes,
+      ].filter(Boolean);
+
+      return searchableFields.some((field) =>
+        field?.toLowerCase().includes(searchLower)
+      );
+    }) || [];
 
   // Debug logging
   useEffect(() => {
     if (searchTerm) {
-      console.log('Search term:', searchTerm);
-      console.log('Total sedationists:', sedationists?.length || 0);
-      console.log('Filtered results:', filteredSedationists.length);
-      console.log('Filtered sedationists:', filteredSedationists.map(s => ({
-        name: `${s.firstName} ${s.lastName}`,
-        email: s.email,
-        notes: s.notes
-      })));
+      console.log("Search term:", searchTerm);
+      console.log("Total sedationists:", sedationists?.length || 0);
+      console.log("Filtered results:", filteredSedationists.length);
+      console.log(
+        "Filtered sedationists:",
+        filteredSedationists.map((s) => ({
+          name: `${s.firstName} ${s.lastName}`,
+          email: s.email,
+          notes: s.notes,
+        }))
+      );
     }
   }, [searchTerm, filteredSedationists, sedationists]);
 
   const handleSedationistToggle = (sedationistId: string) => {
     const newSelection = selectedSedationistIds.includes(sedationistId)
-      ? selectedSedationistIds.filter(id => id !== sedationistId)
+      ? selectedSedationistIds.filter((id) => id !== sedationistId)
       : [...selectedSedationistIds, sedationistId];
-    
+
     setSelectedSedationists(newSelection);
   };
 
   const selectAll = () => {
-    const allIds = filteredSedationists.map(s => s.id).filter(Boolean);
+    const allIds = filteredSedationists.map((s) => s.id).filter(Boolean);
     setSelectedSedationists(allIds);
   };
 
@@ -84,8 +88,12 @@ export function SedationistMultiSelect() {
   const getSelectedNames = () => {
     if (selectedSedationistIds.length === 0) return "Select sedationists";
     if (selectedSedationistIds.length === 1) {
-      const sedationist = sedationists?.find(s => s.id === selectedSedationistIds[0]);
-      return sedationist ? `${sedationist.firstName} ${sedationist.lastName}` : "1 selected";
+      const sedationist = sedationists?.find(
+        (s) => s.id === selectedSedationistIds[0]
+      );
+      return sedationist
+        ? `${sedationist.firstName} ${sedationist.lastName}`
+        : "1 selected";
     }
     return `${selectedSedationistIds.length} sedationists selected`;
   };
@@ -110,17 +118,18 @@ export function SedationistMultiSelect() {
         <SelectTrigger className="w-full h-10">
           <div className="flex items-center gap-2 flex-1">
             <Users className="h-4 w-4 text-muted-foreground" />
-            <span className={cn(
-              "truncate",
-              selectedSedationistIds.length === 0 && "text-muted-foreground"
-            )}>
+            <span
+              className={cn(
+                "truncate",
+                selectedSedationistIds.length === 0 && "text-muted-foreground"
+              )}
+            >
               {getSelectedNames()}
             </span>
           </div>
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </SelectTrigger>
 
-        <SelectContent 
+        <SelectContent
           className="w-[280px] p-0 bg-popover border border-border shadow-lg"
           align="start"
           side="bottom"
@@ -131,21 +140,27 @@ export function SedationistMultiSelect() {
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Users className="h-3 w-3" />
                 <span>
-                  {searchTerm 
-                    ? `${filteredSedationists.length} of ${sedationists?.length || 0}` 
-                    : `${sedationists?.length || 0} total`
-                  }
+                  {searchTerm
+                    ? `${filteredSedationists.length} of ${
+                        sedationists?.length || 0
+                      }`
+                    : `${sedationists?.length || 0} total`}
                 </span>
               </div>
               <Button
-                variant="ghost" 
+                variant="ghost"
                 size="sm"
                 onClick={handleRefresh}
                 disabled={isLoadingSedationists}
                 className="h-6 w-6 p-0 ml-auto"
                 title="Refresh sedationists"
               >
-                <RefreshCw className={cn("h-3 w-3", isLoadingSedationists && "animate-spin")} />
+                <RefreshCw
+                  className={cn(
+                    "h-3 w-3",
+                    isLoadingSedationists && "animate-spin"
+                  )}
+                />
               </Button>
             </div>
             <div className="relative">
@@ -197,8 +212,10 @@ export function SedationistMultiSelect() {
             {filteredSedationists.length > 0 ? (
               <div className="p-1">
                 {filteredSedationists.map((sedationist) => {
-                  const isSelected = selectedSedationistIds.includes(sedationist.id);
-                  
+                  const isSelected = selectedSedationistIds.includes(
+                    sedationist.id
+                  );
+
                   return (
                     <div
                       key={sedationist.id}
@@ -209,7 +226,7 @@ export function SedationistMultiSelect() {
                         checked={isSelected}
                         className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                       />
-                      
+
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-foreground">
                           {sedationist.firstName} {sedationist.lastName}
@@ -237,7 +254,9 @@ export function SedationistMultiSelect() {
               <div className="p-4 text-center text-muted-foreground">
                 <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">
-                  {searchTerm ? `No sedationists match "${searchTerm}"` : 'No sedationists available'}
+                  {searchTerm
+                    ? `No sedationists match "${searchTerm}"`
+                    : "No sedationists available"}
                 </p>
                 {searchTerm && (
                   <p className="text-xs mt-1 opacity-75">
