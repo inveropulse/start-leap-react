@@ -1,8 +1,4 @@
-import { Patient, PatientPaginationResponse, CreatePatientRequest, UpdatePatientRequest, PatientsQueryParams } from "../types/patient.types";
-import { Title } from "@/api/generated/models/Title";
-import { Sex } from "@/api/generated/models/Sex";
-import { SmokingStatus } from "@/api/generated/models/SmokingStatus";
-import { AlcoholStatus } from "@/api/generated/models/AlcoholStatus";
+import { Patient, PatientPaginationResponse, CreatePatientRequest, UpdatePatientRequest, PatientsQueryParams, Title, Sex, SmokingStatus, AlcoholStatus } from "../types/patient.types";
 
 // Mock data generation
 const mockPatients: Patient[] = Array.from({ length: 87 }, (_, index) => {

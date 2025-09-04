@@ -7,11 +7,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Form } from "@/shared/components/ui/form";
 import { FormTextField, FormSelect, FormTextArea } from "@/shared/components/form";
 import { useUpdatePatientRequest } from "../hooks/useUpdatePatientRequest";
-import { Patient, UpdatePatientRequest } from "../types/patient.types";
-import { Title } from "@/api/generated/models/Title";
-import { Sex } from "@/api/generated/models/Sex";
-import { SmokingStatus } from "@/api/generated/models/SmokingStatus";
-import { AlcoholStatus } from "@/api/generated/models/AlcoholStatus";
+import { Patient, UpdatePatientRequest, Title, Sex, SmokingStatus, AlcoholStatus } from "../types/patient.types";
 import { useNotifications } from "@/shared/providers/NotificationProvider";
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 
