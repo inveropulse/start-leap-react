@@ -24,8 +24,7 @@ const SettingsScreen = <div />;
 const DashboardPage = lazy(
   () => import("@/app/internal/dashboard/DashboardPage")
 );
-const PatientPage = lazy(() => import("@/app/internal/patient/PatientPage"));
-const PatientDetailPage = lazy(() => import("@/app/internal/patient/PatientDetailPage"));
+const PatientPage = lazy(() => import("@/app/internal/PatientPage"));
 const CalendarPage = lazy(
   () => import("@/app/internal/calendar/CalendarPage")
 );
@@ -44,7 +43,6 @@ export enum InternalRoute {
   ROOT = "/internal",
   DASHBOARD = `${InternalRoute.ROOT}/dashboard`,
   PATIENTS = `${InternalRoute.ROOT}/patients`,
-  PATIENT_DETAIL = `${InternalRoute.ROOT}/patients/:id`,
   CLINICS = `${InternalRoute.ROOT}/clinics`,
   CALENDAR = `${InternalRoute.ROOT}/calendar`,
   APPOINTMENTS = `${InternalRoute.ROOT}/appointments`,
@@ -66,11 +64,6 @@ const INTERNAL_ROUTES: AppRoute[] = [
     element: <PatientPage />,
     path: InternalRoute.PATIENTS,
     meta: { title: "Patients", enabled: true, icon: Users },
-  },
-  {
-    element: <PatientDetailPage />,
-    path: InternalRoute.PATIENT_DETAIL,
-    meta: { title: "Patient Details", enabled: true },
   },
   {
     element: Clinics,
