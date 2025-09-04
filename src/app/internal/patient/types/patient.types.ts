@@ -1,27 +1,7 @@
-// Local enum definitions
-export enum Title {
-  MR = "MR",
-  MRS = "MRS", 
-  MS = "MS",
-  DR = "DR"
-}
-
-export enum Sex {
-  MALE = "MALE",
-  FEMALE = "FEMALE"
-}
-
-export enum SmokingStatus {
-  NEVER = "NEVER",
-  FORMER = "FORMER",
-  YES = "YES"
-}
-
-export enum AlcoholStatus {
-  NEVER = "NEVER", 
-  FORMER = "FORMER",
-  YES = "YES"
-}
+import { Title } from "@/api/generated/models/Title";
+import { Sex } from "@/api/generated/models/Sex";
+import { SmokingStatus } from "@/api/generated/models/SmokingStatus";
+import { AlcoholStatus } from "@/api/generated/models/AlcoholStatus";
 
 export interface Patient {
   id: string;
