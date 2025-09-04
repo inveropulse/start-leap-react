@@ -24,7 +24,7 @@ const SettingsScreen = <div />;
 const DashboardPage = lazy(
   () => import("@/app/internal/dashboard/DashboardPage")
 );
-const PatientPage = lazy(() => import("@/app/internal/PatientPage"));
+const PatientPage = lazy(() => import("@/app/internal/patient/PatientPage"));
 const CalendarPage = lazy(
   () => import("@/app/internal/calendar/CalendarPage")
 );
