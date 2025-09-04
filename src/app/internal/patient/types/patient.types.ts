@@ -1,92 +1,90 @@
-import { Title } from "@/api/generated/models/Title";
-import { Sex } from "@/api/generated/models/Sex";
-import { SmokingStatus } from "@/api/generated/models/SmokingStatus";
-import { AlcoholStatus } from "@/api/generated/models/AlcoholStatus";
-
-export interface Patient {
-  id: string;
-  firstName: string | null;
-  lastName: string | null;
-  fullName: string | null;
-  bmi: number;
-  title: Title;
-  dateOfBirth: string;
-  sex: Sex;
-  age: number;
-  address: string | null;
-  town: string | null;
-  country: string | null;
-  postCode: string | null;
-  phoneNumber: string | null;
-  alternativePhoneNumber: string | null;
-  businessName: string | null;
-  email: string | null;
-  medicalHistory: string | null;
-  allergies: string | null;
-  medications: string | null;
-  anestheticHistory: string | null;
-  asaClassification: number;
-  smokingStatus: SmokingStatus;
-  alcoholStatus: AlcoholStatus;
-  lastMealAgoInHours: number | null;
-  lastFluidAgoInHours: number | null;
-  occupation: string | null;
-  heightFormat: string | null;
-  height: number;
-  weightFormat: string | null;
-  weight: number;
-  ticketId: string | null;
-  notes: string | null;
-  createdDateTime: string | null;
-  smokingNote: string | null;
-  alcoholNote: string | null;
+// Local enums to avoid dependencies on @/api/generated/models
+export enum Title {
+  MR = "Mr",
+  MRS = "Mrs",
+  MS = "Ms",
+  DR = "Dr",
+  PROF = "Prof",
 }
 
+export enum Sex {
+  MALE = "Male",
+  FEMALE = "Female",
+  OTHER = "Other",
+}
+
+export enum SmokingStatus {
+  NEVER = "Never",
+  FORMER = "Former",
+  CURRENT = "Current",
+}
+
+export enum AlcoholStatus {
+  NEVER = "Never",
+  OCCASIONAL = "Occasional",
+  REGULAR = "Regular",
+  HEAVY = "Heavy",
+}
+
+// Patient data structure
+export interface Patient {
+  id: string;
+  title: Title;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  sex: Sex;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  smokingStatus: SmokingStatus;
+  alcoholStatus: AlcoholStatus;
+  allergies?: string[];
+  medications?: string[];
+  medicalHistory?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Paginated response
 export interface PatientPaginationResponse {
-  payload: Patient[];
+  items: Patient[];
+  totalCount: number;
   page: number;
   pageSize: number;
-  totalCount: number;
   totalPages: number;
 }
 
+// Request payloads
 export interface CreatePatientRequest {
+  title: Title;
   firstName: string;
   lastName: string;
-  title: Title;
   dateOfBirth: string;
   sex: Sex;
-  address?: string;
-  town?: string;
-  country?: string;
-  postCode?: string;
-  phoneNumber?: string;
-  alternativePhoneNumber?: string;
-  businessName?: string;
-  email?: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  smokingStatus: SmokingStatus;
+  alcoholStatus: AlcoholStatus;
+  allergies?: string[];
+  medications?: string[];
   medicalHistory?: string;
-  allergies?: string;
-  medications?: string;
-  anestheticHistory?: string;
-  asaClassification?: number;
-  smokingStatus?: SmokingStatus;
-  alcoholStatus?: AlcoholStatus;
-  occupation?: string;
-  height?: number;
-  heightFormat?: string;
-  weight?: number;
-  weightFormat?: string;
   notes?: string;
-  smokingNote?: string;
-  alcoholNote?: string;
 }
 
-export interface UpdatePatientRequest extends Partial<CreatePatientRequest> {
+export interface UpdatePatientRequest extends CreatePatientRequest {
   id: string;
 }
 
+// Query parameters
 export interface PatientsQueryParams {
-  searchText?: string;
-  pageNo?: number;
+  search?: string;
+  page?: number;
   pageSize?: number;
 }
