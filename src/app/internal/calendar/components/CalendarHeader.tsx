@@ -1,8 +1,9 @@
-import { Button } from "@/shared/components/ui/button";
-import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
-import { useCalendarStore } from "../store/calendarStore";
-import { PortalType } from "@/shared/types";
 import { addDays, subDays } from "date-fns";
+import { PortalType } from "@/shared/types";
+import { Button } from "@/shared/components/ui/button";
+import { useCalendarStore } from "../store/calendarStore";
+import { SedationistMultiSelect } from "./SedationistMultiSelect";
+import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 
 export function CalendarHeader() {
   const { selectedDate, setSelectedDate } = useCalendarStore(
@@ -62,7 +63,8 @@ export function CalendarHeader() {
       </div>
 
       {/* Right side - Day view only */}
-      <div className="flex items-center">
+      <div className="flex items-center gap-3">
+        <SedationistMultiSelect />
         <Button variant="default" size="sm" disabled>
           Day View
         </Button>

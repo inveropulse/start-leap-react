@@ -1,7 +1,8 @@
-import { SimpleSecureStorage } from "./SimpleSecureStorage";
 import { PortalType } from "@/shared/types";
+import { SimpleSecureStorage } from "./SimpleSecureStorage";
+import { CalendarViewMode } from "@/app/internal/calendar/store/calendarStore";
 
-export class CalendarStorageService {
+class CalendarStorage {
   private storage: SimpleSecureStorage;
 
   constructor(storage: SimpleSecureStorage) {
@@ -22,14 +23,14 @@ export class CalendarStorageService {
     return this.storage.getItem(key) || [];
   }
 
-  setViewMode(portal: PortalType, viewMode: "day" | "week"): void {
+  setViewMode(portal: PortalType, viewMode: CalendarViewMode): void {
     const key = this.getPortalKey(portal, "view_mode");
     this.storage.setItem(key, viewMode);
   }
 
-  getViewMode(portal: PortalType): "day" | "week" {
+  getViewMode(portal: PortalType): CalendarViewMode {
     const key = this.getPortalKey(portal, "view_mode");
-    return this.storage.getItem(key) || "day";
+    return this.storage.getItem(key) || CalendarViewMode.DAY;
   }
 
   setSelectedDate(portal: PortalType, date: Date): void {
@@ -44,17 +45,13 @@ export class CalendarStorageService {
   }
 
   clearPortalData(portal: PortalType): void {
-    const keys = [
-      "selected_sedationists",
-      "view_mode", 
-      "selected_date"
-    ];
-    
-    keys.forEach(key => {
+    const keys = ["selected_sedationists", "view_mode", "selected_date"];
+
+    keys.forEach((key) => {
       const portalKey = this.getPortalKey(portal, key);
       this.storage.removeItem(portalKey);
     });
   }
 }
 
-export const calendarStorage = new CalendarStorageService(new SimpleSecureStorage());
+export const calendarStorage = new CalendarStorage(new SimpleSecureStorage());

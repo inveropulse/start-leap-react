@@ -74,7 +74,7 @@ const DEFAULT_CONFIG: AppConfig = {
     enableHSTS: false, // false for development, true for production
     maxRequestSize: 10 * 1024 * 1024, // 10MB
     rateLimit: {
-      enabled: true,  
+      enabled: true,
       maxRequests: 100,
       windowMs: 15 * 60 * 1000, // 15 minutes
     },
@@ -88,7 +88,7 @@ const DEFAULT_CONFIG: AppConfig = {
   },
   calendar: {
     defaultStartHour: 6, // 6 AM
-    defaultEndHour: 21, // 9 PM
+    defaultEndHour: 22, // 10 PM
     timeSlotDuration: 30, // 30 minutes
     refreshInterval: 5 * 60 * 1000, // 5 minutes
     maxSedationistsDisplay: 6, // Max sedationists in day view
@@ -131,7 +131,7 @@ export class ApplicationConfig {
       ) as Environment,
       version: getEnvValue("VITE_VERSION", DEFAULT_CONFIG.version),
       currency: getEnvValue(
-        "VITE_CURRENCY", 
+        "VITE_CURRENCY",
         DEFAULT_CONFIG.currency,
         (v) => v as Currency
       ),
@@ -256,7 +256,7 @@ export class ApplicationConfig {
           Number
         ),
         defaultEndHour: getEnvValue(
-          "VITE_CALENDAR_END_HOUR", 
+          "VITE_CALENDAR_END_HOUR",
           DEFAULT_CONFIG.calendar.defaultEndHour,
           Number
         ),
