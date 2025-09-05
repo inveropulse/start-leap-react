@@ -17,11 +17,11 @@ import {
 } from '@/shared/components/ui/popover';
 import { FormDateField } from '@/shared/components/form';
 import { useForm } from 'react-hook-form';
-import { AppointmentStatus, AppointmentFilters } from '../types';
+import { AppointmentStatus, AppointmentFilters as AppointmentFiltersType } from '../types';
 
 interface AppointmentFiltersProps {
-  filters: AppointmentFilters;
-  onFiltersChange: (filters: AppointmentFilters) => void;
+  filters: AppointmentFiltersType;
+  onFiltersChange: (filters: AppointmentFiltersType) => void;
   totalResults: number;
 }
 
@@ -30,7 +30,8 @@ interface DateRangeForm {
   dateTo: string;
 }
 
-export function AppointmentFiltersComponent({ filters, onFiltersChange, totalResults }: AppointmentFiltersProps) {
+export function AppointmentFilters({ filters, onFiltersChange, totalResults }: AppointmentFiltersProps) {
+  // Component for filtering appointments
   const [isDateRangeOpen, setIsDateRangeOpen] = useState(false);
   
   const { control, watch, setValue } = useForm<DateRangeForm>({
