@@ -1,5 +1,6 @@
+// Update PatientDetailPage with new tabs
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, Trash2, Phone, Mail, MapPin, Calendar, Activity } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, Phone, Mail, MapPin, Calendar, Activity, FileText } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
@@ -9,6 +10,9 @@ import { usePatientRequest } from "./hooks/usePatientRequests";
 import { PatientAvatar } from "./components/PatientAvatar";
 import { PatientEditModal } from "./components/PatientEditModal";
 import { PatientDeleteDialog } from "./components/PatientDeleteDialog";
+import { PatientAppointmentsTab } from "./components/PatientAppointmentsTab";
+import { PatientRecordsTab } from "./components/PatientRecordsTab";
+import { PatientPrintExport } from "./components/PatientPrintExport";
 import { useState } from "react";
 import { format } from "date-fns";
 
@@ -161,9 +165,11 @@ export default function PatientDetailPage() {
 
       {/* Detailed Information Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="medical">Medical</TabsTrigger>
+          <TabsTrigger value="appointments">Appointments</TabsTrigger>
+          <TabsTrigger value="records">Records</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
@@ -292,6 +298,10 @@ export default function PatientDetailPage() {
           </div>
         </TabsContent>
 
+        <TabsContent value="appointments" className="space-y-4">
+          <PatientAppointmentsTab patientId={patient.id!} />
+        </TabsContent>
+
         <TabsContent value="contact" className="space-y-4">
           <Card>
             <CardHeader>
@@ -337,24 +347,28 @@ export default function PatientDetailPage() {
         </TabsContent>
 
         <TabsContent value="notes" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Clinical Notes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Notes</label>
-                  <p className="mt-2 whitespace-pre-wrap">{patient.notes || "No notes recorded"}</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Clinical Notes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Notes</label>
+                    <p className="mt-2 whitespace-pre-wrap">{patient.notes || "No notes recorded"}</p>
+                  </div>
+                  <Separator />
+                  <div className="text-sm text-muted-foreground">
+                    <p>Created: {formatDate(patient.createdDateTime)}</p>
+                    {patient.ticketId && <p>Ticket ID: {patient.ticketId}</p>}
+                  </div>
                 </div>
-                <Separator />
-                <div className="text-sm text-muted-foreground">
-                  <p>Created: {formatDate(patient.createdDateTime)}</p>
-                  {patient.ticketId && <p>Ticket ID: {patient.ticketId}</p>}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            <PatientPrintExport patient={patient} />
+          </div>
         </TabsContent>
       </Tabs>
 
