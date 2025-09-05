@@ -60,8 +60,6 @@ export function AppointmentFilters({ filters, onFiltersChange, totalResults }: A
   };
 
   const applyDateRange = (data: DateRangeForm) => {
-    // TEMPORARY ERROR FOR TESTING - REMOVE THIS LINE
-    (undefined as any).testError;
     if (data.dateFrom && data.dateTo) {
       onFiltersChange({
         ...filters,
