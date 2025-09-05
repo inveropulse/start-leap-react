@@ -1,10 +1,12 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog";
 import { Badge } from "@/shared/components/ui/badge";
-import { Calendar, Clock, MapPin, User, Phone, DollarSign, FileText, Stethoscope } from "lucide-react";
+import { Calendar, Clock, MapPin, User, Phone, DollarSign, Euro, PoundSterling, FileText, Stethoscope } from "lucide-react";
 import { PatientAppointment } from "../services/appointmentService";
 import { format } from "date-fns";
 import { Separator } from "@/shared/components/ui/separator";
 import { formatCurrencyAxisValue } from "@/shared/utils/currency";
+import { APP_CONFIG } from "@/shared/AppConfig";
+import { Currency } from "@/shared/types";
 
 interface AppointmentDetailsModalProps {
   appointment: PatientAppointment | null;
@@ -37,6 +39,19 @@ export function AppointmentDetailsModal({ appointment, isOpen, onClose }: Appoin
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    }
+  };
+
+  const getCurrencyIcon = () => {
+    switch (APP_CONFIG.currency) {
+      case Currency.GBP:
+        return PoundSterling;
+      case Currency.USD:
+        return DollarSign;
+      case Currency.EUR:
+        return Euro;
+      default:
+        return PoundSterling;
     }
   };
 
@@ -108,7 +123,10 @@ export function AppointmentDetailsModal({ appointment, isOpen, onClose }: Appoin
           {appointment.fee && (
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                {(() => {
+                  const CurrencyIcon = getCurrencyIcon();
+                  return <CurrencyIcon className="h-4 w-4 text-muted-foreground" />;
+                })()}
                 <span className="font-medium text-sm">Fee</span>
               </div>
               <p className="text-sm pl-6">{formatCurrencyAxisValue(appointment.fee)}</p>
