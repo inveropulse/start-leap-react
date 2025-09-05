@@ -15,7 +15,7 @@ import { AppointmentViewModal } from './components/AppointmentViewModal';
 import { AppointmentEditModal } from './components/AppointmentEditModal';
 import { AddAvailabilityModal } from './components/AddAvailabilityModal';
 import { CancelAppointmentModal } from './components/CancelAppointmentModal';
-import { BookAppointmentModal } from './components/BookAppointmentModal';
+import { BookAppointmentWizard } from './components/wizard/BookAppointmentWizard';
 import { AppointmentPagination } from './components/AppointmentPagination';
 import { Appointment, AppointmentFilters as FilterType, PaginationState, AppointmentStatus } from './types';
 import { useNotifications } from '@/shared/providers/NotificationProvider';
@@ -306,7 +306,7 @@ export default function AppointmentPage() {
         onClose={() => setCancelModalOpen(false)}
       />
 
-      <BookAppointmentModal
+      <BookAppointmentWizard
         isOpen={bookModalOpen}
         onClose={() => setBookModalOpen(false)}
       />
