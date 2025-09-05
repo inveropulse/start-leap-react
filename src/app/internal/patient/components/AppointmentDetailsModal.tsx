@@ -4,6 +4,7 @@ import { Calendar, Clock, MapPin, User, Phone, DollarSign, FileText, Stethoscope
 import { PatientAppointment } from "../services/appointmentService";
 import { format } from "date-fns";
 import { Separator } from "@/shared/components/ui/separator";
+import { formatCurrencyAxisValue } from "@/shared/utils/currency";
 
 interface AppointmentDetailsModalProps {
   appointment: PatientAppointment | null;
@@ -110,7 +111,7 @@ export function AppointmentDetailsModal({ appointment, isOpen, onClose }: Appoin
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium text-sm">Fee</span>
               </div>
-              <p className="text-sm pl-6">${appointment.fee}</p>
+              <p className="text-sm pl-6">{formatCurrencyAxisValue(appointment.fee)}</p>
             </div>
           )}
 
