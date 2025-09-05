@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { quickActionTo } from "@/shared/utils/quickAction";
 import { InternalQuickActionKey, InternalRoute } from "@/routes/internal_routes";
 import { useState } from "react";
+import { PatientAppointment } from "../services/appointmentService";
+import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 
 interface PatientAppointmentsTabProps {
   patientId: string;
@@ -19,10 +21,17 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
   const navigate = useNavigate();
   const { data: appointments, isLoading } = usePatientAppointments(patientId);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedAppointment, setSelectedAppointment] = useState<PatientAppointment | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const itemsPerPage = 5;
 
   const handleBookAppointment = () => {
     navigate(quickActionTo(InternalRoute.APPOINTMENTS, InternalQuickActionKey.NEW_APPOINTMENT, { patientId }));
+  };
+
+  const handleViewDetails = (appointment: PatientAppointment) => {
+    setSelectedAppointment(appointment);
+    setIsDetailsModalOpen(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -149,7 +158,9 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
                     )}
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">View Details</Button>
+                    <Button variant="outline" size="sm" onClick={() => handleViewDetails(appointment)}>
+                      View Details
+                    </Button>
                     <Button variant="outline" size="sm">Reschedule</Button>
                   </div>
                 </div>
@@ -198,7 +209,9 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
                         </div>
                       )}
                     </div>
-                    <Button variant="ghost" size="sm">View Report</Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleViewDetails(appointment)}>
+                      View Details
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -238,6 +251,16 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
           )}
         </CardContent>
       </Card>
+
+      {/* Appointment Details Modal */}
+      <AppointmentDetailsModal
+        appointment={selectedAppointment}
+        isOpen={isDetailsModalOpen}
+        onClose={() => {
+          setIsDetailsModalOpen(false);
+          setSelectedAppointment(null);
+        }}
+      />
 
       {/* Appointment Timeline */}
       <Card>
