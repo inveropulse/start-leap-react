@@ -15,7 +15,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/shared/components/ui/popover';
-import { FormDateField } from '@/shared/components/form';
+import { FormDateField, FormDateRangeField } from '@/shared/components/form';
+import { Form } from '@/shared/components/ui/form';
+import { FormErrorBoundary } from '@/shared/components/error/FormErrorBoundary';
 import { useForm } from 'react-hook-form';
 import { AppointmentStatus, AppointmentFilters as AppointmentFiltersType } from '../types';
 
@@ -34,15 +36,12 @@ export function AppointmentFilters({ filters, onFiltersChange, totalResults }: A
   // Component for filtering appointments
   const [isDateRangeOpen, setIsDateRangeOpen] = useState(false);
   
-  const { control, watch, setValue } = useForm<DateRangeForm>({
+  const form = useForm<DateRangeForm>({
     defaultValues: {
       dateFrom: filters.dateFrom || '',
       dateTo: filters.dateTo || '',
     },
   });
-
-  const dateFrom = watch('dateFrom');
-  const dateTo = watch('dateTo');
 
   const handleSearchChange = (search: string) => {
     onFiltersChange({ ...filters, search });
@@ -60,22 +59,24 @@ export function AppointmentFilters({ filters, onFiltersChange, totalResults }: A
     }
   };
 
-  const applyDateRange = () => {
-    onFiltersChange({
-      ...filters,
-      dateFrom: dateFrom || undefined,
-      dateTo: dateTo || undefined,
-    });
-    setIsDateRangeOpen(false);
+  const applyDateRange = (data: DateRangeForm) => {
+    if (data.dateFrom && data.dateTo) {
+      onFiltersChange({
+        ...filters,
+        dateFrom: data.dateFrom,
+        dateTo: data.dateTo,
+      });
+      setIsDateRangeOpen(false);
+    }
   };
 
   const clearDateRange = () => {
-    setValue('dateFrom', '');
-    setValue('dateTo', '');
+    form.setValue('dateFrom', '');
+    form.setValue('dateTo', '');
     onFiltersChange({
       ...filters,
-      dateFrom: undefined,
-      dateTo: undefined,
+      dateFrom: '',
+      dateTo: '',
     });
     setIsDateRangeOpen(false);
   };
@@ -84,11 +85,11 @@ export function AppointmentFilters({ filters, onFiltersChange, totalResults }: A
     onFiltersChange({
       search: '',
       status: [],
-      dateFrom: undefined,
-      dateTo: undefined,
+      dateFrom: '',
+      dateTo: '',
     });
-    setValue('dateFrom', '');
-    setValue('dateTo', '');
+    form.setValue('dateFrom', '');
+    form.setValue('dateTo', '');
   };
 
   const activeFiltersCount = 
@@ -170,31 +171,42 @@ export function AppointmentFilters({ filters, onFiltersChange, totalResults }: A
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80">
-            <div className="space-y-4">
-              <div className="font-medium">Select Date Range</div>
-              <div className="space-y-3">
-                <FormDateField
-                  control={control}
-                  name="dateFrom"
-                  label="From Date"
-                />
-                <FormDateField
-                  control={control}
-                  name="dateTo"
-                  label="To Date"
-                />
-              </div>
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={clearDateRange} size="sm">
-                  Clear
-                </Button>
-                <Button onClick={applyDateRange} size="sm">
-                  Apply
-                </Button>
-              </div>
-            </div>
-          </PopoverContent>
+            <PopoverContent className="w-80 p-4">
+              <FormErrorBoundary formName="Date Range Filter">
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(applyDateRange)} className="space-y-4">
+                    <h4 className="font-medium">Select Date Range</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <FormDateField
+                        control={form.control}
+                        name="dateFrom"
+                        label="From"
+                        placeholder="Select start date"
+                      />
+                      <FormDateField
+                        control={form.control}
+                        name="dateTo"
+                        label="To"
+                        placeholder="Select end date"
+                      />
+                    </div>
+                    <div className="flex justify-between pt-2">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={clearDateRange}
+                      >
+                        Clear
+                      </Button>
+                      <Button type="submit" size="sm">
+                        Apply
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </FormErrorBoundary>
+            </PopoverContent>
         </Popover>
 
         {/* Filter Summary */}
