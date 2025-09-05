@@ -15,6 +15,7 @@ import { AppointmentViewModal } from './components/AppointmentViewModal';
 import { AppointmentEditModal } from './components/AppointmentEditModal';
 import { AddAvailabilityModal } from './components/AddAvailabilityModal';
 import { CancelAppointmentModal } from './components/CancelAppointmentModal';
+import { BookAppointmentModal } from './components/BookAppointmentModal';
 import { AppointmentPagination } from './components/AppointmentPagination';
 import { Appointment, AppointmentFilters as FilterType, PaginationState, AppointmentStatus } from './types';
 import { useNotifications } from '@/shared/providers/NotificationProvider';
@@ -38,6 +39,7 @@ export default function AppointmentPage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [addAvailabilityModalOpen, setAddAvailabilityModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [bookModalOpen, setBookModalOpen] = useState(false);
 
   // Filter and paginate appointments
   const filteredAppointments = useMemo(() => {
@@ -142,6 +144,10 @@ export default function AppointmentPage() {
     setCancelModalOpen(true);
   };
 
+  const handleBookAppointment = () => {
+    setBookModalOpen(true);
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -161,7 +167,7 @@ export default function AppointmentPage() {
             <Calendar className="h-4 w-4 mr-2" />
             Add Availability
           </Button>
-          <Button>
+          <Button onClick={handleBookAppointment}>
             <Plus className="h-4 w-4 mr-2" />
             Book Appointment
           </Button>
@@ -298,6 +304,11 @@ export default function AppointmentPage() {
         appointment={selectedAppointment}
         isOpen={cancelModalOpen}
         onClose={() => setCancelModalOpen(false)}
+      />
+
+      <BookAppointmentModal
+        isOpen={bookModalOpen}
+        onClose={() => setBookModalOpen(false)}
       />
     </div>
   );
