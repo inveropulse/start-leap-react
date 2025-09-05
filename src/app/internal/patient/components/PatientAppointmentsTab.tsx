@@ -1,4 +1,4 @@
-import { Calendar, Clock, MapPin, User, Plus, Phone } from "lucide-react";
+import { Calendar, Clock, MapPin, User, Plus, Phone, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { quickActionTo } from "@/shared/utils/quickAction";
 import { InternalQuickActionKey, InternalRoute } from "@/routes/internal_routes";
+import { useState } from "react";
 
 interface PatientAppointmentsTabProps {
   patientId: string;
@@ -17,6 +18,8 @@ interface PatientAppointmentsTabProps {
 export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppointmentsTabProps) {
   const navigate = useNavigate();
   const { data: appointments, isLoading } = usePatientAppointments(patientId);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const handleBookAppointment = () => {
     navigate(quickActionTo(InternalRoute.APPOINTMENTS, InternalQuickActionKey.NEW_APPOINTMENT, { patientId }));
@@ -65,6 +68,20 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
 
   const upcomingAppointments = appointments?.upcoming || [];
   const pastAppointments = appointments?.past || [];
+  
+  // Pagination calculations
+  const totalPages = Math.ceil(pastAppointments.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPageAppointments = pastAppointments.slice(startIndex, endIndex);
+
+  const handlePreviousPage = () => {
+    setCurrentPage(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  };
 
   return (
     <div className="space-y-6">
@@ -162,33 +179,62 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
           {pastAppointments.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">No appointment history</p>
           ) : (
-            pastAppointments.slice(0, 5).map((appointment) => (
-              <div key={appointment.id} className="border rounded-lg p-4 space-y-2 opacity-75">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{formatDateTime(appointment.dateTime)}</span>
-                      <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Dr. {appointment.doctorName} • {appointment.clinicName}
-                    </div>
-                    {appointment.procedure && (
-                      <div className="text-sm text-muted-foreground">
-                        {appointment.procedure}
+            <>
+              {currentPageAppointments.map((appointment) => (
+                <div key={appointment.id} className="border rounded-lg p-4 space-y-2 opacity-75">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{formatDateTime(appointment.dateTime)}</span>
+                        <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
                       </div>
-                    )}
+                      <div className="text-sm text-muted-foreground">
+                        Dr. {appointment.doctorName} • {appointment.clinicName}
+                      </div>
+                      {appointment.procedure && (
+                        <div className="text-sm text-muted-foreground">
+                          {appointment.procedure}
+                        </div>
+                      )}
+                    </div>
+                    <Button variant="ghost" size="sm">View Report</Button>
                   </div>
-                  <Button variant="ghost" size="sm">View Report</Button>
                 </div>
-              </div>
-            ))
-          )}
-          {pastAppointments.length > 5 && (
-            <Button variant="outline" className="w-full">
-              View All {pastAppointments.length} Past Appointments
-            </Button>
+              ))}
+              
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between pt-4">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {startIndex + 1}-{Math.min(endIndex, pastAppointments.length)} of {pastAppointments.length} appointments
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handlePreviousPage}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Previous
+                    </Button>
+                    <div className="text-sm text-muted-foreground">
+                      Page {currentPage} of {totalPages}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>
