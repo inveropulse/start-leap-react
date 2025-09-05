@@ -21,6 +21,7 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
   const navigate = useNavigate();
   const { data: appointments, isLoading } = usePatientAppointments(patientId);
   const [currentPage, setCurrentPage] = useState(1);
+  const [upcomingCurrentPage, setUpcomingCurrentPage] = useState(1);
   const [selectedAppointment, setSelectedAppointment] = useState<PatientAppointment | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const itemsPerPage = 5;
@@ -78,11 +79,17 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
   const upcomingAppointments = appointments?.upcoming || [];
   const pastAppointments = appointments?.past || [];
   
-  // Pagination calculations
+  // Pagination calculations for past appointments
   const totalPages = Math.ceil(pastAppointments.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentPageAppointments = pastAppointments.slice(startIndex, endIndex);
+
+  // Pagination calculations for upcoming appointments
+  const upcomingTotalPages = Math.ceil(upcomingAppointments.length / itemsPerPage);
+  const upcomingStartIndex = (upcomingCurrentPage - 1) * itemsPerPage;
+  const upcomingEndIndex = upcomingStartIndex + itemsPerPage;
+  const currentUpcomingAppointments = upcomingAppointments.slice(upcomingStartIndex, upcomingEndIndex);
 
   const handlePreviousPage = () => {
     setCurrentPage(prev => Math.max(prev - 1, 1));
@@ -90,6 +97,14 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
 
   const handleNextPage = () => {
     setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  };
+
+  const handleUpcomingPreviousPage = () => {
+    setUpcomingCurrentPage(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleUpcomingNextPage = () => {
+    setUpcomingCurrentPage(prev => Math.min(prev + 1, upcomingTotalPages));
   };
 
   return (
@@ -134,46 +149,80 @@ export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppoi
           {upcomingAppointments.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">No upcoming appointments scheduled</p>
           ) : (
-            upcomingAppointments.map((appointment) => (
-              <div key={appointment.id} className="border rounded-lg p-4 space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{formatDateTime(appointment.dateTime)}</span>
-                      <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">Dr. {appointment.doctorName}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{appointment.clinicName}</span>
-                    </div>
-                    {appointment.procedure && (
-                      <div className="text-sm text-muted-foreground">
-                        Procedure: {appointment.procedure}
+            <>
+              {currentUpcomingAppointments.map((appointment) => (
+                <div key={appointment.id} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{formatDateTime(appointment.dateTime)}</span>
+                        <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
                       </div>
-                    )}
+                      <div className="flex items-center space-x-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">Dr. {appointment.doctorName}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{appointment.clinicName}</span>
+                      </div>
+                      {appointment.procedure && (
+                        <div className="text-sm text-muted-foreground">
+                          Procedure: {appointment.procedure}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(appointment)}>
+                        View Details
+                      </Button>
+                      <Button variant="outline" size="sm">Reschedule</Button>
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" onClick={() => handleViewDetails(appointment)}>
-                      View Details
+                  {appointment.notes && (
+                    <>
+                      <Separator />
+                      <div className="text-sm text-muted-foreground">
+                        <strong>Notes:</strong> {appointment.notes}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+              
+              {/* Upcoming Appointments Pagination Controls */}
+              {upcomingTotalPages > 1 && (
+                <div className="flex items-center justify-between pt-4">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {upcomingStartIndex + 1}-{Math.min(upcomingEndIndex, upcomingAppointments.length)} of {upcomingAppointments.length} appointments
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleUpcomingPreviousPage}
+                      disabled={upcomingCurrentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Previous
                     </Button>
-                    <Button variant="outline" size="sm">Reschedule</Button>
+                    <div className="text-sm text-muted-foreground">
+                      Page {upcomingCurrentPage} of {upcomingTotalPages}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleUpcomingNextPage}
+                      disabled={upcomingCurrentPage === upcomingTotalPages}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-                {appointment.notes && (
-                  <>
-                    <Separator />
-                    <div className="text-sm text-muted-foreground">
-                      <strong>Notes:</strong> {appointment.notes}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))
+              )}
+            </>
           )}
         </CardContent>
       </Card>
