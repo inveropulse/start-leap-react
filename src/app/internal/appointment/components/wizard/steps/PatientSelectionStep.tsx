@@ -35,10 +35,10 @@ export function PatientSelectionStep({ data, onDataChange, onNext }: WizardStepP
   }, []);
 
   const handleNext = useCallback(() => {
-    if (selectedPatientId) {
+    if (selectedPatientId && data.patient) {
       onNext();
     }
-  }, [selectedPatientId, onNext]);
+  }, [selectedPatientId, onNext, data.patient]);
 
   return (
     <div className="space-y-6">

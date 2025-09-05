@@ -4,7 +4,7 @@ import { WizardData, WizardStep, StepValidationResult } from '../types/wizard.ty
 export function useAppointmentWizard() {
   const [currentStep, setCurrentStep] = useState<WizardStep>(WizardStep.PATIENT_SELECTION);
   const [isLoading, setIsLoading] = useState(false);
-  const wizardDataRef = useRef<WizardData>({});
+  const [wizardData, setWizardData] = useState<WizardData>({});
   const stepValidationRef = useRef<Record<WizardStep, StepValidationResult>>({
     [WizardStep.PATIENT_SELECTION]: { isValid: false, errors: [] },
     [WizardStep.CLINIC_SELECTION]: { isValid: false, errors: [] },
@@ -15,10 +15,10 @@ export function useAppointmentWizard() {
   });
 
   const updateData = useCallback((updates: Partial<WizardData>) => {
-    wizardDataRef.current = {
-      ...wizardDataRef.current,
+    setWizardData(prev => ({
+      ...prev,
       ...updates,
-    };
+    }));
   }, []);
 
   const updateStepValidation = useCallback((step: WizardStep, validation: StepValidationResult) => {
@@ -57,7 +57,7 @@ export function useAppointmentWizard() {
 
   const resetWizard = useCallback(() => {
     setCurrentStep(WizardStep.PATIENT_SELECTION);
-    wizardDataRef.current = {};
+    setWizardData({});
     stepValidationRef.current = {
       [WizardStep.PATIENT_SELECTION]: { isValid: false, errors: [] },
       [WizardStep.CLINIC_SELECTION]: { isValid: false, errors: [] },
@@ -76,7 +76,7 @@ export function useAppointmentWizard() {
 
   return {
     currentStep,
-    data: wizardDataRef.current,
+    data: wizardData,
     isLoading,
     setIsLoading,
     updateData,
