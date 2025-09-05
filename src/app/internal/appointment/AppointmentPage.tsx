@@ -13,10 +13,13 @@ import { AppointmentFilters } from './components/AppointmentFilters';
 import { AppointmentsTable } from './components/AppointmentsTable';
 import { AppointmentViewModal } from './components/AppointmentViewModal';
 import { AppointmentEditModal } from './components/AppointmentEditModal';
+import { AddAvailabilityModal } from './components/AddAvailabilityModal';
 import { AppointmentPagination } from './components/AppointmentPagination';
 import { Appointment, AppointmentFilters as FilterType, PaginationState, AppointmentStatus } from './types';
+import { useNotifications } from '@/shared/providers/NotificationProvider';
 
 export default function AppointmentPage() {
+  const { showSuccess } = useNotifications();
   const [appointments] = useState<Appointment[]>(mockAppointments);
   const [filters, setFilters] = useState<FilterType>({
     search: '',
@@ -32,6 +35,7 @@ export default function AppointmentPage() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [addAvailabilityModalOpen, setAddAvailabilityModalOpen] = useState(false);
 
   // Filter and paginate appointments
   const filteredAppointments = useMemo(() => {
@@ -101,6 +105,36 @@ export default function AppointmentPage() {
     console.log('Saving appointment:', appointment);
   };
 
+  const handleRefresh = async () => {
+    // Simulate refresh with loading state
+    const refreshBtn = document.querySelector('[data-refresh-btn]') as HTMLButtonElement;
+    if (refreshBtn) {
+      refreshBtn.disabled = true;
+    }
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Reset filters to show "refreshed" data
+    setFilters({
+      search: '',
+      status: [],
+      dateFrom: undefined,
+      dateTo: undefined,
+    });
+    setPagination(prev => ({ ...prev, page: 1 }));
+    
+    showSuccess("Appointments refreshed successfully");
+    
+    if (refreshBtn) {
+      refreshBtn.disabled = false;
+    }
+  };
+
+  const handleAddAvailability = () => {
+    setAddAvailabilityModalOpen(true);
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -112,11 +146,11 @@ export default function AppointmentPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleRefresh} data-refresh-btn>
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleAddAvailability}>
             <Calendar className="h-4 w-4 mr-2" />
             Add Availability
           </Button>
@@ -245,6 +279,11 @@ export default function AppointmentPage() {
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         onSave={handleSaveAppointment}
+      />
+
+      <AddAvailabilityModal
+        isOpen={addAvailabilityModalOpen}
+        onClose={() => setAddAvailabilityModalOpen(false)}
       />
     </div>
   );
