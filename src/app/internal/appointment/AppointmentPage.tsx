@@ -14,6 +14,7 @@ import { AppointmentsTable } from './components/AppointmentsTable';
 import { AppointmentViewModal } from './components/AppointmentViewModal';
 import { AppointmentEditModal } from './components/AppointmentEditModal';
 import { AddAvailabilityModal } from './components/AddAvailabilityModal';
+import { CancelAppointmentModal } from './components/CancelAppointmentModal';
 import { AppointmentPagination } from './components/AppointmentPagination';
 import { Appointment, AppointmentFilters as FilterType, PaginationState, AppointmentStatus } from './types';
 import { useNotifications } from '@/shared/providers/NotificationProvider';
@@ -36,6 +37,7 @@ export default function AppointmentPage() {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [addAvailabilityModalOpen, setAddAvailabilityModalOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
 
   // Filter and paginate appointments
   const filteredAppointments = useMemo(() => {
@@ -133,6 +135,11 @@ export default function AppointmentPage() {
 
   const handleAddAvailability = () => {
     setAddAvailabilityModalOpen(true);
+  };
+
+  const handleCancelAppointment = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setCancelModalOpen(true);
   };
 
   return (
@@ -242,6 +249,7 @@ export default function AppointmentPage() {
               appointments={paginatedAppointments}
               onViewAppointment={handleViewAppointment}
               onEditAppointment={handleEditAppointment}
+              onCancelAppointment={handleCancelAppointment}
             />
           ) : (
             <div className="text-center py-12">
@@ -284,6 +292,12 @@ export default function AppointmentPage() {
       <AddAvailabilityModal
         isOpen={addAvailabilityModalOpen}
         onClose={() => setAddAvailabilityModalOpen(false)}
+      />
+
+      <CancelAppointmentModal
+        appointment={selectedAppointment}
+        isOpen={cancelModalOpen}
+        onClose={() => setCancelModalOpen(false)}
       />
     </div>
   );

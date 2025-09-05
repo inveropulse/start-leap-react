@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { Eye, Edit, Calendar, Phone, MapPin, MoreHorizontal } from 'lucide-react';
+import { Eye, Edit, Calendar, Phone, MapPin, MoreHorizontal, X } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Badge } from '@/shared/components/ui/badge';
 import {
@@ -24,9 +24,10 @@ interface AppointmentsTableProps {
   appointments: Appointment[];
   onViewAppointment: (appointment: Appointment) => void;
   onEditAppointment: (appointment: Appointment) => void;
+  onCancelAppointment: (appointment: Appointment) => void;
 }
 
-export function AppointmentsTable({ appointments, onViewAppointment, onEditAppointment }: AppointmentsTableProps) {
+export function AppointmentsTable({ appointments, onViewAppointment, onEditAppointment, onCancelAppointment }: AppointmentsTableProps) {
   const getStatusVariant = (status: AppointmentStatus): "default" | "secondary" | "destructive" | "outline" => {
     switch (status) {
       case AppointmentStatus.CONFIRMED:
@@ -63,6 +64,10 @@ export function AppointmentsTable({ appointments, onViewAppointment, onEditAppoi
     } catch {
       return `${date} • ${time}`;
     }
+  };
+
+  const canCancelAppointment = (status: AppointmentStatus): boolean => {
+    return ![AppointmentStatus.CANCELLED, AppointmentStatus.COMPLETED, AppointmentStatus.NO_SHOW].includes(status);
   };
 
   // Desktop Table View
@@ -134,6 +139,16 @@ export function AppointmentsTable({ appointments, onViewAppointment, onEditAppoi
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
+                  {canCancelAppointment(appointment.status) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onCancelAppointment(appointment)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm">
@@ -153,6 +168,15 @@ export function AppointmentsTable({ appointments, onViewAppointment, onEditAppoi
                         <Phone className="h-4 w-4 mr-2" />
                         Contact Patient
                       </DropdownMenuItem>
+                      {canCancelAppointment(appointment.status) && (
+                        <DropdownMenuItem 
+                          onClick={() => onCancelAppointment(appointment)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <X className="h-4 w-4 mr-2" />
+                          Cancel Appointment
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -216,15 +240,25 @@ export function AppointmentsTable({ appointments, onViewAppointment, onEditAppoi
                   <Eye className="h-4 w-4 mr-2" />
                   View
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onEditAppointment(appointment)}
-                  className="flex-1"
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
+                 <Button
+                   variant="outline"
+                   size="sm"
+                   onClick={() => onEditAppointment(appointment)}
+                   className="flex-1"
+                 >
+                   <Edit className="h-4 w-4 mr-2" />
+                   Edit
+                 </Button>
+                 {canCancelAppointment(appointment.status) && (
+                   <Button
+                     variant="outline"
+                     size="sm"
+                     onClick={() => onCancelAppointment(appointment)}
+                     className="text-destructive hover:text-destructive"
+                   >
+                     <X className="h-4 w-4" />
+                   </Button>
+                 )}
               </div>
             </div>
           </CardContent>
