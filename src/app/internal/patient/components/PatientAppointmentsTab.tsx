@@ -5,13 +5,22 @@ import { Badge } from "@/shared/components/ui/badge";
 import { Separator } from "@/shared/components/ui/separator";
 import { usePatientAppointments } from "../hooks/usePatientAppointments";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import { quickActionTo } from "@/shared/utils/quickAction";
+import { InternalQuickActionKey, InternalRoute } from "@/routes/internal_routes";
 
 interface PatientAppointmentsTabProps {
   patientId: string;
+  patientPhone?: string;
 }
 
-export function PatientAppointmentsTab({ patientId }: PatientAppointmentsTabProps) {
+export function PatientAppointmentsTab({ patientId, patientPhone }: PatientAppointmentsTabProps) {
+  const navigate = useNavigate();
   const { data: appointments, isLoading } = usePatientAppointments(patientId);
+
+  const handleBookAppointment = () => {
+    navigate(quickActionTo(InternalRoute.APPOINTMENTS, InternalQuickActionKey.NEW_APPOINTMENT, { patientId }));
+  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -71,18 +80,18 @@ export function PatientAppointmentsTab({ patientId }: PatientAppointmentsTabProp
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={handleBookAppointment}>
               <Plus className="mr-2 h-4 w-4" />
               Book Appointment
             </Button>
-            <Button variant="outline" size="sm">
-              <Calendar className="mr-2 h-4 w-4" />
-              Check Availability
-            </Button>
-            <Button variant="outline" size="sm">
-              <Phone className="mr-2 h-4 w-4" />
-              Contact Patient
-            </Button>
+            {patientPhone && (
+              <Button variant="outline" size="sm" asChild>
+                <a href={`tel:${patientPhone}`}>
+                  <Phone className="mr-2 h-4 w-4" />
+                  Contact Patient
+                </a>
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

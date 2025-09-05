@@ -299,7 +299,7 @@ export default function PatientDetailPage() {
         </TabsContent>
 
         <TabsContent value="appointments" className="space-y-4">
-          <PatientAppointmentsTab patientId={patient.id!} />
+          <PatientAppointmentsTab patientId={patient.id!} patientPhone={patient.phoneNumber} />
         </TabsContent>
 
         <TabsContent value="contact" className="space-y-4">
