@@ -14,6 +14,7 @@ export type AppRoute = {
     readonly title: string;
     readonly enabled: boolean;
     readonly description?: string;
+    readonly isSubRoute?: boolean;
     readonly icon?: React.ForwardRefExoticComponent<
       Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
     >;

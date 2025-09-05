@@ -25,6 +25,20 @@ export const getEnabledPortals = () => {
     }));
 };
 
+export const getEnabledPortalsWithMainRoutes = () => {
+  return PORTAL_REGISTRY.portals
+    .filter((portal) => portal.enabled)
+    .map((portal) => ({
+      ...portal,
+      routes: portal.routes.filter((route) => route.meta.enabled && !route.meta.isSubRoute),
+      quickActions: portal.quickActions.filter((action) => action.enabled),
+    }));
+};
+
 export const getPortalByType = (type: PortalType) => {
   return getEnabledPortals().find((portal) => portal.key === type);
+};
+
+export const getPortalByTypeWithMainRoutes = (type: PortalType) => {
+  return getEnabledPortalsWithMainRoutes().find((portal) => portal.key === type);
 };

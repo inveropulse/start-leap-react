@@ -70,7 +70,7 @@ const INTERNAL_ROUTES: AppRoute[] = [
   {
     element: <PatientDetailPage />,
     path: InternalRoute.PATIENT_DETAIL,
-    meta: { title: "Patient Details", enabled: true, icon: Users },
+    meta: { title: "Patient Details", enabled: true, isSubRoute: true, icon: Users },
   },
   {
     element: Clinics,

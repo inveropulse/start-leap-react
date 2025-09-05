@@ -1,7 +1,7 @@
 import { cn } from "@/shared/utils/cn";
 import { Activity } from "lucide-react";
 import { PortalType } from "@/shared/types";
-import { getPortalByType } from "@/routes/registry";
+import { getPortalByTypeWithMainRoutes } from "@/routes/registry";
 import { NavLink, useLocation } from "react-router-dom";
 import { usePortalTheme } from "@/shared/hooks/usePortalTheme";
 import { quickActionState, quickActionTo } from "@/shared/utils/quickAction";
@@ -17,7 +17,7 @@ export function MobileNavigation({
 }: MobileNavigationProps) {
   const location = useLocation();
   const theme = usePortalTheme(portal);
-  const portalConfig = getPortalByType(portal);
+  const portalConfig = getPortalByTypeWithMainRoutes(portal);
   const routeItems = portalConfig.routes || [];
   const quickActions = portalConfig.quickActions || [];
 

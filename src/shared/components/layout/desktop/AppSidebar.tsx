@@ -22,7 +22,7 @@ import {
   TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
 import { PortalType } from "@/shared/types";
-import { getPortalByType } from "@/routes/registry";
+import { getPortalByTypeWithMainRoutes } from "@/routes/registry";
 import { quickActionState, quickActionTo } from "@/shared/utils/quickAction";
 
 export interface AppSidebarProps {
@@ -34,7 +34,7 @@ export function AppSidebar({ portal }: AppSidebarProps) {
   const { state } = useSidebar();
   const theme = usePortalTheme(portal);
   const isCollapsed = state === "collapsed";
-  const portalConfig = getPortalByType(portal);
+  const portalConfig = getPortalByTypeWithMainRoutes(portal);
   const routeItems = portalConfig.routes || [];
   const quickActions = portalConfig.quickActions || [];
 
