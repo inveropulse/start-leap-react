@@ -18,7 +18,7 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<Partial<ClinicSearchParams>>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12);
+  const [pageSize, setPageSize] = useState(25);
 
   const searchParams = useMemo<ClinicSearchParams>(() => ({
     search: searchText || undefined,

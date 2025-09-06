@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 interface ClinicPaginationProps {
   currentPage: number;
@@ -35,28 +34,22 @@ export function ClinicPagination({
 
   const generatePageNumbers = () => {
     const pages = [];
-    const maxVisiblePages = 5;
+    const maxVisiblePages = 3; // Show fewer pages like in the reference
     
-    if (totalPages <= maxVisiblePages) {
+    if (totalPages <= maxVisiblePages + 2) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      const startPage = Math.max(1, currentPage - 2);
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-      
-      if (startPage > 1) {
-        pages.push(1);
-        if (startPage > 2) pages.push('...');
-      }
-      
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-      
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) pages.push('...');
-        pages.push(totalPages);
+      if (currentPage <= 2) {
+        // Show first few pages
+        pages.push(1, 2, '...', totalPages);
+      } else if (currentPage >= totalPages - 1) {
+        // Show last few pages
+        pages.push(1, '...', totalPages - 1, totalPages);
+      } else {
+        // Show current page with context
+        pages.push(1, '...', currentPage, '...', totalPages);
       }
     }
     
@@ -64,8 +57,8 @@ export function ClinicPagination({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
-      {/* Results Info */}
+    <div className="flex items-center justify-between py-4">
+      {/* Results Info - Left */}
       <div className="text-sm text-muted-foreground">
         {isLoading ? (
           <span>Loading...</span>
@@ -76,95 +69,66 @@ export function ClinicPagination({
         )}
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* Page Size Selector */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Per page:</span>
-          <Select
-            value={pageSize.toString()}
-            onValueChange={(value) => onPageSizeChange(parseInt(value))}
-            disabled={isLoading}
-          >
-            <SelectTrigger className="w-20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="6">6</SelectItem>
-              <SelectItem value="12">12</SelectItem>
-              <SelectItem value="24">24</SelectItem>
-              <SelectItem value="48">48</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      {/* Page Size Selector - Center */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Show:</span>
+        <Select
+          value={pageSize.toString()}
+          onValueChange={(value) => onPageSizeChange(parseInt(value))}
+          disabled={isLoading}
+        >
+          <SelectTrigger className="w-32">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="10">10 per page</SelectItem>
+            <SelectItem value="25">25 per page</SelectItem>
+            <SelectItem value="50">50 per page</SelectItem>
+            <SelectItem value="100">100 per page</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        {/* Pagination Controls */}
+      {/* Pagination Controls - Right */}
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={!canGoPrevious}
+        >
+          Previous
+        </Button>
+
+        {/* Page Numbers */}
         <div className="flex items-center gap-1">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(1)}
-            disabled={!canGoPrevious}
-            className="h-8 w-8 p-0"
-          >
-            <ChevronsLeft className="h-4 w-4" />
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={!canGoPrevious}
-            className="h-8 w-8 p-0"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-
-          {/* Page Numbers */}
-          <div className="flex items-center gap-1">
-            {generatePageNumbers().map((page, index) => (
-              <div key={index}>
-                {page === '...' ? (
-                  <span className="px-2 text-muted-foreground">...</span>
-                ) : (
-                  <Button
-                    variant={page === currentPage ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => onPageChange(page as number)}
-                    disabled={isLoading}
-                    className="h-8 w-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={!canGoNext}
-            className="h-8 w-8 p-0"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(totalPages)}
-            disabled={!canGoNext}
-            className="h-8 w-8 p-0"
-          >
-            <ChevronsRight className="h-4 w-4" />
-          </Button>
+          {generatePageNumbers().map((page, index) => (
+            <div key={index}>
+              {page === '...' ? (
+                <span className="px-2 text-muted-foreground">...</span>
+              ) : (
+                <Button
+                  variant={page === currentPage ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => onPageChange(page as number)}
+                  disabled={isLoading}
+                  className="h-8 w-8 p-0"
+                >
+                  {page}
+                </Button>
+              )}
+            </div>
+          ))}
         </div>
 
-        {/* Page Info */}
-        <div className="text-sm text-muted-foreground">
-          Page {currentPage} of {Math.max(1, totalPages)}
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={!canGoNext}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );
