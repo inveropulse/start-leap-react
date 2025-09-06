@@ -15,7 +15,7 @@ import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
 
 const ClinicsPage = lazy(() => import("@/app/internal/clinics/ClinicsPage"));
-const Sedationists = <div />;
+const SedationistsPage = lazy(() => import("@/app/internal/sedationists/SedationistsPage"));
 const Analytics = <div />;
 const Reports = <div />;
 const UsersMgmt = <div />;
@@ -36,6 +36,7 @@ const AppointmentPage = lazy(
 export enum InternalQuickActionKey {
   ADD_PATIENT = "add_patient",
   ADD_CLINIC = "add_clinic",
+  ADD_SEDATIONIST = "add_sedationist",
   NEW_APPOINTMENT = "new_appointment",
   VIEW_APPOINTMENT = "view_appointment",
   VIEW_CALENDAR = "view_calendar",
@@ -89,7 +90,7 @@ const INTERNAL_ROUTES: AppRoute[] = [
     meta: { title: "Appointments", enabled: true, icon: CalendarDays },
   },
   {
-    element: Sedationists,
+    element: <SedationistsPage />,
     path: InternalRoute.SEDATIONISTS,
     meta: { title: "Sedationists", enabled: true, icon: UserCheck },
   },
@@ -141,6 +142,13 @@ export const INTERNAL_PORTAL: PortalConfig = {
       title: "Add Clinic",
       path: InternalRoute.CLINICS,
       actionKey: InternalQuickActionKey.ADD_CLINIC,
+    },
+    {
+      enabled: true,
+      icon: UserCheck,
+      title: "Add Sedationist",
+      path: InternalRoute.SEDATIONISTS,
+      actionKey: InternalQuickActionKey.ADD_SEDATIONIST,
     },
     {
       enabled: true,
