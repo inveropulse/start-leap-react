@@ -28,7 +28,7 @@ export interface ListViewControlsProps {
   onRefresh: () => void;
   isLoading?: boolean;
   showFilters?: boolean;
-  filtersActive?: boolean;
+  filtersActive?: boolean | number;
   onToggleFilters?: () => void;
   children?: React.ReactNode; // For custom filters
 }

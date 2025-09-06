@@ -1,16 +1,7 @@
 import { useState, useMemo } from 'react';
-import { Plus, RefreshCw, Grid3X3, List, Search, Filter } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
-import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
+import { UserCheck, Users, Award, Calendar } from "lucide-react";
 import { SedationistFilters } from './SedationistFilters';
 import { SedationistCard } from './SedationistCard';
-import { SedationistPagination } from './SedationistPagination';
 import { useSedationistsRequest } from '../hooks/useSedationistsRequest';
 import { 
   SedationistFilters as FilterType, 
@@ -19,7 +10,13 @@ import {
   SedationistSpecialty,
   CertificationStatus
 } from '../types';
-import { UserCheck, Users, Award, Calendar } from "lucide-react";
+import {
+  ListViewHeader,
+  ListViewStats,
+  ListViewControls,
+  ListViewContent,
+  ListViewPagination
+} from "../../shared";
 
 interface SedationistsListViewProps {
   onAddSedationist: () => void;
@@ -76,7 +73,7 @@ export function SedationistsListView({ onAddSedationist, onViewSedationist }: Se
 
   // Calculate stats
   const stats = useMemo(() => {
-    if (!data) return { active: 0, available: 0, certExpiring: 0, totalCases: 0 };
+    if (!data) return [];
     
     const active = data.items.filter(s => s.status === SedationistStatus.ACTIVE).length;
     const available = data.items.filter(s => 
@@ -87,195 +84,126 @@ export function SedationistsListView({ onAddSedationist, onViewSedationist }: Se
     ).length;
     const totalCases = data.items.reduce((sum, s) => sum + s.totalProcedures, 0);
 
-    return { active, available, certExpiring, totalCases };
+    return [
+      {
+        id: 'active',
+        label: 'Active Sedationists',
+        value: active,
+        icon: UserCheck,
+        color: 'success' as const,
+        description: 'Currently practicing'
+      },
+      {
+        id: 'available',
+        label: 'Available Today',
+        value: available,
+        icon: Calendar,
+        color: 'primary' as const,
+        description: 'Available for procedures'
+      },
+      {
+        id: 'certExpiring',
+        label: 'Certs Expiring',
+        value: certExpiring,
+        icon: Award,
+        color: 'warning' as const,
+        description: 'Need renewal soon'
+      },
+      {
+        id: 'totalCases',
+        label: 'Total Cases',
+        value: totalCases,
+        icon: Users,
+        color: 'default' as const,
+        description: 'All-time procedures'
+      }
+    ];
   }, [data]);
 
   if (error) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Sedationists</h1>
-            <p className="text-muted-foreground">
-              Manage sedationist profiles, certifications, and availability
-            </p>
-          </div>
-          <Button onClick={onAddSedationist}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Sedationist
-          </Button>
-        </div>
+        <ListViewHeader
+          title="Sedationists"
+          description="Manage sedationist profiles, certifications, and availability"
+          onAdd={onAddSedationist}
+          addButtonText="Add Sedationist"
+        />
         
-        <Card>
-          <CardContent className="flex items-center justify-center h-32">
-            <div className="text-center">
-              <p className="text-destructive mb-2">Error loading sedationists</p>
-              <Button variant="outline" onClick={() => refetch()}>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Retry
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <ListViewContent
+          viewMode={viewMode}
+          error="Error loading sedationists"
+          onRetry={() => refetch()}
+        />
       </div>
     );
   }
 
+  // Get active filters count
+  const getActiveFiltersCount = () => {
+    return (
+      (filters.status.length > 0 ? 1 : 0) +
+      (filters.specialties.length > 0 ? 1 : 0) +
+      (filters.certificationStatus.length > 0 ? 1 : 0) +
+      (filters.availableOnly ? 1 : 0)
+    );
+  };
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Sedationists</h1>
-          <p className="text-muted-foreground">
-            Manage sedationist profiles, certifications, and availability
-          </p>
-        </div>
-        <Button onClick={onAddSedationist}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Sedationist
-        </Button>
-      </div>
+      <ListViewHeader
+        title="Sedationists"
+        description="Manage sedationist profiles, certifications, and availability"
+        onAdd={onAddSedationist}
+        addButtonText="Add Sedationist"
+      />
+      
+      <ListViewStats stats={stats} isLoading={isLoading} />
+      
+      <ListViewControls
+        searchValue={filters.search}
+        onSearchChange={(value) => handleFiltersChange({ ...filters, search: value })}
+        searchPlaceholder="Search sedationists..."
+        viewMode={viewMode}
+        onViewModeToggle={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+        onRefresh={() => refetch()}
+        isLoading={isLoading}
+        showFilters={true}
+        filtersActive={getActiveFiltersCount()}
+        onToggleFilters={() => {}} // Filters are always shown for now
+      >
+        <SedationistFilters
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+        />
+      </ListViewControls>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Sedationists</CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.active}</div>
-            <p className="text-xs text-muted-foreground">
-              Currently practicing
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Available Today</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.available}</div>
-            <p className="text-xs text-muted-foreground">
-              Available for procedures
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Certs Expiring</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.certExpiring}</div>
-            <p className="text-xs text-muted-foreground">
-              Need renewal soon
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cases</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalCases}</div>
-            <p className="text-xs text-muted-foreground">
-              All-time procedures
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Search & Filter</CardTitle>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => refetch()}
-                disabled={isLoading}
-              >
-                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <SedationistFilters
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
+      <ListViewContent
+        viewMode={viewMode}
+        isLoading={isLoading}
+        isEmpty={data?.items.length === 0}
+        emptyMessage={
+          filters.search || getActiveFiltersCount() > 0
+            ? "Try adjusting your search or filters"
+            : "Get started by adding your first sedationist"
+        }
+        emptyAction={(filters.search === '' && getActiveFiltersCount() === 0) ? {
+          label: "Add Sedationist",
+          onClick: onAddSedationist
+        } : undefined}
+      >
+        {data?.items.map((sedationist) => (
+          <SedationistCard
+            key={sedationist.id}
+            sedationist={sedationist}
+            viewMode={viewMode}
+            onClick={() => onViewSedationist(sedationist.id)}
           />
-        </CardContent>
-      </Card>
+        ))}
+      </ListViewContent>
 
-      {/* Sedationists Grid/List */}
-      <Card>
-        <CardContent className="p-6">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-32">
-              <div className="flex items-center space-x-2">
-                <RefreshCw className="h-4 w-4 animate-spin" />
-                <span>Loading sedationists...</span>
-              </div>
-            </div>
-          ) : data?.items.length === 0 ? (
-            <div className="flex items-center justify-center h-32">
-              <div className="text-center">
-                <UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No sedationists found</h3>
-                <p className="text-muted-foreground mb-4">
-                  {filters.search || filters.status.length > 0
-                    ? "Try adjusting your search or filters"
-                    : "Get started by adding your first sedationist"}
-                </p>
-                <Button onClick={onAddSedationist}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Sedationist
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className={
-              viewMode === 'grid'
-                ? "grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-                : "space-y-4"
-            }>
-              {data?.items.map((sedationist) => (
-                <SedationistCard
-                  key={sedationist.id}
-                  sedationist={sedationist}
-                  viewMode={viewMode}
-                  onClick={() => onViewSedationist(sedationist.id)}
-                />
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Pagination */}
       {data && data.totalCount > 0 && (
-        <SedationistPagination
+        <ListViewPagination
           currentPage={pagination.page}
           totalPages={Math.ceil(pagination.total / pagination.pageSize)}
           pageSize={pagination.pageSize}

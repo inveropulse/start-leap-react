@@ -6,9 +6,9 @@ import { ListViewStatsProps } from "../../types/listView.types";
 const getStatColorClass = (color?: 'default' | 'success' | 'warning' | 'primary') => {
   switch (color) {
     case 'success':
-      return 'text-green-600';
+      return 'text-green-600 dark:text-green-400';
     case 'warning':
-      return 'text-orange-600';
+      return 'text-orange-600 dark:text-orange-400';
     case 'primary':
       return 'text-portal-internal-primary';
     default:
@@ -19,11 +19,11 @@ const getStatColorClass = (color?: 'default' | 'success' | 'warning' | 'primary'
 const getStatBgClass = (color?: 'default' | 'success' | 'warning' | 'primary') => {
   switch (color) {
     case 'success':
-      return 'bg-green-50 border-green-200';
+      return 'bg-green-50/50 border-green-200/50 dark:bg-green-950/20 dark:border-green-800/30';
     case 'warning':
-      return 'bg-orange-50 border-orange-200';
+      return 'bg-orange-50/50 border-orange-200/50 dark:bg-orange-950/20 dark:border-orange-800/30';
     case 'primary':
-      return 'bg-portal-internal-secondary border-portal-internal-accent/20';
+      return 'bg-portal-internal-primary/5 border-portal-internal-primary/20';
     default:
       return 'bg-card border-border';
   }
@@ -34,9 +34,9 @@ export function ListViewStats({ stats, isLoading }: ListViewStatsProps) {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i}>
+          <Card key={i} className="animate-pulse">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <Skeleton className="h-4 w-20" />
               <Skeleton className="h-4 w-4" />
@@ -52,24 +52,27 @@ export function ListViewStats({ stats, isLoading }: ListViewStatsProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat) => {
         const IconComponent = stat.icon;
         const statColorClass = getStatColorClass(stat.color);
         const statBgClass = getStatBgClass(stat.color);
         
         return (
-          <Card key={stat.id} className={statBgClass}>
+          <Card 
+            key={stat.id} 
+            className={`${statBgClass} hover:shadow-md transition-all duration-200 cursor-pointer hover:scale-[1.02]`}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.label}
               </CardTitle>
               {IconComponent && (
-                <IconComponent className={`h-4 w-4 ${statColorClass}`} />
+                <IconComponent className="h-4 w-4 text-muted-foreground" />
               )}
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${statColorClass}`}>
+              <div className={`text-2xl font-bold ${statColorClass} mb-1`}>
                 {stat.value}
               </div>
               {stat.description && (
