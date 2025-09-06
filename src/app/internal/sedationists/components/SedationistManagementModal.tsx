@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
+import { Input } from "@/shared/components/ui/input";
+import { Label } from "@/shared/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
+import { Checkbox } from "@/shared/components/ui/checkbox";
+import { useToast } from "@/shared/hooks/use-toast";
 import { 
   User, 
   Award, 
@@ -20,13 +25,19 @@ import {
   Loader2,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  Edit3,
+  Save,
+  X
 } from "lucide-react";
 import { useSedationistRequest } from '../hooks/useSedationistsRequest';
+import { useUpdateSedationistRequest } from '../hooks/useSedationistMutations';
 import { 
   SedationistStatus, 
   CertificationStatus,
-  SedationistSpecialty 
+  SedationistSpecialty,
+  type Sedationist,
+  type UpdateSedationistData
 } from '../types';
 
 interface SedationistManagementModalProps {
@@ -100,8 +111,97 @@ export function SedationistManagementModal({
   onClose 
 }: SedationistManagementModalProps) {
   const [activeTab, setActiveTab] = useState('profile');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState<Partial<Sedationist>>({});
   
   const { data: sedationist, isLoading, error } = useSedationistRequest(sedationistId);
+  const updateSedationist = useUpdateSedationistRequest();
+  const { toast } = useToast();
+
+  // Initialize edit form when sedationist data loads
+  useEffect(() => {
+    if (sedationist && !isEditing) {
+      setEditForm({
+        firstName: sedationist.firstName,
+        lastName: sedationist.lastName,
+        email: sedationist.email,
+        phone: sedationist.phone,
+        status: sedationist.status,
+        specialties: sedationist.specialties,
+        licenseNumber: sedationist.licenseNumber,
+      });
+    }
+  }, [sedationist, isEditing]);
+
+  const handleEditToggle = () => {
+    if (isEditing) {
+      // Reset form if canceling
+      if (sedationist) {
+        setEditForm({
+          firstName: sedationist.firstName,
+          lastName: sedationist.lastName,
+          email: sedationist.email,
+          phone: sedationist.phone,
+          status: sedationist.status,
+          specialties: sedationist.specialties,
+          licenseNumber: sedationist.licenseNumber,
+        });
+      }
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const handleSave = async () => {
+    if (!sedationistId || !editForm.firstName || !editForm.lastName || !editForm.email) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const updateData: UpdateSedationistData = {
+        id: sedationistId,
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        email: editForm.email,
+        phone: editForm.phone || '',
+        status: editForm.status!,
+        specialties: editForm.specialties || [],
+        licenseNumber: editForm.licenseNumber!,
+      };
+
+      await updateSedationist.mutateAsync(updateData);
+      setIsEditing(false);
+      toast({
+        title: "Success",
+        description: "Sedationist updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update sedationist. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSpecialtyChange = (specialty: SedationistSpecialty, checked: boolean) => {
+    const currentSpecialties = editForm.specialties || [];
+    if (checked) {
+      setEditForm({
+        ...editForm,
+        specialties: [...currentSpecialties, specialty]
+      });
+    } else {
+      setEditForm({
+        ...editForm,
+        specialties: currentSpecialties.filter(s => s !== specialty)
+      });
+    }
+  };
 
   if (!isOpen || !sedationistId) return null;
 
@@ -163,6 +263,42 @@ export function SedationistManagementModal({
                 <span className="text-muted-foreground">{sedationist.licenseNumber}</span>
               </div>
             </div>
+            <div className="flex items-center space-x-2">
+              {activeTab === 'profile' && (
+                <>
+                  {isEditing ? (
+                    <>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={handleEditToggle}
+                        disabled={updateSedationist.isPending}
+                      >
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel
+                      </Button>
+                      <Button 
+                        size="sm"
+                        onClick={handleSave}
+                        disabled={updateSedationist.isPending}
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        {updateSedationist.isPending ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                    </>
+                  ) : (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleEditToggle}
+                    >
+                      <Edit3 className="h-4 w-4 mr-2" />
+                      Edit Profile
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </DialogHeader>
 
@@ -191,76 +327,182 @@ export function SedationistManagementModal({
           </TabsList>
 
           <TabsContent value="profile" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Contact Information */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Contact Information</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span>{sedationist.email}</span>
-                  </div>
-                  {sedationist.phone && (
-                    <div className="flex items-center space-x-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span>{sedationist.phone}</span>
+            {isEditing ? (
+              /* Edit Mode */
+              <div className="space-y-6">
+                {/* Basic Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Basic Information</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="firstName">First Name *</Label>
+                        <Input
+                          id="firstName"
+                          value={editForm.firstName || ''}
+                          onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                          placeholder="Enter first name"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="lastName">Last Name *</Label>
+                        <Input
+                          id="lastName"
+                          value={editForm.lastName || ''}
+                          onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                          placeholder="Enter last name"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="licenseNumber">License Number *</Label>
+                        <Input
+                          id="licenseNumber"
+                          value={editForm.licenseNumber || ''}
+                          onChange={(e) => setEditForm({ ...editForm, licenseNumber: e.target.value })}
+                          placeholder="Enter license number"
+                        />
+                      </div>
                     </div>
-                  )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Contact & Status</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="email">Email *</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={editForm.email || ''}
+                          onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                          placeholder="Enter email address"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Phone</Label>
+                        <Input
+                          id="phone"
+                          value={editForm.phone || ''}
+                          onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                          placeholder="Enter phone number"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="status">Status</Label>
+                        <Select
+                          value={editForm.status}
+                          onValueChange={(value: SedationistStatus) => setEditForm({ ...editForm, status: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(statusConfig).map(([key, config]) => (
+                              <SelectItem key={key} value={key}>
+                                {config.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Specialties */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Specialties</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {Object.entries(specialtyLabels).map(([key, label]) => (
+                      <div key={key} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={key}
+                          checked={editForm.specialties?.includes(key as SedationistSpecialty) || false}
+                          onCheckedChange={(checked) => 
+                            handleSpecialtyChange(key as SedationistSpecialty, checked as boolean)
+                          }
+                        />
+                        <Label htmlFor={key} className="text-sm">{label}</Label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+            ) : (
+              /* View Mode */
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Contact Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Contact Information</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span>{sedationist.email}</span>
+                      </div>
+                      {sedationist.phone && (
+                        <div className="flex items-center space-x-2">
+                          <Phone className="h-4 w-4 text-muted-foreground" />
+                          <span>{sedationist.phone}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-              {/* Professional Stats */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Professional Statistics</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 border rounded-lg">
-                    <div className="text-2xl font-bold">{sedationist.totalProcedures}</div>
-                    <div className="text-sm text-muted-foreground">Total Cases</div>
+                  {/* Professional Stats */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Professional Statistics</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-4 border rounded-lg">
+                        <div className="text-2xl font-bold">{sedationist.totalProcedures}</div>
+                        <div className="text-sm text-muted-foreground">Total Cases</div>
+                      </div>
+                      <div className="text-center p-4 border rounded-lg">
+                        <div className="text-2xl font-bold">{sedationist.successRate.toFixed(1)}%</div>
+                        <div className="text-sm text-muted-foreground">Success Rate</div>
+                      </div>
+                      <div className="text-center p-4 border rounded-lg">
+                        <div className="text-2xl font-bold">{sedationist.patientRating.toFixed(1)}</div>
+                        <div className="text-sm text-muted-foreground">Patient Rating</div>
+                      </div>
+                      <div className="text-center p-4 border rounded-lg">
+                        <div className="text-2xl font-bold">{sedationist.certifications.length}</div>
+                        <div className="text-sm text-muted-foreground">Certifications</div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
-                    <div className="text-2xl font-bold">{sedationist.successRate.toFixed(1)}%</div>
-                    <div className="text-sm text-muted-foreground">Success Rate</div>
+                </div>
+
+                {/* Specialties */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Specialties</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {sedationist.specialties.map((specialty) => (
+                      <Badge key={specialty} variant="outline">
+                        {specialtyLabels[specialty]}
+                      </Badge>
+                    ))}
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
-                    <div className="text-2xl font-bold">{sedationist.patientRating.toFixed(1)}</div>
-                    <div className="text-sm text-muted-foreground">Patient Rating</div>
-                  </div>
-                  <div className="text-center p-4 border rounded-lg">
-                    <div className="text-2xl font-bold">{sedationist.certifications.length}</div>
-                    <div className="text-sm text-muted-foreground">Certifications</div>
+                </div>
+
+                {/* Service Details */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Service Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-sm font-medium">Joined:</span>
+                      <span className="ml-2">{new Date(sedationist.joinDate).toLocaleDateString()}</span>
+                    </div>
+                    {sedationist.lastActiveDate && (
+                      <div>
+                        <span className="text-sm font-medium">Last Active:</span>
+                        <span className="ml-2">{new Date(sedationist.lastActiveDate).toLocaleDateString()}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Specialties */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Specialties</h3>
-              <div className="flex flex-wrap gap-2">
-                {sedationist.specialties.map((specialty) => (
-                  <Badge key={specialty} variant="outline">
-                    {specialtyLabels[specialty]}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            {/* Service Details */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Service Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <span className="text-sm font-medium">Joined:</span>
-                  <span className="ml-2">{new Date(sedationist.joinDate).toLocaleDateString()}</span>
-                </div>
-                {sedationist.lastActiveDate && (
-                  <div>
-                    <span className="text-sm font-medium">Last Active:</span>
-                    <span className="ml-2">{new Date(sedationist.lastActiveDate).toLocaleDateString()}</span>
-                  </div>
-                )}
-              </div>
-            </div>
+            )}
           </TabsContent>
 
           <TabsContent value="certifications" className="space-y-4">
