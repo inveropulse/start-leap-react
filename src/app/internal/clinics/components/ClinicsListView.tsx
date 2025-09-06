@@ -6,6 +6,7 @@ import { useClinicsRequest } from "../hooks/useClinicRequests";
 import { ClinicSearchParams } from "../types/clinic.types";
 import { ClinicCard } from "./ClinicCard";
 import { ClinicFilters } from "./ClinicFilters";
+import { ClinicPagination } from "./ClinicPagination";
 
 interface ClinicsListViewProps {
   onAddClinic: () => void;
@@ -16,13 +17,15 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
   const [searchText, setSearchText] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<Partial<ClinicSearchParams>>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
 
   const searchParams = useMemo<ClinicSearchParams>(() => ({
     search: searchText || undefined,
-    page: 1,
-    pageSize: 12,
+    page: currentPage,
+    pageSize: pageSize,
     ...filters,
-  }), [searchText, filters]);
+  }), [searchText, filters, currentPage, pageSize]);
 
   const { data, isLoading, error, refetch } = useClinicsRequest(searchParams);
 
@@ -32,6 +35,25 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
 
   const toggleViewMode = () => {
     setViewMode(prev => prev === "grid" ? "list" : "grid");
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1); // Reset to first page when changing page size
+  };
+
+  const handleFiltersChange = (newFilters: Partial<ClinicSearchParams>) => {
+    setFilters(newFilters);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchText(value);
+    setCurrentPage(1); // Reset to first page when search changes
   };
 
   return (
@@ -57,7 +79,7 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
           <Input
             placeholder="Search clinics by name, location, or contact person..."
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -87,20 +109,30 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
       {/* Filters */}
       <ClinicFilters 
         filters={filters}
-        onFiltersChange={setFilters}
+        onFiltersChange={handleFiltersChange}
       />
 
-      {/* Stats */}
-      {data && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>
-            Showing {data.clinics.length} of {data.totalCount} clinics
-          </span>
-          <span>
-            Page {data.currentPage} of {data.totalPages}
-          </span>
-        </div>
-      )}
+      {/* Stats - Always shown */}
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <span>
+          {isLoading ? (
+            "Loading clinics..."
+          ) : data ? (
+            `Showing ${data.clinics.length} of ${data.totalCount} clinics`
+          ) : (
+            "No clinics loaded"
+          )}
+        </span>
+        <span>
+          {isLoading ? (
+            "Page - of -"
+          ) : data ? (
+            `Page ${data.currentPage} of ${Math.max(1, data.totalPages)}`
+          ) : (
+            "Page 1 of 1"
+          )}
+        </span>
+      </div>
 
       {/* Loading State */}
       {isLoading && (
@@ -142,7 +174,7 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
       )}
 
       {/* Empty State */}
-      {data && data.clinics.length === 0 && (
+      {data && data.clinics.length === 0 && !isLoading && (
         <div className="text-center py-12">
           <div className="text-muted-foreground">
             {searchText || Object.keys(filters).length > 0 ? (
@@ -150,8 +182,8 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
                 <p>No clinics found matching your criteria</p>
                 <Button 
                   onClick={() => {
-                    setSearchText("");
-                    setFilters({});
+                    handleSearchChange("");
+                    handleFiltersChange({});
                   }} 
                   variant="outline" 
                   className="mt-4"
@@ -170,6 +202,17 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
           </div>
         </div>
       )}
+
+      {/* Always show pagination */}
+      <ClinicPagination
+        currentPage={data?.currentPage || currentPage}
+        totalPages={data?.totalPages || 1}
+        pageSize={pageSize}
+        totalCount={data?.totalCount || 0}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
