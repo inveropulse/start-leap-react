@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
-import { UserCheck, Users, Award, Calendar } from "lucide-react";
+import { UserCheck, Users, Award, Calendar, Grid, List, RefreshCw } from "lucide-react";
+import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent } from "@/shared/components/ui/card";
 import { SedationistFilters } from './SedationistFilters';
 import { SedationistCard } from './SedationistCard';
 import { useSedationistsRequest } from '../hooks/useSedationistsRequest';
@@ -13,7 +15,6 @@ import {
 import {
   ListViewHeader,
   ListViewStats,
-  ListViewControls,
   ListViewContent,
   ListViewPagination
 } from "../../shared";
@@ -160,23 +161,52 @@ export function SedationistsListView({ onAddSedationist, onViewSedationist }: Se
       
       <ListViewStats stats={stats} isLoading={isLoading} />
       
-      <ListViewControls
-        searchValue={filters.search}
-        onSearchChange={(value) => handleFiltersChange({ ...filters, search: value })}
-        searchPlaceholder="Search sedationists..."
-        viewMode={viewMode}
-        onViewModeToggle={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-        onRefresh={() => refetch()}
-        isLoading={isLoading}
-        showFilters={true}
-        filtersActive={getActiveFiltersCount()}
-        onToggleFilters={() => {}} // Filters are always shown for now
-      >
-        <SedationistFilters
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-        />
-      </ListViewControls>
+      {/* Custom Controls Card for Sedationists */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            {/* View Mode Toggle */}
+            <div className="flex justify-end">
+              <div className="flex border rounded-md">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  disabled={isLoading}
+                  className="rounded-r-none border-r-0"
+                >
+                  <Grid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  disabled={isLoading}
+                  className="rounded-l-none"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm" 
+                onClick={() => refetch()}
+                disabled={isLoading}
+                className="ml-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+
+            {/* Sedationist-specific Search & Filters */}
+            <SedationistFilters
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       <ListViewContent
         viewMode={viewMode}
