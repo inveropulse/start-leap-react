@@ -1,9 +1,8 @@
-import { MultiSelect } from "@/shared/components/ui/multi-select";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { X } from "lucide-react";
-import { UserFilters, UserStatus, Department, PermissionLevel } from "../types";
+import { type UserFilters, UserStatus, Department, PermissionLevel } from "../types";
 import { UserRole } from "@/shared/types";
 
 interface UserFiltersProps {
@@ -107,7 +106,7 @@ export function UserFilters({ filters, onFiltersChange, onClearFilters }: UserFi
           <SimpleMultiSelect
             options={statusOptions}
             value={filters.status}
-            onValueChange={(status) => onFiltersChange({ status })}
+            onValueChange={(status) => onFiltersChange({ status: status as UserStatus[] })}
             placeholder="Select statuses"
           />
         </div>
@@ -117,7 +116,7 @@ export function UserFilters({ filters, onFiltersChange, onClearFilters }: UserFi
           <SimpleMultiSelect
             options={roleOptions}
             value={filters.roles}
-            onValueChange={(roles) => onFiltersChange({ roles })}
+            onValueChange={(roles) => onFiltersChange({ roles: roles as string[] })}
             placeholder="Select roles"
           />
         </div>
@@ -127,7 +126,7 @@ export function UserFilters({ filters, onFiltersChange, onClearFilters }: UserFi
           <SimpleMultiSelect
             options={departmentOptions}
             value={filters.departments}
-            onValueChange={(departments) => onFiltersChange({ departments })}
+            onValueChange={(departments) => onFiltersChange({ departments: departments as Department[] })}
             placeholder="Select departments"
           />
         </div>
@@ -137,7 +136,7 @@ export function UserFilters({ filters, onFiltersChange, onClearFilters }: UserFi
           <SimpleMultiSelect
             options={permissionLevelOptions}
             value={filters.permissionLevels}
-            onValueChange={(permissionLevels) => onFiltersChange({ permissionLevels })}
+            onValueChange={(permissionLevels) => onFiltersChange({ permissionLevels: permissionLevels as PermissionLevel[] })}
             placeholder="Select levels"
           />
         </div>
