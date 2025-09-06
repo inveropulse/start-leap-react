@@ -102,7 +102,7 @@ export function AppointmentManagementModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col">
         <DialogHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
           <div className="flex-1">
             <DialogTitle className="text-xl font-semibold">
@@ -135,8 +135,8 @@ export function AppointmentManagementModal({
               <TabsTrigger value="payment">PAYMENT</TabsTrigger>
             </TabsList>
 
-            <div className="flex-1 overflow-auto mt-4">
-              <TabsContent value="details" className="h-full">
+            <div className="flex-1 overflow-auto mt-4 px-1">
+              <TabsContent value="details" className="mt-0 h-auto">
                 <AppointmentDetailsTab
                   appointment={appointment}
                   isLoading={isLoading}
@@ -144,7 +144,7 @@ export function AppointmentManagementModal({
                 />
               </TabsContent>
 
-              <TabsContent value="track" className="h-full">
+              <TabsContent value="track" className="mt-0 h-auto">
                 <AppointmentTrackTab
                   activities={managementData?.activities || []}
                   isLoading={isLoading}
@@ -152,7 +152,7 @@ export function AppointmentManagementModal({
                 />
               </TabsContent>
 
-              <TabsContent value="documents" className="h-full">
+              <TabsContent value="documents" className="mt-0 h-auto">
                 <AppointmentDocumentsTab
                   documents={managementData?.documents || []}
                   appointmentId={appointment.id}
@@ -161,7 +161,7 @@ export function AppointmentManagementModal({
                 />
               </TabsContent>
 
-              <TabsContent value="payment" className="h-full">
+              <TabsContent value="payment" className="mt-0 h-auto">
                 <AppointmentPaymentTab
                   payments={managementData?.payments || []}
                   appointmentId={appointment.id}
