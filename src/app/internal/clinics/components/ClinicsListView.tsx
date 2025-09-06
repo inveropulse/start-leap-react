@@ -1,12 +1,18 @@
 import { useState, useMemo } from "react";
-import { Search, Plus, RefreshCw, Grid3X3, List } from "lucide-react";
-import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
+import { Building2, CheckCircle, MapPin, Users } from "lucide-react";
 import { useClinicsRequest } from "../hooks/useClinicRequests";
-import { ClinicSearchParams } from "../types/clinic.types";
+import { ClinicSearchParams, ClinicStatus } from "../types/clinic.types";
 import { ClinicCard } from "./ClinicCard";
 import { ClinicFilters } from "./ClinicFilters";
-import { ClinicPagination } from "./ClinicPagination";
+import { 
+  ListViewHeader,
+  ListViewStats,
+  ListViewControls,
+  ListViewContent,
+  ListViewPagination,
+  ListViewStat
+} from "../../shared";
+import { Button } from "@/shared/components/ui/button";
 
 interface ClinicsListViewProps {
   onAddClinic: () => void;
@@ -19,6 +25,7 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
   const [filters, setFilters] = useState<Partial<ClinicSearchParams>>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
+  const [showFilters, setShowFilters] = useState(false);
 
   const searchParams = useMemo<ClinicSearchParams>(() => ({
     search: searchText || undefined,
@@ -35,6 +42,10 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
 
   const toggleViewMode = () => {
     setViewMode(prev => prev === "grid" ? "list" : "grid");
+  };
+
+  const toggleFilters = () => {
+    setShowFilters(prev => !prev);
   };
 
   const handlePageChange = (page: number) => {
@@ -56,155 +67,130 @@ export function ClinicsListView({ onAddClinic, onViewClinic }: ClinicsListViewPr
     setCurrentPage(1); // Reset to first page when search changes
   };
 
+  const getStats = (): ListViewStat[] => {
+    if (!data) {
+      return [
+        { id: 'total', label: 'Total Clinics', value: 0, icon: Building2, color: 'default' },
+        { id: 'active', label: 'Active', value: 0, icon: CheckCircle, color: 'success' },
+        { id: 'types', label: 'Types', value: 0, icon: Users, color: 'primary' },
+        { id: 'cities', label: 'Cities', value: 0, icon: MapPin, color: 'default' },
+      ];
+    }
+
+    return [
+      { 
+        id: 'total', 
+        label: 'Total Clinics', 
+        value: data.totalCount, 
+        icon: Building2, 
+        color: 'default',
+        description: `${data.clinics.length} on this page`
+      },
+      { 
+        id: 'active', 
+        label: 'Active', 
+        value: data.clinics.filter(c => c.status === ClinicStatus.ACTIVE).length, 
+        icon: CheckCircle, 
+        color: 'success',
+        description: 'Currently operating'
+      },
+      { 
+        id: 'types', 
+        label: 'Clinic Types', 
+        value: new Set(data.clinics.map(c => c.type).filter(Boolean)).size, 
+        icon: Users, 
+        color: 'primary',
+        description: 'Different specializations'
+      },
+      { 
+        id: 'cities', 
+        label: 'Cities', 
+        value: new Set(data.clinics.map(c => c.city).filter(Boolean)).size, 
+        icon: MapPin, 
+        color: 'default',
+        description: 'Locations covered'
+      },
+    ];
+  };
+
+  const hasActiveFilters = Object.keys(filters).length > 0;
+  const isEmpty = data && data.clinics.length === 0;
+  const emptyMessage = searchText || hasActiveFilters 
+    ? "No clinics found matching your criteria"
+    : "No clinics registered yet";
+  const emptyAction = searchText || hasActiveFilters 
+    ? { 
+        label: "Clear Filters", 
+        onClick: () => {
+          handleSearchChange("");
+          handleFiltersChange({});
+        }
+      }
+    : { 
+        label: "Add First Clinic", 
+        onClick: onAddClinic 
+      };
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-foreground">Clinics Management</h1>
-          <p className="text-muted-foreground">
-            Manage and monitor all registered clinics
-          </p>
-        </div>
-        <Button onClick={onAddClinic} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Add Clinic
-        </Button>
-      </div>
-
-      {/* Search and Actions */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search clinics by name, location, or contact person..."
-            value={searchText}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleRefresh}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={toggleViewMode}
-          >
-            {viewMode === "grid" ? (
-              <List className="h-4 w-4" />
-            ) : (
-              <Grid3X3 className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <ClinicFilters 
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
+      <ListViewHeader
+        title="Clinics Management"
+        description="Manage and monitor all registered clinics"
+        onAdd={onAddClinic}
+        addButtonText="Add Clinic"
       />
 
-      {/* Stats - Always shown */}
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>
-          {isLoading ? (
-            "Loading clinics..."
-          ) : data ? (
-            `Showing ${data.clinics.length} of ${data.totalCount} clinics`
-          ) : (
-            "No clinics loaded"
-          )}
-        </span>
-        <span>
-          {isLoading ? (
-            "Page - of -"
-          ) : data ? (
-            `Page ${data.currentPage} of ${Math.max(1, data.totalPages)}`
-          ) : (
-            "Page 1 of 1"
-          )}
-        </span>
-      </div>
+      {/* Stats */}
+      <ListViewStats 
+        stats={getStats()}
+        isLoading={isLoading}
+      />
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-muted rounded-lg h-48"></div>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Search and Controls */}
+      <ListViewControls
+        searchValue={searchText}
+        onSearchChange={handleSearchChange}
+        searchPlaceholder="Search clinics by name, location, or contact person..."
+        viewMode={viewMode}
+        onViewModeToggle={toggleViewMode}
+        onRefresh={handleRefresh}
+        isLoading={isLoading}
+        showFilters={true}
+        filtersActive={hasActiveFilters}
+        onToggleFilters={toggleFilters}
+      >
+        {showFilters && (
+          <ClinicFilters 
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+          />
+        )}
+      </ListViewControls>
 
-      {/* Error State */}
-      {error && (
-        <div className="text-center py-12">
-          <p className="text-destructive">Failed to load clinics</p>
-          <Button onClick={handleRefresh} variant="outline" className="mt-4">
-            Try Again
-          </Button>
-        </div>
-      )}
+      {/* Content */}
+      <ListViewContent
+        viewMode={viewMode}
+        isLoading={isLoading}
+        error={error ? "Failed to load clinics" : null}
+        isEmpty={isEmpty}
+        emptyMessage={emptyMessage}
+        emptyAction={emptyAction}
+        onRetry={handleRefresh}
+        loadingSkeletonCount={6}
+      >
+        {data?.clinics.map((clinic) => (
+          <ClinicCard
+            key={clinic.id}
+            clinic={clinic}
+            viewMode={viewMode}
+            onView={() => onViewClinic(clinic.id!)}
+          />
+        ))}
+      </ListViewContent>
 
-      {/* Clinics Grid/List */}
-      {data && data.clinics.length > 0 && (
-        <div className={
-          viewMode === "grid" 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            : "space-y-4"
-        }>
-          {data.clinics.map((clinic) => (
-            <ClinicCard
-              key={clinic.id}
-              clinic={clinic}
-              viewMode={viewMode}
-              onView={() => onViewClinic(clinic.id!)}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Empty State */}
-      {data && data.clinics.length === 0 && !isLoading && (
-        <div className="text-center py-12">
-          <div className="text-muted-foreground">
-            {searchText || Object.keys(filters).length > 0 ? (
-              <>
-                <p>No clinics found matching your criteria</p>
-                <Button 
-                  onClick={() => {
-                    handleSearchChange("");
-                    handleFiltersChange({});
-                  }} 
-                  variant="outline" 
-                  className="mt-4"
-                >
-                  Clear Filters
-                </Button>
-              </>
-            ) : (
-              <>
-                <p>No clinics registered yet</p>
-                <Button onClick={onAddClinic} className="mt-4">
-                  Add First Clinic
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Always show pagination */}
-      <ClinicPagination
+      {/* Pagination */}
+      <ListViewPagination
         currentPage={data?.currentPage || currentPage}
         totalPages={data?.totalPages || 1}
         pageSize={pageSize}
