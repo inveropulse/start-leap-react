@@ -11,8 +11,7 @@ import { CalendarDays, Clock, Users, MapPin } from "lucide-react";
 import { mockAppointments } from './data/mockData';
 import { AppointmentFilters } from './components/AppointmentFilters';
 import { AppointmentsTable } from './components/AppointmentsTable';
-import { AppointmentViewModal } from './components/AppointmentViewModal';
-import { AppointmentEditModal } from './components/AppointmentEditModal';
+import { AppointmentManagementModal } from './components/AppointmentManagementModal';
 import { AddAvailabilityModal } from './components/AddAvailabilityModal';
 import { CancelAppointmentModal } from './components/CancelAppointmentModal';
 import { BookAppointmentWizard } from './components/wizard/BookAppointmentWizard';
@@ -280,18 +279,15 @@ export default function AppointmentPage() {
         />
       )}
 
-      {/* Modals */}
-      <AppointmentViewModal
+      {/* Enhanced Management Modal */}
+      <AppointmentManagementModal
         appointment={selectedAppointment}
-        isOpen={viewModalOpen}
-        onClose={() => setViewModalOpen(false)}
-        onEdit={handleEditAppointment}
-      />
-
-      <AppointmentEditModal
-        appointment={selectedAppointment}
-        isOpen={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
+        isOpen={viewModalOpen || editModalOpen}
+        onClose={() => {
+          setViewModalOpen(false);
+          setEditModalOpen(false);
+          setSelectedAppointment(null);
+        }}
         onSave={handleSaveAppointment}
       />
 
