@@ -1,6 +1,7 @@
-import { AppointmentStatus, AppointmentType, Appointment } from "@/shared/types/entities/appointment";
+import { AppointmentStatus, AppointmentType, Appointment } from "@/shared/types/domains/appointment";
 import { AppointmentStats } from "./types/stats.types";
-import { Patient, ClinicDoctor, Clinic } from "@/shared/types/entities";
+import { Patient } from "@/shared/types/domains/patient";
+import { ClinicDoctor, Clinic } from "@/shared/types/domains/clinic";
 import { AppointmentFilters, PaginationState } from "@/shared/types";
 
 // Re-export shared types for backward compatibility

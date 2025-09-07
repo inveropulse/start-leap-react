@@ -3,11 +3,13 @@ import {
   CreateUserData, 
   UpdateUserData, 
   UserActivity, 
-  UserSession 
-} from "@/shared/types/entities/user";
-import { UserFilters, UserSearchParams } from "@/shared/types/filters";
+  UserSession,
+  UserStatus,
+  Department,
+  PermissionLevel
+} from "@/shared/types/domains/user-access";
+import { UserFilters, UserSearchParams } from "@/shared/types/shared-kernel/filters";
 import { PaginationResponse } from "@/shared/types";
-import { UserStatus, Department, PermissionLevel } from "@/shared/types/enums/user";
 
 // Define typed pagination response for users
 export type UserPaginationResponse = PaginationResponse<InternalUser>;

@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/shared/components/ui/card';
 import { Badge } from '@/shared/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/shared/components/ui/avatar';
 import { WizardStepProps } from '../../../types/wizard.types';
-import { SedationistCertification } from '@/shared/types/entities/sedationist';
+import { SedationistCertification } from '@/shared/types/domains/sedation';
 import { searchSedationists } from '../../../data/mockWizardData';
 
 export function SedationistSelectionStep({ data, onDataChange, onNext, onPrevious }: WizardStepProps) {

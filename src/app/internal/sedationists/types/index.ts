@@ -4,11 +4,13 @@ import {
   UpdateSedationistData,
   SedationistCertification,
   SedationistAvailability,
-  SedationistCase
-} from "@/shared/types/entities/sedationist";
-import { SedationistFilters, SedationistSearchParams } from "@/shared/types/filters";
+  SedationistCase,
+  SedationistStatus,
+  SedationistSpecialty,
+  CertificationStatus
+} from "@/shared/types/domains/sedation";
+import { SedationistFilters, SedationistSearchParams } from "@/shared/types/shared-kernel/filters";
 import { PaginationResponse, PaginationState } from "@/shared/types";
-import { SedationistStatus, SedationistSpecialty, CertificationStatus } from "@/shared/types/enums/sedationist";
 
 // Define typed pagination response for sedationists
 export type SedationistPaginationResponse = PaginationResponse<Sedationist>;

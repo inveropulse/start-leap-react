@@ -1,6 +1,5 @@
 import { WizardPatient, WizardClinic, WizardDoctor, WizardSedationist } from '../types/wizard.types';
-import { SedationistSpecialty, CertificationStatus, SedationistStatus } from "@/shared/types/enums/sedationist";
-import { SedationistCertification } from "@/shared/types/entities/sedationist";
+import { SedationistSpecialty, CertificationStatus, SedationistStatus, SedationistCertification } from "@/shared/types/domains/sedation";
 
 // Mock Patients Data
 export const mockPatients: WizardPatient[] = [
