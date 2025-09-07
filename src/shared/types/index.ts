@@ -1,35 +1,10 @@
-// Main shared types - portal and user roles remain here as they're app-wide foundational types
-export enum PortalType {
-  CLINIC = "clinic",
-  PATIENT = "patient",
-  INTERNAL = "internal",
-  SEDATIONIST = "sedationist",
-}
+// Main shared types index - new domain-driven structure
+// Re-export all domain types and shared kernel
+export * from './domains';
+export * from './shared-kernel';
+export * from './infrastructure';
 
-export enum UserRole {
-  ADMIN = "admin",
-  CLINIC = "clinic",
-  PATIENT = "patient",
-  SEDATIONIST = "sedationist",
-  BOOKING_COORDINATOR = "booking_coordinator",
-
-  // TODO - NOT NEEDED NOW BUT CAN BE USEFUL LATER
-  // MANAGER = "manager",
-  // USER = "user",
-  // DOCTOR = "doctor",
-  // NURSE = "nurse",
-}
-
-// Re-export all shared types from consolidated structure
-export * from './enums';
-export * from './entities';
+// Backward compatibility exports - only export types that don't conflict
 export * from './common';
 export * from './ui';
-// Export filters explicitly to avoid ambiguity
-export type { 
-  AppointmentFilters, 
-  UserSearchParams, 
-  SedationistSearchParams, 
-  PatientSearchParams,
-  ClinicSearchParams
-} from './filters';
+export * from './filters';

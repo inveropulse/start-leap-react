@@ -1,4 +1,5 @@
-import { AppointmentStatus, AppointmentType, AppointmentStats, Appointment } from "@/shared/types/entities/appointment";
+import { AppointmentStatus, AppointmentType, Appointment } from "@/shared/types/entities/appointment";
+import { AppointmentStats } from "./types/stats.types";
 import { Patient, ClinicDoctor, Clinic } from "@/shared/types/entities";
 import { AppointmentFilters, PaginationState } from "@/shared/types";
 
