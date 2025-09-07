@@ -21,6 +21,9 @@ export * from './FilterPills';
 export * from './AdvancedFilterPanel';
 export * from './SearchHighlighter';
 export * from './DateRangePicker';
+export * from './OptimizedList';
+export * from './LazyImage';
+export * from './PerformanceMonitor';
 
 // Animation & interaction enhancements
 export { useSwipeActions } from '../../hooks/useSwipeActions';
@@ -29,3 +32,6 @@ export { useStaggeredAnimation } from '../../hooks/useStaggeredAnimation';
 export { useIntersectionAnimation } from '../../hooks/useIntersectionAnimation';
 export { useDebounce } from '../../hooks/useDebounce';
 export { useLocalStorage } from '../../hooks/useLocalStorage';
+export { useVirtualScroll } from '../../hooks/useVirtualScroll';
+export { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
+export { usePerformanceMonitor } from '../../hooks/usePerformanceMonitor';

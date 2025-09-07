@@ -1,8 +1,12 @@
-import { useMemo, useState, useCallback } from "react";
-import { Patient } from "../types/patient.types";
-import { PatientCard } from "./PatientCard";
-import { Input } from "@/shared/components/ui/input";
-import { Search } from "lucide-react";
+import React, { useState, useMemo, useCallback } from 'react';
+import { Input } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/button';
+import { PatientCard } from './PatientCard';
+import { Patient } from '@/shared/types/domains/patient/entities';
+import { Search, ChevronDown } from 'lucide-react';
+import { LoadingSpinner } from '@/shared/components/ui/LoadingSpinner';
+import { OptimizedList } from '@/shared/components/ui/OptimizedList';
+import { usePerformanceMonitor } from '@/shared/hooks/usePerformanceMonitor';
 
 interface VirtualPatientListProps {
   patients: Patient[];
@@ -21,35 +25,47 @@ export function VirtualPatientList({
   onDeleteClick,
   isLoading = false,
 }: VirtualPatientListProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [useVirtualization, setUseVirtualization] = useState(patients.length > 100);
+  const { startRender, endRender } = usePerformanceMonitor();
 
-  // Filter patients based on search term
   const filteredPatients = useMemo(() => {
-    if (!searchTerm.trim()) return patients;
+    startRender();
     
-    const search = searchTerm.toLowerCase();
-    return patients.filter(patient =>
-      patient.firstName?.toLowerCase().includes(search) ||
-      patient.lastName?.toLowerCase().includes(search) ||
-      patient.fullName?.toLowerCase().includes(search) ||
-      patient.email?.toLowerCase().includes(search) ||
-      patient.phoneNumber?.includes(search) ||
-      patient.town?.toLowerCase().includes(search)
+    if (!searchTerm.trim()) {
+      endRender();
+      return patients;
+    }
+    
+    const term = searchTerm.toLowerCase();
+    const filtered = patients.filter(patient =>
+      patient.firstName?.toLowerCase().includes(term) ||
+      patient.lastName?.toLowerCase().includes(term) ||
+      patient.fullName?.toLowerCase().includes(term) ||
+      patient.email?.toLowerCase().includes(term) ||
+      patient.phoneNumber?.includes(term) ||
+      patient.town?.toLowerCase().includes(term)
     );
-  }, [patients, searchTerm]);
-
-  // Show only the first N items for performance
-  const displayedPatients = filteredPatients.slice(0, displayCount);
+    
+    endRender();
+    return filtered;
+  }, [patients, searchTerm, startRender, endRender]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setDisplayCount(ITEMS_PER_PAGE); // Reset display count on search
   }, []);
 
-  const handleLoadMore = useCallback(() => {
-    setDisplayCount(prev => prev + ITEMS_PER_PAGE);
-  }, []);
+  const renderPatientItem = useCallback((patient: Patient, index: number, style?: React.CSSProperties) => (
+    <div style={style} key={patient.id}>
+      <PatientCard
+        patient={patient}
+        viewMode="list"
+        onView={onPatientClick ? () => onPatientClick(patient) : undefined}
+        onEdit={onEditClick ? () => onEditClick(patient) : undefined}
+        onDelete={onDeleteClick ? () => onDeleteClick(patient) : undefined}
+      />
+    </div>
+  ), [onPatientClick, onEditClick, onDeleteClick]);
 
   if (isLoading) {
     return (
@@ -78,43 +94,38 @@ export function VirtualPatientList({
         />
       </div>
 
-      {/* Results Count */}
-      <div className="text-sm text-muted-foreground">
-        Showing {displayedPatients.length} of {filteredPatients.length} patients
-        {filteredPatients.length !== patients.length && ` (filtered from ${patients.length})`}
-        {searchTerm && ` matching "${searchTerm}"`}
+      {/* Results Count & Performance Toggle */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">
+          Showing {filteredPatients.length} of {patients.length} patients
+          {filteredPatients.length !== patients.length && ` (filtered)`}
+          {searchTerm && ` matching "${searchTerm}"`}
+        </div>
+        {patients.length > 100 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setUseVirtualization(!useVirtualization)}
+            className="text-xs"
+          >
+            {useVirtualization ? "Disable" : "Enable"} Virtualization
+          </Button>
+        )}
       </div>
 
-      {/* Patient List */}
-      {filteredPatients.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">
-            {searchTerm ? "No patients match your search criteria" : "No patients found"}
-          </p>
-        </div>
+      {useVirtualization && filteredPatients.length > 50 ? (
+        <OptimizedList
+          items={filteredPatients}
+          itemHeight={120}
+          containerHeight={600}
+          renderItem={renderPatientItem}
+          className="border rounded-lg"
+          overscan={3}
+        />
       ) : (
         <div className="space-y-2">
-          {displayedPatients.map((patient) => (
-            <PatientCard
-              key={patient.id}
-              patient={patient}
-              viewMode="list"
-              onView={() => onPatientClick?.(patient)}
-              onEdit={() => onEditClick?.(patient)}
-              onDelete={() => onDeleteClick?.(patient)}
-            />
-          ))}
-          
-          {/* Load More Button */}
-          {displayCount < filteredPatients.length && (
-            <div className="text-center py-4">
-              <button
-                onClick={handleLoadMore}
-                className="text-sm text-primary hover:underline"
-              >
-                Load {Math.min(ITEMS_PER_PAGE, filteredPatients.length - displayCount)} more patients
-              </button>
-            </div>
+          {filteredPatients.map((patient, index) => 
+            renderPatientItem(patient, index, { display: "block" })
           )}
         </div>
       )}
