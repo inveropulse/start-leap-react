@@ -75,7 +75,11 @@ export default function DesktopLayout(props: PropsWithChildren) {
           </header>
 
           {/* Desktop Main Content - Scrollable with vertical padding */}
-          <main className="flex-1 overflow-y-auto overflow-x-hidden py-6">
+          <main 
+            id="main-content" 
+            className="flex-1 overflow-y-auto overflow-x-hidden py-6"
+            tabIndex={-1}
+          >
             {props.children}
           </main>
         </SidebarInset>

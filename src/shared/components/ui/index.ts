@@ -24,6 +24,11 @@ export * from './DateRangePicker';
 export * from './OptimizedList';
 export * from './LazyImage';
 export * from './PerformanceMonitor';
+export * from './AccessibilityMenu';
+export * from './SkipToContent';
+export * from './FocusIndicator';
+export * from './AccessibilityWrapper';
+export * from './switch';
 
 // Animation & interaction enhancements
 export { useSwipeActions } from '../../hooks/useSwipeActions';
@@ -35,3 +40,5 @@ export { useLocalStorage } from '../../hooks/useLocalStorage';
 export { useVirtualScroll } from '../../hooks/useVirtualScroll';
 export { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 export { usePerformanceMonitor } from '../../hooks/usePerformanceMonitor';
+export { useAccessibility } from '../../hooks/useAccessibility';
+export { useKeyboardNavigation, useFocusTrap } from '../../hooks/useKeyboardNavigation';

@@ -97,7 +97,11 @@ export default function MobileLayout(props: PropsWithChildren) {
       </header>
 
       {/* Mobile Main Content */}
-      <main className="flex-1 overflow-y-auto overflow-x-hidden py-4">
+      <main 
+        id="main-content" 
+        className="flex-1 overflow-y-auto overflow-x-hidden py-4"
+        tabIndex={-1}
+      >
         {props.children}
       </main>
     </div>
