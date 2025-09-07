@@ -1,8 +1,10 @@
 import { Search, RefreshCw, Grid, List, Filter } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
+import { TouchButton } from "@/shared/components/ui/TouchButton";
 import { Input } from "@/shared/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
 import { ListViewControlsProps } from "@/shared/types/ui/listView.types";
 
@@ -20,6 +22,8 @@ export function ListViewControls({
   children
 }: ListViewControlsProps) {
   const theme = useListViewTheme();
+  const isMobile = useIsMobile();
+  const ButtonComponent = isMobile ? TouchButton : Button;
 
   return (
     <Card>
@@ -40,7 +44,7 @@ export function ListViewControls({
             {/* Action Buttons */}
             <div className="flex items-center gap-2">
               <div className="flex border rounded-md">
-                <Button
+                <ButtonComponent
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => viewMode !== 'grid' && onViewModeToggle()}
@@ -48,8 +52,8 @@ export function ListViewControls({
                   className="rounded-r-none border-r-0"
                 >
                   <Grid className="h-4 w-4" />
-                </Button>
-                <Button
+                </ButtonComponent>
+                <ButtonComponent
                   variant={viewMode === 'list' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => viewMode !== 'list' && onViewModeToggle()}
@@ -57,11 +61,11 @@ export function ListViewControls({
                   className="rounded-l-none"
                 >
                   <List className="h-4 w-4" />
-                </Button>
+                </ButtonComponent>
               </div>
               
               {showFilters && onToggleFilters && (
-                <Button
+                <ButtonComponent
                   variant="outline" 
                   size="sm"
                   onClick={onToggleFilters}
@@ -75,17 +79,17 @@ export function ListViewControls({
                       {typeof filtersActive === 'number' ? filtersActive : '•'}
                     </span>
                   )}
-                </Button>
+                </ButtonComponent>
               )}
               
-              <Button
+              <ButtonComponent
                 variant="outline"
                 size="sm" 
                 onClick={onRefresh}
                 disabled={isLoading}
               >
                 <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              </Button>
+              </ButtonComponent>
             </div>
           </div>
 

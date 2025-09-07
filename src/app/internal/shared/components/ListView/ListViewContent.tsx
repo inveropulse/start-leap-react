@@ -1,6 +1,8 @@
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import { PullToRefresh } from "@/shared/components/ui/PullToRefresh";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
 import { ListViewContentProps } from "@/shared/types/ui/listView.types";
 
@@ -16,6 +18,7 @@ export function ListViewContent({
   children
 }: ListViewContentProps) {
   const theme = useListViewTheme();
+  const isMobile = useIsMobile();
 
   // Loading State
   if (isLoading) {
@@ -84,7 +87,7 @@ export function ListViewContent({
   }
 
   // Content State
-  return (
+  const contentComponent = (
     <Card>
       <CardContent className="p-6">
         <div className={
@@ -97,4 +100,21 @@ export function ListViewContent({
       </CardContent>
     </Card>
   );
+
+  // Wrap with pull-to-refresh on mobile
+  if (isMobile && onRetry) {
+    return (
+      <PullToRefresh 
+        onRefresh={async () => {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          onRetry();
+        }}
+        className="min-h-[200px]"
+      >
+        {contentComponent}
+      </PullToRefresh>
+    );
+  }
+
+  return contentComponent;
 }

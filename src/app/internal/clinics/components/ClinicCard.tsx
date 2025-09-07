@@ -1,7 +1,9 @@
-import { Building2, MapPin, Phone, Mail, Users, Calendar, Globe, MoreVertical } from "lucide-react";
+import { Building2, MapPin, Phone, Mail, Users, Calendar, Globe, MoreVertical, Edit, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
+import { SwipeableCard } from "@/shared/components/ui/SwipeableCard";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +22,7 @@ interface ClinicCardProps {
 }
 
 export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: ClinicCardProps) {
+  const isMobile = useIsMobile();
   const getStatusColor = (status?: ClinicStatus) => {
     switch (status) {
       case ClinicStatus.ACTIVE:
@@ -57,10 +60,28 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
     }
   };
 
+  // Define swipe actions for mobile
+  const swipeActions = isMobile ? [
+    ...(onEdit ? [{
+      id: 'edit',
+      label: 'Edit',
+      icon: Edit,
+      color: 'primary' as const,
+      onAction: onEdit,
+    }] : []),
+    ...(onDelete ? [{
+      id: 'delete',
+      label: 'Delete',
+      icon: Trash2,
+      color: 'destructive' as const,
+      onAction: onDelete,
+    }] : []),
+  ] : [];
+
   if (viewMode === "list") {
-    return (
+    const cardContent = (
       <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onView}>
-        <CardContent className="p-4">
+        <CardContent className="p-4 min-h-[80px] flex items-center">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 flex-1">
               <div className="flex-shrink-0">
@@ -143,9 +164,15 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
         </CardContent>
       </Card>
     );
+
+    return isMobile ? (
+      <SwipeableCard rightActions={swipeActions}>
+        {cardContent}
+      </SwipeableCard>
+    ) : cardContent;
   }
 
-  return (
+  const gridCardContent = (
     <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onView}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
@@ -271,4 +298,10 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
       </CardContent>
     </Card>
   );
+
+  return isMobile ? (
+    <SwipeableCard rightActions={swipeActions}>
+      {gridCardContent}
+    </SwipeableCard>
+  ) : gridCardContent;
 }

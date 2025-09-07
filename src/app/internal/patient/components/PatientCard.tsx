@@ -3,6 +3,8 @@ import { MoreHorizontal, Phone, Mail, MapPin, Eye, Edit, Trash2, Calendar } from
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
+import { SwipeableCard } from "@/shared/components/ui/SwipeableCard";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +30,7 @@ export const PatientCard = memo(function PatientCard({
   onEdit,
   onDelete,
 }: PatientCardProps) {
+  const isMobile = useIsMobile();
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return 'Not provided';
     return new Date(dateString).toLocaleDateString('en-GB', {
@@ -45,10 +48,28 @@ export const PatientCard = memo(function PatientCard({
     return formatDate(lastVisit.toISOString());
   };
 
+  // Define swipe actions for mobile
+  const swipeActions = isMobile ? [
+    {
+      id: 'edit',
+      label: 'Edit',
+      icon: Edit,
+      color: 'primary' as const,
+      onAction: onEdit,
+    },
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: Trash2,
+      color: 'destructive' as const,
+      onAction: onDelete,
+    },
+  ] : [];
+
   if (viewMode === 'list') {
-    return (
+    const cardContent = (
       <Card className="hover:shadow-md transition-shadow">
-        <CardContent className="p-4">
+        <CardContent className="p-4 min-h-[80px] flex items-center">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 flex-1">
               <PatientAvatar patient={patient} size="lg" />
@@ -119,11 +140,17 @@ export const PatientCard = memo(function PatientCard({
         </CardContent>
       </Card>
     );
+
+    return isMobile ? (
+      <SwipeableCard rightActions={swipeActions}>
+        {cardContent}
+      </SwipeableCard>
+    ) : cardContent;
   }
 
-  return (
+  const gridCardContent = (
     <Card className="hover:shadow-md transition-shadow cursor-pointer group" onClick={onView}>
-      <CardContent className="p-4">
+      <CardContent className="p-4 min-h-[200px]">
         <div className="flex flex-col space-y-3">
           {/* Header */}
           <div className="flex items-start justify-between">
@@ -213,4 +240,10 @@ export const PatientCard = memo(function PatientCard({
       </CardContent>
     </Card>
   );
+
+  return isMobile ? (
+    <SwipeableCard rightActions={swipeActions}>
+      {gridCardContent}
+    </SwipeableCard>
+  ) : gridCardContent;
 });
