@@ -4,6 +4,10 @@ import { Patient } from './patient';
 import { ClinicDoctor, Clinic } from './clinic';
 import { Sedationist } from './sedationist';
 
+// Re-export enums for easy access
+export { AppointmentStatus, AppointmentType, DocumentType, DocumentStatus, ActivityType };
+export { PaymentMethod, PaymentStatus };
+
 // Unified Appointment entity interface
 export interface Appointment {
   id: string;
@@ -95,12 +99,17 @@ export interface AppointmentStats {
   activeClinics: number;
 }
 
-// Wizard specific interfaces
+// Wizard specific interfaces - using aliases for compatibility
+export interface WizardPatient extends Patient {}
+export interface WizardClinic extends Clinic {}
+export interface WizardDoctor extends ClinicDoctor {}
+export interface WizardSedationist extends Sedationist {}
+
 export interface WizardData {
-  patient?: Patient;
-  clinic?: Clinic;
-  doctor?: ClinicDoctor;
-  sedationist?: Sedationist;
+  patient?: WizardPatient;
+  clinic?: WizardClinic;
+  doctor?: WizardDoctor;
+  sedationist?: WizardSedationist;
   appointmentDetails?: AppointmentDetails;
 }
 

@@ -16,6 +16,7 @@ export interface Patient {
   country?: string | null;
   postCode?: string | null;
   phoneNumber?: string | null;
+  phone?: string | null; // Alias for phoneNumber for compatibility
   alternativePhoneNumber?: string | null;
   businessName?: string | null;
   email?: string | null;

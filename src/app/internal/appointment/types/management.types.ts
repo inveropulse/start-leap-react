@@ -10,14 +10,16 @@ import { PaymentMethod, PaymentStatus } from "@/shared/types/enums/payment";
 
 // Re-export shared types for backward compatibility
 export { 
-  AppointmentDocument,
-  AppointmentActivity,
-  AppointmentPayment,
-  AppointmentManagement,
   PatientTitle,
   DocumentType,
   DocumentStatus,
   ActivityType,
   PaymentMethod,
   PaymentStatus
+};
+export type { 
+  AppointmentDocument,
+  AppointmentActivity,
+  AppointmentPayment,
+  AppointmentManagement
 };

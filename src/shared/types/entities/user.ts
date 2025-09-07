@@ -1,9 +1,10 @@
 import { UserStatus, Department, PermissionLevel } from '../enums/user';
 import { UserRole } from '../index';
 
+// Remove UserFilters from here - it's already in filters/index.ts
 // Unified User entity interface
 export interface InternalUser {
-  id: string;
+  id: string;  
   firstName: string;
   lastName: string;
   email: string;

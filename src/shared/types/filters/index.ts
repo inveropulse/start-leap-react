@@ -21,6 +21,14 @@ export interface UserFilters {
   lastLoginAfter: string;
 }
 
+export interface SedationistFilters {
+  search: string;
+  status: SedationistStatus[];
+  specialties: SedationistSpecialty[];
+  certificationStatus: CertificationStatus[];
+  availableOnly: boolean;
+}
+
 export interface UserSearchParams extends SearchParams {
   search?: string;
   status?: UserStatus[];
@@ -30,14 +38,6 @@ export interface UserSearchParams extends SearchParams {
   lastLoginAfter?: string;
   pageNo?: number;
   pageSize?: number;
-}
-
-export interface SedationistFilters {
-  search: string;
-  status: SedationistStatus[];
-  specialties: SedationistSpecialty[];
-  certificationStatus: CertificationStatus[];
-  availableOnly: boolean;
 }
 
 export interface SedationistSearchParams extends SearchParams {

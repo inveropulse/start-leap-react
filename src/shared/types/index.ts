@@ -24,5 +24,12 @@ export enum UserRole {
 export * from './enums';
 export * from './entities';
 export * from './common';
-export * from './filters';
 export * from './ui';
+// Export filters explicitly to avoid ambiguity
+export type { 
+  AppointmentFilters, 
+  UserSearchParams, 
+  SedationistSearchParams, 
+  PatientSearchParams,
+  ClinicSearchParams
+} from './filters';

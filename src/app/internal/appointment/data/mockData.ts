@@ -16,11 +16,11 @@ const patients: Patient[] = [
 
 // Mock doctors
 const doctors: Doctor[] = [
-  { id: '1', firstName: 'Dr. Emily', lastName: 'Roberts', specialization: 'Cardiology' },
-  { id: '2', firstName: 'Dr. David', lastName: 'Thompson', specialization: 'Neurology' },
-  { id: '3', firstName: 'Dr. Lisa', lastName: 'Garcia', specialization: 'Dermatology' },
-  { id: '4', firstName: 'Dr. Mark', lastName: 'Lee', specialization: 'Orthopedics' },
-  { id: '5', firstName: 'Dr. Rachel', lastName: 'White', specialization: 'General Practice' }
+  { id: '1', firstName: 'Dr. Emily', lastName: 'Roberts', specialization: 'Cardiology', status: 'Active' },
+  { id: '2', firstName: 'Dr. David', lastName: 'Thompson', specialization: 'Neurology', status: 'Active' },
+  { id: '3', firstName: 'Dr. Lisa', lastName: 'Garcia', specialization: 'Dermatology', status: 'Active' },
+  { id: '4', firstName: 'Dr. Mark', lastName: 'Lee', specialization: 'Orthopedics', status: 'Active' },
+  { id: '5', firstName: 'Dr. Rachel', lastName: 'White', specialization: 'General Practice', status: 'Active' }
 ];
 
 // Mock clinics

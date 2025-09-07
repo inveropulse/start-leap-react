@@ -5,7 +5,9 @@ import { AppointmentFilters, PaginationState } from "@/shared/types";
 // Re-export shared types for backward compatibility
 export { 
   AppointmentStatus, 
-  AppointmentType, 
+  AppointmentType
+};
+export type { 
   AppointmentStats,
   Appointment,
   Patient,

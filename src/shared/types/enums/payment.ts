@@ -5,6 +5,8 @@ export enum PaymentMethod {
   CARD = 'Card',
   BANK_TRANSFER = 'BankTransfer',
   CHEQUE = 'Cheque',
+  INSURANCE = 'Insurance',
+  OTHER = 'Other'
 }
 
 export enum PaymentStatus {

@@ -1,5 +1,6 @@
 import { SedationistStatus, SedationistSpecialty, CertificationStatus } from '../enums/sedationist';
 
+// Remove SedationistFilters from here - it's already in filters/index.ts
 // Unified Sedationist entity interface
 export interface SedationistCertification {
   id: string;
@@ -39,7 +40,7 @@ export interface Sedationist {
   email: string;
   phone?: string;
   licenseNumber: string;
-  status: SedationistStatus;
+  status: SedationistStatus;  
   specialties: SedationistSpecialty[];
   certifications: SedationistCertification[];
   availability: SedationistAvailability[];
