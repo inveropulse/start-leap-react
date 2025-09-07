@@ -80,7 +80,7 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
 
   if (viewMode === "list") {
     const cardContent = (
-      <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onView}>
+      <Card className="interactive cursor-pointer group hover:shadow-lg transition-all duration-200" onClick={onView}>
         <CardContent className="p-4 min-h-[80px] flex items-center">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 flex-1">
@@ -173,7 +173,7 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
   }
 
   const gridCardContent = (
-    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onView}>
+    <Card className="interactive cursor-pointer group hover:shadow-lg hover:-translate-y-1 transition-all duration-200" onClick={onView}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">

@@ -85,9 +85,25 @@ All colors MUST be HSL.
     --shadow-enterprise-lg: 0 8px 40px hsl(var(--enterprise-primary) / 0.25);
     --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.1);
 
-    /* Animations */
+    /* Enhanced Animation System */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Micro-interaction timing */
+    --timing-instant: 0.1s;
+    --timing-fast: 0.15s; 
+    --timing-normal: 0.2s;
+    --timing-slow: 0.3s;
+    --timing-slower: 0.5s;
+    
+    /* Enhanced shadow system */
+    --shadow-micro: 0 1px 2px hsl(var(--primary) / 0.05);
+    --shadow-small: 0 2px 4px hsl(var(--primary) / 0.06);
+    --shadow-medium: 0 4px 8px hsl(var(--primary) / 0.08);
+    --shadow-large: 0 8px 16px hsl(var(--primary) / 0.12);
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.15);
 
     --sidebar-background: 0 0% 98%;
 
@@ -158,6 +174,79 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  /* Enhanced Animation Utilities */
+  
+  /* Staggered animations */
+  .stagger-fade-in {
+    animation: stagger-fade-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  
+  .stagger-scale-in {
+    animation: stagger-scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  
+  .stagger-slide-up {
+    animation: stagger-slide-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  
+  /* Micro-interactions */
+  .hover-lift {
+    transition: transform var(--timing-fast), box-shadow var(--timing-fast);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+  }
+  
+  .hover-scale {
+    transition: transform var(--timing-fast);
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+  
+  .active-scale {
+    transition: transform var(--timing-instant);
+  }
+  
+  .active-scale:active {
+    transform: scale(0.98);
+  }
+  
+  /* Interactive elements */
+  .interactive {
+    @apply hover-lift active-scale transition-all duration-200;
+  }
+  
+  /* Status indicators */
+  .status-pulse {
+    animation: status-pulse 2s infinite;
+  }
+  
+  .status-bounce {
+    animation: status-bounce 1s ease-in-out;
+  }
+  
+  /* Loading states */
+  .loading-skeleton {
+    animation: loading-skeleton 1.5s ease-in-out infinite;
+  }
+  
+  .loading-dots {
+    animation: loading-dots 1.4s ease-in-out infinite both;
+  }
+  
+  /* Page transitions */
+  .page-enter {
+    animation: page-enter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .page-exit {
+    animation: page-exit 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
   /* Toast stacking animations */
   .toast-stack-enter {
     animation: toast-stack-enter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -168,6 +257,114 @@ All colors MUST be HSL.
   }
 }
 
+/* Enhanced Keyframes System */
+
+/* Staggered entry animations */
+@keyframes stagger-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stagger-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes stagger-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Status indicators */
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes status-bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40%, 43% {
+    transform: translateY(-8px);
+  }
+  70% {
+    transform: translateY(-4px);
+  }
+  90% {
+    transform: translateY(-2px);
+  }
+}
+
+/* Loading animations */
+@keyframes loading-skeleton {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes loading-dots {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Page transitions */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes page-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.99);
+  }
+}
+
+/* Enhanced toast animations */
 @keyframes toast-stack-enter {
   from {
     transform: translateX(100%) scale(0.95);

@@ -2,6 +2,8 @@ import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { PullToRefresh } from "@/shared/components/ui/PullToRefresh";
+import { AnimatedList } from "@/shared/components/ui/AnimatedList";
+import { LoadingSpinner } from "@/shared/components/ui/LoadingSpinner";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
 import { ListViewContentProps } from "@/shared/types/ui/listView.types";
@@ -20,21 +22,36 @@ export function ListViewContent({
   const theme = useListViewTheme();
   const isMobile = useIsMobile();
 
-  // Loading State
+  // Enhanced Loading State with staggered animation
   if (isLoading) {
     return (
       <Card>
         <CardContent className="p-6">
+          <div className="flex flex-col items-center justify-center py-12">
+            <LoadingSpinner size="lg" variant="dots" />
+            <p className="text-muted-foreground mt-4 animate-pulse">
+              Loading items...
+            </p>
+          </div>
+          
           <div className={
             viewMode === "grid" 
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              : "space-y-4"
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
+              : "space-y-4 mt-6"
           }>
-            {Array.from({ length: loadingSkeletonCount }).map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <Skeleton className="h-48 rounded-lg" />
-              </div>
-            ))}
+            <AnimatedList animation="stagger" staggerDelay={100}>
+              {Array.from({ length: loadingSkeletonCount }).map((_, i) => (
+                <div key={i} className="loading-skeleton">
+                  <Skeleton 
+                    className="h-48 rounded-lg bg-gradient-to-r from-muted via-muted/50 to-muted animate-shimmer" 
+                    style={{
+                      backgroundSize: '200px 100%',
+                      backgroundRepeat: 'no-repeat',
+                    }}
+                  />
+                </div>
+              ))}
+            </AnimatedList>
           </div>
         </CardContent>
       </Card>
@@ -86,17 +103,21 @@ export function ListViewContent({
     );
   }
 
-  // Content State
+  // Enhanced Content State with animations
   const contentComponent = (
-    <Card>
+    <Card className="hover-lift">
       <CardContent className="p-6">
-        <div className={
-          viewMode === "grid" 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            : "space-y-4"
-        }>
+        <AnimatedList 
+          animation="stagger" 
+          staggerDelay={50}
+          className={
+            viewMode === "grid" 
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              : "space-y-4"
+          }
+        >
           {children}
-        </div>
+        </AnimatedList>
       </CardContent>
     </Card>
   );

@@ -128,6 +128,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        // Existing keyframes
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -160,21 +161,79 @@ export default {
           from: { transform: "translateY(0)" },
           to: { transform: "translateY(100%)" },
         },
+        
+        // Enhanced animation keyframes
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-out": {
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(10px)" },
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.9)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        "scale-out": {
+          "0%": { opacity: "1", transform: "scale(1)" },
+          "100%": { opacity: "0", transform: "scale(0.9)" },
+        },
+        "slide-up": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "slide-down": {
+          "0%": { opacity: "0", transform: "translateY(-20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "stagger-fade": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "bounce-in": {
+          "0%": { opacity: "0", transform: "scale(0.3)" },
+          "50%": { opacity: "1", transform: "scale(1.05)" },
+          "70%": { transform: "scale(0.9)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-1000px 0" },
+          "100%": { backgroundPosition: "1000px 0" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { opacity: "1", boxShadow: "0 0 5px hsl(var(--primary) / 0.3)" },
+          "50%": { opacity: "0.8", boxShadow: "0 0 20px hsl(var(--primary) / 0.6)" },
+        },
       },
       animation: {
+        // Existing animations
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        slideDownAndFade:
-          "slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
-        slideLeftAndFade:
-          "slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideDownAndFade: "slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideLeftAndFade: "slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
         slideUpAndFade: "slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
-        slideRightAndFade:
-          "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "slide-in-from-bottom":
-          "slide-in-from-bottom 300ms cubic-bezier(0.32, 0.72, 0, 1)",
-        "slide-out-to-bottom":
-          "slide-out-to-bottom 300ms cubic-bezier(0.32, 0.72, 0, 1)",
+        slideRightAndFade: "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "slide-in-from-bottom": "slide-in-from-bottom 300ms cubic-bezier(0.32, 0.72, 0, 1)",
+        "slide-out-to-bottom": "slide-out-to-bottom 300ms cubic-bezier(0.32, 0.72, 0, 1)",
+        
+        // Enhanced animations
+        "fade-in": "fade-in 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "fade-out": "fade-out 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "scale-in": "scale-in 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "scale-out": "scale-out 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "slide-up": "slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "slide-down": "slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "stagger-fade": "stagger-fade 0.4s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "bounce-in": "bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+        "shimmer": "shimmer 2s linear infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        
+        // Timing variants
+        "fade-in-fast": "fade-in 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+        "fade-in-slow": "fade-in 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+        "scale-in-fast": "scale-in 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
+        "slide-up-fast": "slide-up 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
       },
     },
   },

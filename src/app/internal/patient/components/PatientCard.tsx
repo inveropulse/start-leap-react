@@ -68,7 +68,7 @@ export const PatientCard = memo(function PatientCard({
 
   if (viewMode === 'list') {
     const cardContent = (
-      <Card className="hover:shadow-md transition-shadow">
+      <Card className="interactive hover:shadow-lg transition-all duration-200 group">
         <CardContent className="p-4 min-h-[80px] flex items-center">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 flex-1">
@@ -149,7 +149,7 @@ export const PatientCard = memo(function PatientCard({
   }
 
   const gridCardContent = (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer group" onClick={onView}>
+    <Card className="interactive cursor-pointer group hover:shadow-lg hover:-translate-y-1 transition-all duration-200" onClick={onView}>
       <CardContent className="p-4 min-h-[200px]">
         <div className="flex flex-col space-y-3">
           {/* Header */}
