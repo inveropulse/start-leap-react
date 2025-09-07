@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { Eye, Edit, Calendar, Phone, MapPin, MoreHorizontal, X } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Badge } from '@/shared/components/ui/badge';
+import { SearchHighlighter } from '@/shared/components/ui/SearchHighlighter';
 import {
   Table,
   TableBody,
@@ -25,9 +26,16 @@ interface AppointmentsTableProps {
   onViewAppointment: (appointment: Appointment) => void;
   onEditAppointment: (appointment: Appointment) => void;
   onCancelAppointment: (appointment: Appointment) => void;
+  searchTerm?: string; // For highlighting search results
 }
 
-export function AppointmentsTable({ appointments, onViewAppointment, onEditAppointment, onCancelAppointment }: AppointmentsTableProps) {
+export function AppointmentsTable({ 
+  appointments, 
+  onViewAppointment, 
+  onEditAppointment, 
+  onCancelAppointment,
+  searchTerm = ''
+}: AppointmentsTableProps) {
   const getStatusVariant = (status: AppointmentStatus): "default" | "secondary" | "destructive" | "outline" => {
     switch (status) {
       case AppointmentStatus.CONFIRMED:
@@ -90,9 +98,11 @@ export function AppointmentsTable({ appointments, onViewAppointment, onEditAppoi
             <TableRow key={appointment.id} className="hover:bg-muted/50">
               <TableCell className="font-medium">
                 <div>
-                  <div className="font-semibold">
-                    {appointment.patient.firstName} {appointment.patient.lastName}
-                  </div>
+                  <SearchHighlighter
+                    text={`${appointment.patient.firstName} ${appointment.patient.lastName}`}
+                    searchTerm={searchTerm}
+                    className="font-semibold"
+                  />
                   <div className="text-sm text-muted-foreground">{appointment.reference}</div>
                 </div>
               </TableCell>
@@ -104,11 +114,25 @@ export function AppointmentsTable({ appointments, onViewAppointment, onEditAppoi
               </TableCell>
               <TableCell>
                 <div>
-                  <div className="font-medium">{appointment.doctor.firstName} {appointment.doctor.lastName}</div>
-                  <div className="text-sm text-muted-foreground">{appointment.doctor.specialization}</div>
+                  <SearchHighlighter
+                    text={`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}
+                    searchTerm={searchTerm}
+                    className="font-medium"
+                  />
+                  <div className="text-sm text-muted-foreground">
+                    <SearchHighlighter
+                      text={appointment.doctor.specialization}
+                      searchTerm={searchTerm}
+                    />
+                  </div>
                 </div>
               </TableCell>
-              <TableCell>{appointment.procedure}</TableCell>
+              <TableCell>
+                <SearchHighlighter
+                  text={appointment.procedure}
+                  searchTerm={searchTerm}
+                />
+              </TableCell>
               <TableCell>
                 <Badge variant={getStatusVariant(appointment.status)}>
                   {getStatusLabel(appointment.status)}
@@ -116,10 +140,17 @@ export function AppointmentsTable({ appointments, onViewAppointment, onEditAppoi
               </TableCell>
               <TableCell>
                 <div>
-                  <div className="font-medium">{appointment.clinic.name}</div>
+                  <SearchHighlighter
+                    text={appointment.clinic.name}
+                    searchTerm={searchTerm}
+                    className="font-medium"
+                  />
                   <div className="text-sm text-muted-foreground flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
-                    {appointment.clinic.address.split(',')[0]}
+                    <SearchHighlighter
+                      text={appointment.clinic.address.split(',')[0]}
+                      searchTerm={searchTerm}
+                    />
                   </div>
                 </div>
               </TableCell>
@@ -198,9 +229,11 @@ export function AppointmentsTable({ appointments, onViewAppointment, onEditAppoi
               {/* Header */}
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="font-semibold">
-                    {appointment.patient.firstName} {appointment.patient.lastName}
-                  </div>
+                  <SearchHighlighter
+                    text={`${appointment.patient.firstName} ${appointment.patient.lastName}`}
+                    searchTerm={searchTerm}
+                    className="font-semibold"
+                  />
                   <div className="text-sm text-muted-foreground">{appointment.reference}</div>
                 </div>
                 <Badge variant={getStatusVariant(appointment.status)}>
@@ -215,17 +248,32 @@ export function AppointmentsTable({ appointments, onViewAppointment, onEditAppoi
                   <span>{formatAppointmentDateTime(appointment.appointmentDate, appointment.appointmentTime)}</span>
                 </div>
                 <div className="text-sm">
-                  <span className="font-medium">{appointment.doctor.firstName} {appointment.doctor.lastName}</span>
-                  <span className="text-muted-foreground"> • {appointment.doctor.specialization}</span>
+                  <SearchHighlighter
+                    text={`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}
+                    searchTerm={searchTerm}
+                    className="font-medium"
+                  />
+                  <SearchHighlighter
+                    text={` • ${appointment.doctor.specialization}`}
+                    searchTerm={searchTerm}
+                    className="text-muted-foreground"
+                  />
                 </div>
               </div>
 
               {/* Procedure and Clinic */}
               <div className="space-y-1">
-                <div className="text-sm font-medium">{appointment.procedure}</div>
+                <SearchHighlighter
+                  text={appointment.procedure}
+                  searchTerm={searchTerm}
+                  className="text-sm font-medium"
+                />
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <MapPin className="h-3 w-3" />
-                  <span>{appointment.clinic.name}</span>
+                  <SearchHighlighter
+                    text={appointment.clinic.name}
+                    searchTerm={searchTerm}
+                  />
                 </div>
               </div>
 

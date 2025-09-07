@@ -16,9 +16,16 @@ export * from './TrendIndicator';
 export * from './MiniChart';
 export * from './EnhancedStatCard';
 export * from './EmptyState';
+export * from './SmartSearchInput';
+export * from './FilterPills';
+export * from './AdvancedFilterPanel';
+export * from './SearchHighlighter';
+export * from './DateRangePicker';
 
 // Animation & interaction enhancements
 export { useSwipeActions } from '../../hooks/useSwipeActions';
 export { usePullToRefresh } from '../../hooks/usePullToRefresh';
 export { useStaggeredAnimation } from '../../hooks/useStaggeredAnimation';
 export { useIntersectionAnimation } from '../../hooks/useIntersectionAnimation';
+export { useDebounce } from '../../hooks/useDebounce';
+export { useLocalStorage } from '../../hooks/useLocalStorage';
