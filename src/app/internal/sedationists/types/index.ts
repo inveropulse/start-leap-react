@@ -7,8 +7,11 @@ import {
   SedationistCase
 } from "@/shared/types/entities/sedationist";
 import { SedationistFilters, SedationistSearchParams } from "@/shared/types/filters";
-import { PaginationResponse as SedationistPaginationResponse, PaginationState } from "@/shared/types";
+import { PaginationResponse, PaginationState } from "@/shared/types";
 import { SedationistStatus, SedationistSpecialty, CertificationStatus } from "@/shared/types/enums/sedationist";
+
+// Define typed pagination response for sedationists
+export type SedationistPaginationResponse = PaginationResponse<Sedationist>;
 
 // Re-export shared types for backward compatibility
 export { 
@@ -22,7 +25,6 @@ export type {
   UpdateSedationistData,
   SedationistFilters,
   SedationistSearchParams,
-  SedationistPaginationResponse,
   PaginationState,
   SedationistCertification,
   SedationistAvailability,
