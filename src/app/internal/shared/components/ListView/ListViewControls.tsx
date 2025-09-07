@@ -4,7 +4,7 @@ import { Input } from "@/shared/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
-import { ListViewControlsProps } from "../../types/listView.types";
+import { ListViewControlsProps } from "@/shared/types/ui/listView.types";
 
 export function ListViewControls({
   searchValue,

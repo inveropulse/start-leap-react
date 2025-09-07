@@ -1,3 +1,4 @@
+// Main shared types - portal and user roles remain here as they're app-wide foundational types
 export enum PortalType {
   CLINIC = "clinic",
   PATIENT = "patient",
@@ -19,8 +20,9 @@ export enum UserRole {
   // NURSE = "nurse",
 }
 
-export enum Currency {
-  GBP = "GBP",
-  USD = "USD",
-  EUR = "EUR",
-}
+// Re-export all shared types from consolidated structure
+export * from './enums';
+export * from './entities';
+export * from './common';
+export * from './filters';
+export * from './ui';

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
-import { ListViewStatsProps } from "../../types/listView.types";
+import { ListViewStatsProps } from "@/shared/types/ui/listView.types";
 
 const getStatColorClass = (color?: 'default' | 'success' | 'warning' | 'primary') => {
   switch (color) {

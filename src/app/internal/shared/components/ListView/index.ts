@@ -11,4 +11,4 @@ export type {
   ListViewContentProps,
   ListViewPaginationProps,
   ListViewStat
-} from '../../types/listView.types';
+} from '@/shared/types/ui/listView.types';

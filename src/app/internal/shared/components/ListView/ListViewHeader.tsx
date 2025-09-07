@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
-import { ListViewHeaderProps } from "../../types/listView.types";
+import { ListViewHeaderProps } from "@/shared/types/ui/listView.types";
 
 export function ListViewHeader({ 
   title, 

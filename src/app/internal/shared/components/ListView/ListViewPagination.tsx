@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
-import { ListViewPaginationProps } from "../../types/listView.types";
+import { ListViewPaginationProps } from "@/shared/types/ui/listView.types";
 
 export function ListViewPagination({
   currentPage,

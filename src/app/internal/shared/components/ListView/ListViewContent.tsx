@@ -2,7 +2,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
-import { ListViewContentProps } from "../../types/listView.types";
+import { ListViewContentProps } from "@/shared/types/ui/listView.types";
 
 export function ListViewContent({
   viewMode,
