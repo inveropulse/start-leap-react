@@ -12,6 +12,20 @@ export interface ListViewStat {
   icon?: React.ComponentType<{ className?: string }>;
   color?: 'default' | 'success' | 'warning' | 'primary';
   description?: string;
+  trend?: {
+    value: number;
+    type: 'percentage' | 'value';
+  };
+  progress?: {
+    current: number;
+    target: number;
+    label?: string;
+  };
+  chart?: {
+    data: Array<{ value: number; label?: string }>;
+    type?: 'line' | 'bar' | 'area';
+  };
+  tooltip?: string;
 }
 
 export interface ListViewStatsProps {

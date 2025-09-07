@@ -364,15 +364,13 @@ All colors MUST be HSL.
   }
 }
 
-/* Enhanced toast animations */
-@keyframes toast-stack-enter {
+/* Enhanced dash animation for line charts */
+@keyframes dash {
   from {
-    transform: translateX(100%) scale(0.95);
-    opacity: 0;
+    stroke-dashoffset: 500;
   }
   to {
-    transform: translateX(0) scale(1);
-    opacity: 1;
+    stroke-dashoffset: 0;
   }
 }
 

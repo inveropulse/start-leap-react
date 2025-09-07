@@ -11,6 +11,11 @@ export * from './AnimatedCard';
 export * from './LoadingSpinner';
 export * from './StatusIndicator';
 export * from './TouchButton';
+export * from './ProgressBar';
+export * from './TrendIndicator';
+export * from './MiniChart';
+export * from './EnhancedStatCard';
+export * from './EmptyState';
 
 // Animation & interaction enhancements
 export { useSwipeActions } from '../../hooks/useSwipeActions';

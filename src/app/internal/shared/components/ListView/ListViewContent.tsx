@@ -4,9 +4,11 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 import { PullToRefresh } from "@/shared/components/ui/PullToRefresh";
 import { AnimatedList } from "@/shared/components/ui/AnimatedList";
 import { LoadingSpinner } from "@/shared/components/ui/LoadingSpinner";
+import { EmptyState } from "@/shared/components/ui/EmptyState";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
 import { ListViewContentProps } from "@/shared/types/ui/listView.types";
+import { RefreshCw, Plus } from "lucide-react";
 
 export function ListViewContent({
   viewMode,
@@ -58,48 +60,101 @@ export function ListViewContent({
     );
   }
 
-  // Error State
+  // Enhanced Error State with actionable guidance
   if (error) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="text-center py-12">
-            <p className="text-destructive mb-4">{error}</p>
-            {onRetry && (
-              <Button 
-                onClick={onRetry} 
-                variant="outline"
-                className={theme.buttonSecondaryClass}
-              >
-                Try Again
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon="settings"
+        title="Something went wrong"
+        description={error}
+        actions={[
+          ...(onRetry ? [{
+            label: "Try Again",
+            onClick: onRetry,
+            variant: 'default' as const,
+            icon: RefreshCw,
+          }] : []),
+        ]}
+        suggestions={[
+          "Check your internet connection",
+          "Refresh the page",
+          "Contact support if the issue persists"
+        ]}
+        animated={true}
+      />
     );
   }
 
-  // Empty State
+  // Enhanced Empty State with context-aware suggestions
   if (isEmpty) {
+    const getEmptyStateConfig = () => {
+      // Try to infer context from empty message
+      if (emptyMessage.toLowerCase().includes('patient')) {
+        return {
+          icon: 'users' as const,
+          title: "No patients found",
+          description: emptyMessage,
+          suggestions: [
+            "Add your first patient to get started",
+            "Check your search filters",
+            "Import patients from another system"
+          ]
+        };
+      }
+      
+      if (emptyMessage.toLowerCase().includes('clinic')) {
+        return {
+          icon: 'building' as const,
+          title: "No clinics found",
+          description: emptyMessage,
+          suggestions: [
+            "Add a new clinic to your network",
+            "Verify your search criteria",
+            "Contact admin to add clinics"
+          ]
+        };
+      }
+
+      if (emptyMessage.toLowerCase().includes('appointment')) {
+        return {
+          icon: 'calendar' as const,
+          title: "No appointments found",
+          description: emptyMessage,
+          suggestions: [
+            "Schedule your first appointment",
+            "Check date range filters",
+            "Review appointment status filters"
+          ]
+        };
+      }
+
+      return {
+        icon: 'search' as const,
+        title: "No items found",
+        description: emptyMessage,
+        suggestions: [
+          "Try adjusting your search terms",
+          "Clear any active filters",
+          "Add new items to get started"
+        ]
+      };
+    };
+
+    const config = getEmptyStateConfig();
+
     return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="text-center py-12">
-            <div className="text-muted-foreground">
-              <p className="mb-4">{emptyMessage}</p>
-              {emptyAction && (
-                <Button 
-                  onClick={emptyAction.onClick}
-                  className={theme.buttonPrimaryClass}
-                >
-                  {emptyAction.label}
-                </Button>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <EmptyState
+        {...config}
+        actions={[
+          ...(emptyAction ? [{
+            label: emptyAction.label,
+            onClick: emptyAction.onClick,
+            variant: 'default' as const,
+            icon: Plus,
+          }] : []),
+        ]}
+        animated={true}
+      />
     );
   }
 
