@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/shared/components/ui/card';
 import { Badge } from '@/shared/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/shared/components/ui/avatar';
 import { WizardStepProps } from '../../../types/wizard.types';
+import { SedationistCertification } from '@/shared/types/entities/sedationist';
 import { searchSedationists } from '../../../data/mockWizardData';
 
 export function SedationistSelectionStep({ data, onDataChange, onNext, onPrevious }: WizardStepProps) {
@@ -137,9 +138,9 @@ export function SedationistSelectionStep({ data, onDataChange, onNext, onPreviou
                     <div>
                       <div className="text-sm font-medium text-foreground mb-1">Certifications:</div>
                       <div className="flex flex-wrap gap-1">
-                        {sedationist.certifications.slice(0, 2).map((cert: string) => (
-                          <Badge key={cert} variant="secondary" className="text-xs bg-portal-internal-primary/10 text-portal-internal-primary">
-                            {cert}
+                        {sedationist.certifications.slice(0, 2).map((cert: SedationistCertification, i: number) => (
+                          <Badge key={cert.id || i} variant="secondary" className="text-xs bg-portal-internal-primary/10 text-portal-internal-primary">
+                            {cert.name}
                           </Badge>
                         ))}
                         {sedationist.certifications.length > 2 && (

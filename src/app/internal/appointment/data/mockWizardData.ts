@@ -1,4 +1,6 @@
 import { WizardPatient, WizardClinic, WizardDoctor, WizardSedationist } from '../types/wizard.types';
+import { SedationistSpecialty, CertificationStatus, SedationistStatus } from "@/shared/types/enums/sedationist";
+import { SedationistCertification } from "@/shared/types/entities/sedationist";
 
 // Mock Patients Data
 export const mockPatients: WizardPatient[] = [
@@ -100,7 +102,8 @@ export const mockDoctors: WizardDoctor[] = [
     experience: 12,
     rating: 4.9,
     avatar: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face',
-    credentials: ['MD', 'FACC', 'Board Certified']
+    credentials: ['MD', 'FACC', 'Board Certified'],
+    status: 'Active' as const
   },
   {
     id: 'doc2',
@@ -111,7 +114,8 @@ export const mockDoctors: WizardDoctor[] = [
     experience: 15,
     rating: 4.8,
     avatar: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
-    credentials: ['MD', 'FAAOS', 'Sports Medicine Certified']
+    credentials: ['MD', 'FAAOS', 'Sports Medicine Certified'],
+    status: 'Active' as const
   },
   {
     id: 'doc3',
@@ -122,7 +126,8 @@ export const mockDoctors: WizardDoctor[] = [
     experience: 8,
     rating: 4.7,
     avatar: 'https://images.unsplash.com/photo-1594824019292-60f647afd842?w=150&h=150&fit=crop&crop=face',
-    credentials: ['MD', 'FAAP', 'Pediatric Emergency Medicine']
+    credentials: ['MD', 'FAAP', 'Pediatric Emergency Medicine'],
+    status: 'Active' as const
   },
   {
     id: 'doc4',
@@ -133,7 +138,8 @@ export const mockDoctors: WizardDoctor[] = [
     experience: 20,
     rating: 4.9,
     avatar: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face',
-    credentials: ['MD', 'PhD', 'Board Certified Neurologist']
+    credentials: ['MD', 'PhD', 'Board Certified Neurologist'],
+    status: 'Active' as const
   }
 ];
 
@@ -143,11 +149,23 @@ export const mockSedationists: WizardSedationist[] = [
     id: 'sed1',
     firstName: 'Dr. Amanda',
     lastName: 'Foster',
-    specialties: ['General Anesthesia', 'Conscious Sedation', 'Regional Blocks'],
+    email: 'amanda.foster@medical.com',
+    licenseNumber: 'MED123456',
+    status: SedationistStatus.ACTIVE,
+    specialties: [SedationistSpecialty.GENERAL_ANAESTHESIA, SedationistSpecialty.CONSCIOUS_SEDATION],
+    availability: [],
+    recentCases: [],
+    joinDate: '2020-01-01',
+    totalProcedures: 1250,
+    patientRating: 4.9,
     experience: 10,
     rating: 4.9,
     avatar: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face',
-    certifications: ['ASA Board Certified', 'ACLS', 'PALS'],
+    certifications: [
+      { id: "1", name: "ASA Board Certified", issuingBody: "American Society of Anesthesiologists", certificateNumber: "ASA123", issueDate: "2020-01-01", expiryDate: "2025-01-01", status: CertificationStatus.VALID },
+      { id: "2", name: "ACLS", issuingBody: "American Heart Association", certificateNumber: "AHA456", issueDate: "2022-01-01", expiryDate: "2024-01-01", status: CertificationStatus.VALID },
+      { id: "3", name: "PALS", issuingBody: "American Academy of Pediatrics", certificateNumber: "PAL789", issueDate: "2021-01-01", expiryDate: "2024-01-01", status: CertificationStatus.VALID }
+    ],
     successRate: 99.2,
     currentCaseload: 15
   },
@@ -155,11 +173,22 @@ export const mockSedationists: WizardSedationist[] = [
     id: 'sed2',
     firstName: 'Dr. Robert',
     lastName: 'Martinez',
-    specialties: ['Pediatric Sedation', 'IV Sedation', 'Nitrous Oxide'],
+    email: 'robert.martinez@medical.com',
+    licenseNumber: 'MED789012',
+    status: SedationistStatus.ACTIVE,
+    specialties: [SedationistSpecialty.PEDIATRIC_SEDATION, SedationistSpecialty.IV_SEDATION, SedationistSpecialty.NITROUS_OXIDE],
+    availability: [],
+    recentCases: [],
+    joinDate: '2018-01-01',
+    totalProcedures: 2100,
+    patientRating: 4.8,
     experience: 15,
     rating: 4.8,
     avatar: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
-    certifications: ['ASA Board Certified', 'Pediatric Advanced Life Support'],
+    certifications: [
+      { id: "4", name: "ASA Board Certified", issuingBody: "American Society of Anesthesiologists", certificateNumber: "ASA987", issueDate: "2019-01-01", expiryDate: "2024-01-01", status: CertificationStatus.VALID },
+      { id: "5", name: "Pediatric Advanced Life Support", issuingBody: "American Academy of Pediatrics", certificateNumber: "PALS654", issueDate: "2022-01-01", expiryDate: "2024-01-01", status: CertificationStatus.VALID }
+    ],
     successRate: 98.8,
     currentCaseload: 12
   },
@@ -167,11 +196,23 @@ export const mockSedationists: WizardSedationist[] = [
     id: 'sed3',
     firstName: 'Dr. Jessica',
     lastName: 'Lee',
-    specialties: ['Oral Sedation', 'IV Sedation', 'Emergency Management'],
+    email: 'jessica.lee@medical.com',
+    licenseNumber: 'MED345678',
+    status: SedationistStatus.ACTIVE,
+    specialties: [SedationistSpecialty.CONSCIOUS_SEDATION, SedationistSpecialty.IV_SEDATION],
+    availability: [],
+    recentCases: [],
+    joinDate: '2021-01-01',
+    totalProcedures: 850,
+    patientRating: 4.7,
     experience: 7,
     rating: 4.7,
     avatar: 'https://images.unsplash.com/photo-1594824019292-60f647afd842?w=150&h=150&fit=crop&crop=face',
-    certifications: ['Board Certified', 'ACLS', 'Sedation Permit'],
+    certifications: [
+      { id: "6", name: "Board Certified", issuingBody: "American Dental Association", certificateNumber: "ADA321", issueDate: "2021-01-01", expiryDate: "2024-01-01", status: CertificationStatus.VALID },
+      { id: "7", name: "ACLS", issuingBody: "American Heart Association", certificateNumber: "AHA111", issueDate: "2022-01-01", expiryDate: "2024-01-01", status: CertificationStatus.VALID },
+      { id: "8", name: "Sedation Permit", issuingBody: "State Medical Board", certificateNumber: "SMB222", issueDate: "2020-01-01", expiryDate: "2025-01-01", status: CertificationStatus.VALID }
+    ],
     successRate: 98.5,
     currentCaseload: 18
   },
@@ -179,11 +220,22 @@ export const mockSedationists: WizardSedationist[] = [
     id: 'sed4',
     firstName: 'Dr. Thomas',
     lastName: 'Brown',
-    specialties: ['General Anesthesia', 'Spinal Blocks', 'Pain Management'],
+    email: 'thomas.brown@medical.com',
+    licenseNumber: 'MED901234',
+    status: SedationistStatus.ACTIVE,
+    specialties: [SedationistSpecialty.GENERAL_ANAESTHESIA, SedationistSpecialty.CONSCIOUS_SEDATION],
+    availability: [],
+    recentCases: [],
+    joinDate: '2015-01-01',
+    totalProcedures: 3200,
+    patientRating: 4.9,
     experience: 18,
     rating: 4.9,
     avatar: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face',
-    certifications: ['ASA Board Certified', 'Pain Medicine Fellowship'],
+    certifications: [
+      { id: "9", name: "ASA Board Certified", issuingBody: "American Society of Anesthesiologists", certificateNumber: "ASA555", issueDate: "2018-01-01", expiryDate: "2025-01-01", status: CertificationStatus.VALID },
+      { id: "10", name: "Pain Medicine Fellowship", issuingBody: "American Board of Anesthesiology", certificateNumber: "ABA777", issueDate: "2019-01-01", expiryDate: "2024-01-01", status: CertificationStatus.VALID }
+    ],
     successRate: 99.5,
     currentCaseload: 10
   }
@@ -194,7 +246,7 @@ export const searchPatients = (query: string, page: number = 1, pageSize: number
   const filtered = mockPatients.filter(patient =>
     `${patient.firstName} ${patient.lastName}`.toLowerCase().includes(query.toLowerCase()) ||
     patient.email.toLowerCase().includes(query.toLowerCase()) ||
-    patient.phone.includes(query)
+    (patient.phone && patient.phone.includes(query))
   );
   
   const total = filtered.length;
@@ -213,9 +265,9 @@ export const searchPatients = (query: string, page: number = 1, pageSize: number
 
 export const searchClinics = (query: string, page: number = 1, pageSize: number = 10) => {
   const filtered = mockClinics.filter(clinic =>
-    clinic.name.toLowerCase().includes(query.toLowerCase()) ||
-    clinic.address.toLowerCase().includes(query.toLowerCase()) ||
-    clinic.specialties.some(specialty => specialty.toLowerCase().includes(query.toLowerCase()))
+    clinic.name?.toLowerCase().includes(query.toLowerCase()) ||
+    clinic.address?.toLowerCase().includes(query.toLowerCase()) ||
+    (clinic.specialties && clinic.specialties.some(specialty => specialty.toLowerCase().includes(query.toLowerCase())))
   );
   
   const total = filtered.length;
@@ -240,7 +292,7 @@ export const searchSedationists = (query: string, page: number = 1, pageSize: nu
   const filtered = mockSedationists.filter(sedationist =>
     `${sedationist.firstName} ${sedationist.lastName}`.toLowerCase().includes(query.toLowerCase()) ||
     sedationist.specialties.some(specialty => specialty.toLowerCase().includes(query.toLowerCase())) ||
-    sedationist.certifications.some(cert => cert.toLowerCase().includes(query.toLowerCase()))
+    sedationist.certifications.some(cert => cert.name.toLowerCase().includes(query.toLowerCase()))
   );
   
   const total = filtered.length;
