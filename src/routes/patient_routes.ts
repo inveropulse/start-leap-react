@@ -7,15 +7,18 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { lazy } from "react";
+import React from "react";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
 
 const PatientDashboard = lazy(() => import("@/app/patient/PatientPortal"));
-const PatientAppointments = <div />;
-const PatientRecords = <div />;
-const PatientMessages = <div />;
-const PatientBilling = <div />;
-const PatientProfile = <div />;
+
+// Placeholder components for routes not yet implemented
+const PatientAppointments = () => React.createElement("div");
+const PatientRecords = () => React.createElement("div");
+const PatientMessages = () => React.createElement("div");
+const PatientBilling = () => React.createElement("div");
+const PatientProfile = () => React.createElement("div");
 
 export enum PatientQuickActionKey {
   NEW_APPOINTMENT = "new_appointment",
@@ -37,32 +40,32 @@ export enum PatientRoute {
 const PATIENT_ROUTES: AppRoute[] = [
   {
     index: true,
-    element: <PatientDashboard />,
+    component: PatientDashboard,
     path: PatientRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },
   {
-    element: PatientAppointments,
+    component: PatientAppointments,
     path: PatientRoute.APPOINTMENTS,
     meta: { title: "My Appointments", enabled: true, icon: Calendar },
   },
   {
-    element: PatientRecords,
+    component: PatientRecords,
     path: PatientRoute.RECORDS,
     meta: { title: "Health Records", enabled: true, icon: Heart },
   },
   {
-    element: PatientMessages,
+    component: PatientMessages,
     path: PatientRoute.MESSAGES,
     meta: { title: "Messages", enabled: true, icon: MessageSquare },
   },
   {
-    element: PatientBilling,
+    component: PatientBilling,
     path: PatientRoute.BILLING,
     meta: { title: "Billing", enabled: true, icon: CreditCard },
   },
   {
-    element: PatientProfile,
+    component: PatientProfile,
     path: PatientRoute.PROFILE,
     meta: { title: "Profile", enabled: true, icon: UserIcon },
   },

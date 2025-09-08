@@ -9,7 +9,7 @@ import { SedationistQuickActionKey } from "./sedationist_routes";
 export type AppRoute = {
   readonly path: string;
   readonly index?: boolean;
-  readonly element: React.ReactNode;
+  readonly component: React.ComponentType;
   readonly meta: {
     readonly title: string;
     readonly enabled: boolean;

@@ -8,18 +8,21 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import { lazy } from "react";
+import React from "react";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
 
 const SedationistDashboard = lazy(
   () => import("@/app/sedationist/SedationistPortal")
 );
-const SedationistSchedule = <div />;
-const SedationistPatients = <div />;
-const SedationistProcedures = <div />;
-const SedationistMonitoring = <div />;
-const SedationistCerts = <div />;
-const SedationistGuidelines = <div />;
+
+// Placeholder components for routes not yet implemented
+const SedationistSchedule = () => React.createElement("div");
+const SedationistPatients = () => React.createElement("div");
+const SedationistProcedures = () => React.createElement("div");
+const SedationistMonitoring = () => React.createElement("div");
+const SedationistCerts = () => React.createElement("div");
+const SedationistGuidelines = () => React.createElement("div");
 
 export enum SedationistQuickActionKey {
   NEW_PROCEDURE = "new_procedure",
@@ -38,27 +41,27 @@ export enum SedationistRoute {
 const SEDATIONIST_ROUTES: AppRoute[] = [
   {
     index: true,
-    element: <SedationistDashboard />,
+    component: SedationistDashboard,
     path: SedationistRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },
   {
-    element: SedationistSchedule,
+    component: SedationistSchedule,
     path: SedationistRoute.SCHEDULE,
     meta: { title: "My Schedule", enabled: true, icon: Calendar },
   },
   {
-    element: SedationistPatients,
+    component: SedationistPatients,
     path: SedationistRoute.PATIENTS,
     meta: { title: "Patient Records", enabled: true, icon: Users },
   },
   {
-    element: SedationistProcedures,
+    component: SedationistProcedures,
     path: SedationistRoute.PROCEDURES,
     meta: { title: "Procedure Notes", enabled: true, icon: ClipboardList },
   },
   {
-    element: SedationistMonitoring,
+    component: SedationistMonitoring,
     path: SedationistRoute.MONITORING,
     meta: {
       title: "Sedation Monitoring",
@@ -67,12 +70,12 @@ const SEDATIONIST_ROUTES: AppRoute[] = [
     },
   },
   {
-    element: SedationistCerts,
+    component: SedationistCerts,
     path: SedationistRoute.CERTIFICATIONS,
     meta: { title: "Certifications", enabled: true, icon: Shield },
   },
   {
-    element: SedationistGuidelines,
+    component: SedationistGuidelines,
     path: SedationistRoute.GUIDELINES,
     meta: { title: "Guidelines", enabled: true, icon: BookOpen },
   },

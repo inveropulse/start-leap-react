@@ -7,16 +7,19 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import { lazy } from "react";
+import React from "react";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
 
 const ClinicDashboardPage = lazy(() => import("@/app/clinic/ClinicPortal"));
-const ClinicSchedule = <div />;
-const ClinicPatients = <div />;
-const ClinicAppointments = <div />;
-const ClinicStaff = <div />;
-const ClinicReports = <div />;
-const ClinicSettings = <div />;
+
+// Placeholder components for routes not yet implemented
+const ClinicSchedule = () => React.createElement("div");
+const ClinicPatients = () => React.createElement("div");
+const ClinicAppointments = () => React.createElement("div");
+const ClinicStaff = () => React.createElement("div");
+const ClinicReports = () => React.createElement("div");
+const ClinicSettings = () => React.createElement("div");
 
 export enum ClinicQuickActionKey {
   NEW_APPOINTMENT = "new_appointment",
@@ -36,37 +39,37 @@ export enum ClinicRoute {
 const CLINIC_ROUTES: AppRoute[] = [
   {
     index: true,
-    element: <ClinicDashboardPage />,
+    component: ClinicDashboardPage,
     path: ClinicRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },
   {
-    element: ClinicSchedule,
+    component: ClinicSchedule,
     path: ClinicRoute.SCHEDULE,
     meta: { title: "Today's Schedule", enabled: true, icon: Calendar },
   },
   {
-    element: ClinicPatients,
+    component: ClinicPatients,
     path: ClinicRoute.PATIENTS,
     meta: { title: "Patients", enabled: true, icon: Users },
   },
   {
-    element: ClinicAppointments,
+    component: ClinicAppointments,
     path: ClinicRoute.APPOINTMENTS,
     meta: { title: "Appointments", enabled: true, icon: Calendar },
   },
   {
-    element: ClinicStaff,
+    component: ClinicStaff,
     path: ClinicRoute.STAFF,
     meta: { title: "Staff", enabled: true, icon: UserCheck },
   },
   {
-    element: ClinicReports,
+    component: ClinicReports,
     path: ClinicRoute.REPORTS,
     meta: { title: "Reports", enabled: true, icon: FileText },
   },
   {
-    element: ClinicSettings,
+    component: ClinicSettings,
     path: ClinicRoute.SETTINGS,
     meta: { title: "Settings", enabled: true, icon: Settings },
   },

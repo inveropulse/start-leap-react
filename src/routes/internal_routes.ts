@@ -11,27 +11,31 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import { lazy } from "react";
+import React from "react";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
 
 const ClinicsPage = lazy(() => import("@/app/internal/clinics/ClinicsPage"));
-const SedationistsPage = lazy(() => import("@/app/internal/sedationists/SedationistsPage"));
+const SedationistsPage = lazy(
+  () => import("@/app/internal/sedationists/SedationistsPage")
+);
 const UsersPage = lazy(() => import("@/app/internal/users/UsersPage"));
-const Analytics = <div />;
-const Reports = <div />;
-const SettingsScreen = <div />;
-
 const DashboardPage = lazy(
   () => import("@/app/internal/dashboard/DashboardPage")
 );
 const PatientPage = lazy(() => import("@/app/internal/patient/PatientPage"));
-const PatientDetailPage = lazy(() => import("@/app/internal/patient/PatientDetailPage"));
-const CalendarPage = lazy(
-  () => import("@/app/internal/calendar/CalendarPage")
+const PatientDetailPage = lazy(
+  () => import("@/app/internal/patient/PatientDetailPage")
 );
+const CalendarPage = lazy(() => import("@/app/internal/calendar/CalendarPage"));
 const AppointmentPage = lazy(
   () => import("@/app/internal/appointment/AppointmentPage")
 );
+
+// Placeholder components for routes not yet implemented
+const Analytics = () => React.createElement("div");
+const Reports = () => React.createElement("div");
+const SettingsScreen = () => React.createElement("div");
 
 export enum InternalQuickActionKey {
   ADD_PATIENT = "add_patient",
@@ -61,57 +65,62 @@ export enum InternalRoute {
 const INTERNAL_ROUTES: AppRoute[] = [
   {
     index: true,
-    element: <DashboardPage />,
+    component: DashboardPage,
     path: InternalRoute.ROOT,
     meta: { title: "Dashboard", enabled: true, icon: LayoutDashboard },
   },
   {
-    element: <PatientPage />,
+    component: PatientPage,
     path: InternalRoute.PATIENTS,
     meta: { title: "Patients", enabled: true, icon: Users },
   },
   {
-    element: <PatientDetailPage />,
+    component: PatientDetailPage,
     path: InternalRoute.PATIENT_DETAIL,
-    meta: { title: "Patient Details", enabled: true, isSubRoute: true, icon: Users },
+    meta: {
+      title: "Patient Details",
+      enabled: true,
+      isSubRoute: true,
+      icon: Users,
+    },
   },
   {
-    element: <ClinicsPage />,
+    component: ClinicsPage,
     path: InternalRoute.CLINICS,
     meta: { title: "Clinics", enabled: true, icon: Building2 },
   },
   {
-    element: <CalendarPage />,
+    component: CalendarPage,
     path: InternalRoute.CALENDAR,
     meta: { title: "Calendar", enabled: true, icon: Calendar },
   },
   {
-    element: <AppointmentPage />,
+    component: AppointmentPage,
     path: InternalRoute.APPOINTMENTS,
     meta: { title: "Appointments", enabled: true, icon: CalendarDays },
   },
   {
-    element: <SedationistsPage />,
+    component: SedationistsPage,
     path: InternalRoute.SEDATIONISTS,
     meta: { title: "Sedationists", enabled: true, icon: UserCheck },
   },
   {
-    element: Analytics,
+    component: Analytics,
     path: InternalRoute.ANALYTICS,
     meta: { title: "Analytics", enabled: true, icon: Activity },
   },
   {
     path: InternalRoute.REPORTS,
-    element: Reports,
+    component: Reports,
     meta: { title: "Reports", enabled: true, icon: FileText },
   },
   {
-    element: <UsersPage />,
+    component: UsersPage,
     path: InternalRoute.USERS,
     meta: { title: "User Management", enabled: true, icon: Shield },
   },
   {
-    element: SettingsScreen,
+    component: SettingsScreen,
     path: InternalRoute.SETTINGS,
     meta: { title: "Settings", enabled: true, icon: Settings },
   },

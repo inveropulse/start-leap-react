@@ -5,6 +5,7 @@ import { CLINIC_PORTAL } from "./clinic_routes";
 import { PATIENT_PORTAL } from "./patient_routes";
 import { INTERNAL_PORTAL } from "./internal_routes";
 import { SEDATIONIST_PORTAL } from "./sedationist_routes";
+import React from "react";
 
 const PORTAL_REGISTRY: PortalRegistry = {
   public: AUTH_CONFIG,
@@ -12,7 +13,12 @@ const PORTAL_REGISTRY: PortalRegistry = {
 } as const;
 
 export const getEnabledPublicRoutes = () => {
-  return PORTAL_REGISTRY.public.routes.filter((route) => route.meta.enabled);
+  return PORTAL_REGISTRY.public.routes
+    .filter((route) => route.meta.enabled)
+    .map((route) => ({
+      ...route,
+      element: React.createElement(route.component),
+    }));
 };
 
 export const getEnabledPortals = () => {
@@ -20,7 +26,12 @@ export const getEnabledPortals = () => {
     .filter((portal) => portal.enabled)
     .map((portal) => ({
       ...portal,
-      routes: portal.routes.filter((route) => route.meta.enabled),
+      routes: portal.routes
+        .filter((route) => route.meta.enabled)
+        .map((route) => ({
+          ...route,
+          element: React.createElement(route.component),
+        })),
       quickActions: portal.quickActions.filter((action) => action.enabled),
     }));
 };
@@ -30,7 +41,12 @@ export const getEnabledPortalsWithMainRoutes = () => {
     .filter((portal) => portal.enabled)
     .map((portal) => ({
       ...portal,
-      routes: portal.routes.filter((route) => route.meta.enabled && !route.meta.isSubRoute),
+      routes: portal.routes
+        .filter((route) => route.meta.enabled && !route.meta.isSubRoute)
+        .map((route) => ({
+          ...route,
+          element: React.createElement(route.component),
+        })),
       quickActions: portal.quickActions.filter((action) => action.enabled),
     }));
 };
@@ -40,5 +56,7 @@ export const getPortalByType = (type: PortalType) => {
 };
 
 export const getPortalByTypeWithMainRoutes = (type: PortalType) => {
-  return getEnabledPortalsWithMainRoutes().find((portal) => portal.key === type);
+  return getEnabledPortalsWithMainRoutes().find(
+    (portal) => portal.key === type
+  );
 };
