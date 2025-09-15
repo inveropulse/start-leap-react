@@ -1,6 +1,6 @@
 import "./App.css";
 import { AnimatePresence } from "framer-motion";
-import { NotFoundPage } from "@/app/auth/not-found";
+import NotFoundPage from "./app/auth/not-found/NotFoundPage";
 import { useAppLoading } from "./shared/hooks/useAppLoading";
 import WithProviders from "./shared/providers/WithProviders";
 import { PublicRoute } from "./shared/components/PublicRoute";
