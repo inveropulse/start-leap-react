@@ -4,7 +4,14 @@ import { useNotifications } from "@/shared/providers/NotificationProvider";
 import { usePatientsRequest } from "@/api/patients";
 import { PatientSearchParams } from "@/shared/types";
 
-export function usePatientList() {
+interface UsePatientListConfig {
+  enableSearchButton?: boolean;
+  searchMinLength?: number;
+}
+
+export function usePatientList(config?: UsePatientListConfig) {
+  const { enableSearchButton = false, searchMinLength = 3 } = config || {};
+
   const navigate = useNavigate();
   const { showSuccess } = useNotifications();
 
@@ -14,6 +21,7 @@ export function usePatientList() {
     pageSize: 25,
   });
 
+  const [pendingSearch, setPendingSearch] = useState<string>("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [deletePatientId, setDeletePatientId] = useState<string | null>(null);
   const [editPatientId, setEditPatientId] = useState<string | null>(null);
@@ -21,13 +29,55 @@ export function usePatientList() {
   const { data, isLoading, isError, refetch, isFetching } =
     usePatientsRequest(searchParams);
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchParams((prev) => ({
-      ...prev,
-      search: value,
-      pageNo: 1, // Reset to first page when searching
-    }));
-  }, []);
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      if (enableSearchButton) {
+        // When search button is enabled, store the search term but don't execute the search
+        setPendingSearch(value);
+        setSearchParams((prev) => ({
+          ...prev,
+          search: "",
+          pageNo: 1,
+        }));
+      } else {
+        // Auto-search mode (existing behavior)
+        if (value.length >= searchMinLength) {
+          setSearchParams((prev) => ({
+            ...prev,
+            search: value,
+            pageNo: 1, // Reset to first page when searching
+          }));
+        }
+      }
+    },
+    [enableSearchButton]
+  );
+
+  const handleSearchButtonClick = useCallback(() => {
+    if (pendingSearch == "") {
+      setSearchParams((prev) => ({
+        ...prev,
+        search: "",
+        pageNo: 1,
+      }));
+    } else if (pendingSearch.length >= searchMinLength) {
+      setSearchParams((prev) => ({
+        ...prev,
+        search: pendingSearch,
+        pageNo: 1,
+      }));
+    }
+  }, [pendingSearch, searchMinLength]);
+
+  const handleSearchKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter" && enableSearchButton) {
+        event.preventDefault();
+        handleSearchButtonClick();
+      }
+    },
+    [enableSearchButton, handleSearchButtonClick]
+  );
 
   const handlePageChange = useCallback((page: number) => {
     setSearchParams((prev) => ({ ...prev, pageNo: page }));
@@ -68,9 +118,14 @@ export function usePatientList() {
   return {
     // State
     searchParams,
+    pendingSearch,
     viewMode,
     deletePatientId,
     editPatientId,
+
+    // Configuration
+    enableSearchButton,
+    searchMinLength,
 
     // API data
     data,
@@ -80,6 +135,8 @@ export function usePatientList() {
 
     // Actions
     handleSearchChange,
+    handleSearchButtonClick,
+    handleSearchKeyDown,
     handlePageChange,
     handlePageSizeChange,
     handleRefresh,

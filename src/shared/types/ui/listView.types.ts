@@ -10,11 +10,11 @@ export interface ListViewStat {
   label: string;
   value: number | string;
   icon?: React.ComponentType<{ className?: string }>;
-  color?: 'default' | 'success' | 'warning' | 'primary';
+  color?: "default" | "success" | "warning" | "primary";
   description?: string;
   trend?: {
     value: number;
-    type: 'percentage' | 'value';
+    type: "percentage" | "value";
   };
   progress?: {
     current: number;
@@ -23,7 +23,7 @@ export interface ListViewStat {
   };
   chart?: {
     data: Array<{ value: number; label?: string }>;
-    type?: 'line' | 'bar' | 'area';
+    type?: "line" | "bar" | "area";
   };
   tooltip?: string;
 }
@@ -36,19 +36,26 @@ export interface ListViewStatsProps {
 export interface ListViewControlsProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
+  onSearchKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   searchPlaceholder: string;
-  viewMode: 'grid' | 'list';
+  viewMode: "grid" | "list";
   onViewModeToggle: () => void;
   onRefresh: () => void;
   isLoading?: boolean;
   showFilters?: boolean;
   filtersActive?: boolean | number;
   onToggleFilters?: () => void;
+
+  // Search button configuration
+  showSearchButton?: boolean;
+  onSearchButtonClick?: () => void;
+  searchMinLength?: number;
+
   children?: React.ReactNode; // For custom filters
 }
 
 export interface ListViewContentProps {
-  viewMode: 'grid' | 'list';
+  viewMode: "grid" | "list";
   isLoading?: boolean;
   error?: string | null;
   isEmpty?: boolean;

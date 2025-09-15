@@ -10,7 +10,7 @@ import { useDebounce } from "@/shared/hooks/useDebounce";
 interface SearchSuggestion {
   id: string;
   text: string;
-  type: 'recent' | 'suggestion' | 'trending';
+  type: "recent" | "suggestion" | "trending";
   count?: number;
   category?: string;
 }
@@ -27,110 +27,133 @@ interface SmartSearchInputProps {
   maxSuggestions?: number;
   className?: string;
   disabled?: boolean;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export const SmartSearchInput = forwardRef<HTMLInputElement, SmartSearchInputProps>(
-  ({
-    value,
-    onChange,
-    placeholder = "Search...",
-    suggestions = [],
-    recentSearches = [],
-    onRecentSearch,
-    showSuggestions = true,
-    fuzzySearch = true,
-    maxSuggestions = 8,
-    className,
-    disabled = false,
-  }, ref) => {
+export const SmartSearchInput = forwardRef<
+  HTMLInputElement,
+  SmartSearchInputProps
+>(
+  (
+    {
+      value,
+      onChange,
+      placeholder = "Search...",
+      suggestions = [],
+      recentSearches = [],
+      onRecentSearch,
+      showSuggestions = true,
+      fuzzySearch = true,
+      maxSuggestions = 8,
+      className,
+      disabled = false,
+      onKeyDown,
+    },
+    ref
+  ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-    
+
     const debouncedValue = useDebounce(value, 150);
-    
+
     // Filter and combine suggestions
     const filteredSuggestions = useMemo(() => {
       if (!debouncedValue.trim() && recentSearches.length === 0) return [];
-      
+
       let allSuggestions: SearchSuggestion[] = [];
-      
+
       // Add recent searches if no current search
       if (!debouncedValue.trim()) {
-        allSuggestions = recentSearches.slice(0, 3).map(search => ({
+        allSuggestions = recentSearches.slice(0, 3).map((search) => ({
           id: `recent-${search}`,
           text: search,
-          type: 'recent' as const,
+          type: "recent" as const,
         }));
       } else {
         // Filter suggestions based on search
         const searchLower = debouncedValue.toLowerCase();
-        
-        allSuggestions = suggestions.filter(suggestion => {
+
+        allSuggestions = suggestions.filter((suggestion) => {
           if (fuzzySearch) {
             // Simple fuzzy matching
-            return suggestion.text.toLowerCase().includes(searchLower) ||
-                   searchLower.split('').every(char => 
-                     suggestion.text.toLowerCase().includes(char)
-                   );
+            return (
+              suggestion.text.toLowerCase().includes(searchLower) ||
+              searchLower
+                .split("")
+                .every((char) => suggestion.text.toLowerCase().includes(char))
+            );
           }
           return suggestion.text.toLowerCase().includes(searchLower);
         });
-        
+
         // Add recent searches that match
         const matchingRecent = recentSearches
-          .filter(recent => recent.toLowerCase().includes(searchLower))
+          .filter((recent) => recent.toLowerCase().includes(searchLower))
           .slice(0, 2)
-          .map(search => ({
+          .map((search) => ({
             id: `recent-${search}`,
             text: search,
-            type: 'recent' as const,
+            type: "recent" as const,
           }));
-        
+
         allSuggestions = [...matchingRecent, ...allSuggestions];
       }
-      
+
       return allSuggestions.slice(0, maxSuggestions);
-    }, [debouncedValue, suggestions, recentSearches, fuzzySearch, maxSuggestions]);
+    }, [
+      debouncedValue,
+      suggestions,
+      recentSearches,
+      fuzzySearch,
+      maxSuggestions,
+    ]);
 
     // Handle click outside
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(event.target as Node)
+        ) {
           setIsOpen(false);
           setFocusedIndex(-1);
         }
       };
 
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     // Handle keyboard navigation
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      // Call external onKeyDown first
+      onKeyDown?.(e);
+
       if (!isOpen || filteredSuggestions.length === 0) return;
 
       switch (e.key) {
-        case 'ArrowDown':
+        case "ArrowDown":
           e.preventDefault();
-          setFocusedIndex(prev => 
+          setFocusedIndex((prev) =>
             prev < filteredSuggestions.length - 1 ? prev + 1 : 0
           );
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
           e.preventDefault();
-          setFocusedIndex(prev => 
+          setFocusedIndex((prev) =>
             prev > 0 ? prev - 1 : filteredSuggestions.length - 1
           );
           break;
-        case 'Enter':
+        case "Enter":
           e.preventDefault();
           if (focusedIndex >= 0) {
             handleSuggestionSelect(filteredSuggestions[focusedIndex]);
           }
           break;
-        case 'Escape':
+        case "Escape":
           setIsOpen(false);
           setFocusedIndex(-1);
           inputRef.current?.blur();
@@ -140,7 +163,7 @@ export const SmartSearchInput = forwardRef<HTMLInputElement, SmartSearchInputPro
 
     const handleSuggestionSelect = (suggestion: SearchSuggestion) => {
       onChange(suggestion.text);
-      if (suggestion.type === 'recent') {
+      if (suggestion.type === "recent") {
         onRecentSearch?.(suggestion.text);
       }
       setIsOpen(false);
@@ -156,32 +179,32 @@ export const SmartSearchInput = forwardRef<HTMLInputElement, SmartSearchInputPro
     };
 
     const handleClear = () => {
-      onChange('');
+      onChange("");
       setIsOpen(false);
       inputRef.current?.focus();
     };
 
-    const getSuggestionIcon = (type: SearchSuggestion['type']) => {
+    const getSuggestionIcon = (type: SearchSuggestion["type"]) => {
       switch (type) {
-        case 'recent':
+        case "recent":
           return Clock;
-        case 'trending':
+        case "trending":
           return TrendingUp;
         default:
           return Search;
       }
     };
 
-    const getSuggestionLabel = (type: SearchSuggestion['type']) => {
+    const getSuggestionLabel = (type: SearchSuggestion["type"]) => {
       switch (type) {
-        case 'recent':
-          return 'Recent';
-        case 'trending':
-          return 'Trending';
-        case 'suggestion':
-          return 'Suggestion';
+        case "recent":
+          return "Recent";
+        case "trending":
+          return "Trending";
+        case "suggestion":
+          return "Suggestion";
         default:
-          return '';
+          return "";
       }
     };
 
@@ -192,7 +215,7 @@ export const SmartSearchInput = forwardRef<HTMLInputElement, SmartSearchInputPro
           <Input
             ref={(node) => {
               inputRef.current = node;
-              if (typeof ref === 'function') {
+              if (typeof ref === "function") {
                 ref(node);
               } else if (ref) {
                 ref.current = node;
@@ -225,7 +248,7 @@ export const SmartSearchInput = forwardRef<HTMLInputElement, SmartSearchInputPro
               {filteredSuggestions.map((suggestion, index) => {
                 const Icon = getSuggestionIcon(suggestion.type);
                 const isActive = index === focusedIndex;
-                
+
                 return (
                   <div
                     key={suggestion.id}
@@ -245,14 +268,14 @@ export const SmartSearchInput = forwardRef<HTMLInputElement, SmartSearchInputPro
                         </Badge>
                       )}
                     </div>
-                    
+
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {suggestion.count && (
                         <span className="text-xs text-muted-foreground">
                           {suggestion.count}
                         </span>
                       )}
-                      {suggestion.type !== 'recent' && (
+                      {suggestion.type !== "recent" && (
                         <Badge variant="outline" className="text-xs">
                           {getSuggestionLabel(suggestion.type)}
                         </Badge>

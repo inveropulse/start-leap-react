@@ -20,8 +20,11 @@ export default function ViewAllPatientsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <PatientListView onAddPatient={() => setOpenAddPatient(true)} />
-
+      <PatientListView
+        onAddPatient={() => setOpenAddPatient(true)}
+        enableSearchButton={true}
+        searchMinLength={3}
+      />
       <CreatePatientModal
         open={openAddPatient}
         onOpenChange={setOpenAddPatient}

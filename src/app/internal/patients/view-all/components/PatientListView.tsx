@@ -12,11 +12,18 @@ import { PatientCard } from "../../shared/components/PatientCard";
 
 interface PatientListViewProps {
   onAddPatient: () => void;
+  enableSearchButton?: boolean;
+  searchMinLength?: number;
 }
 
-export function PatientListView({ onAddPatient }: PatientListViewProps) {
+export function PatientListView({
+  onAddPatient,
+  enableSearchButton = false,
+  searchMinLength = 3,
+}: PatientListViewProps) {
   const {
     searchParams,
+    pendingSearch,
     viewMode,
     deletePatientId,
     editPatientId,
@@ -25,6 +32,8 @@ export function PatientListView({ onAddPatient }: PatientListViewProps) {
     isError,
     isFetching,
     handleSearchChange,
+    handleSearchButtonClick,
+    handleSearchKeyDown,
     handlePageChange,
     handlePageSizeChange,
     handleRefresh,
@@ -34,7 +43,7 @@ export function PatientListView({ onAddPatient }: PatientListViewProps) {
     toggleViewMode,
     setDeletePatientId,
     setEditPatientId,
-  } = usePatientList();
+  } = usePatientList({ enableSearchButton, searchMinLength });
 
   const { stats, isStatsLoading } = usePatientListStats(data);
 
@@ -69,13 +78,19 @@ export function PatientListView({ onAddPatient }: PatientListViewProps) {
       <ListViewStats stats={stats} isLoading={isLoading || isStatsLoading} />
 
       <ListViewControls
-        searchValue={searchParams.search || ""}
+        searchValue={
+          enableSearchButton ? pendingSearch : searchParams.search || ""
+        }
         onSearchChange={handleSearchChange}
+        onSearchKeyDown={handleSearchKeyDown}
         searchPlaceholder="Search patients..."
         viewMode={viewMode}
         onViewModeToggle={toggleViewMode}
         onRefresh={handleRefresh}
         isLoading={isFetching}
+        showSearchButton={enableSearchButton}
+        onSearchButtonClick={handleSearchButtonClick}
+        searchMinLength={searchMinLength}
       />
 
       <ListViewContent
