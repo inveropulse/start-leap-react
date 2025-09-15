@@ -36,7 +36,6 @@ export interface ListViewStatsProps {
 export interface ListViewControlsProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
-  onSearchKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   searchPlaceholder: string;
   viewMode: "grid" | "list";
   onViewModeToggle: () => void;
@@ -48,7 +47,6 @@ export interface ListViewControlsProps {
 
   // Search button configuration
   showSearchButton?: boolean;
-  onSearchButtonClick?: () => void;
   searchMinLength?: number;
 
   children?: React.ReactNode; // For custom filters

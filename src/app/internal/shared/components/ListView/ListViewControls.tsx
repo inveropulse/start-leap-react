@@ -1,38 +1,17 @@
-import {
-  Search,
-  RefreshCw,
-  Grid,
-  List,
-  Filter,
-  Settings,
-  Bookmark,
-} from "lucide-react";
+import { Search, RefreshCw, Grid, List, Filter } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { TouchButton } from "@/shared/components/ui/TouchButton";
-import { Input } from "@/shared/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
-import { Badge } from "@/shared/components/ui/badge";
+import { Card, CardContent } from "@/shared/components/ui/card";
 import { SmartSearchInput } from "@/shared/components/ui/SmartSearchInput";
 import { FilterPills, FilterPill } from "@/shared/components/ui/FilterPills";
-import {
-  AdvancedFilterPanel,
-  FilterSection,
-} from "@/shared/components/ui/AdvancedFilterPanel";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { useLocalStorage } from "@/shared/hooks/useLocalStorage";
-import { useListViewTheme } from "../../hooks/useListViewTheme";
 import { ListViewControlsProps } from "@/shared/types/ui/listView.types";
 import { useState, useMemo, useEffect } from "react";
 
 export function ListViewControls({
   searchValue,
   onSearchChange,
-  onSearchKeyDown,
   searchPlaceholder,
   viewMode,
   onViewModeToggle,
@@ -42,32 +21,22 @@ export function ListViewControls({
   filtersActive,
   onToggleFilters,
   showSearchButton = false,
-  onSearchButtonClick,
   searchMinLength = 3,
   children,
 }: ListViewControlsProps) {
-  const theme = useListViewTheme();
   const isMobile = useIsMobile();
   const ButtonComponent = isMobile ? TouchButton : Button;
 
-  // Search state management
-  const [localSearchValue, setLocalSearchValue] = useState(searchValue);
-  const [pendingSearch, setPendingSearch] = useState<string>("");
-
-  // Enhanced search and filter state
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  // Simple search state
+  const [inputValue, setInputValue] = useState(searchValue);
   const [recentSearches, setRecentSearches] = useLocalStorage<string[]>(
     "recent-searches",
     []
   );
-  const [filterPresets, setFilterPresets] = useLocalStorage(
-    "filter-presets",
-    []
-  );
 
-  // Sync local search value with prop
+  // Sync with prop
   useEffect(() => {
-    setLocalSearchValue(searchValue);
+    setInputValue(searchValue);
   }, [searchValue]);
 
   // Mock search suggestions - in real app, these would come from API
@@ -105,10 +74,9 @@ export function ListViewControls({
     []
   );
 
-  // Mock active filters - in real app, this would come from props
+  // Mock active filters (simplified)
   const activeFilters: FilterPill[] = useMemo(() => {
     const filters: FilterPill[] = [];
-
     if (searchValue) {
       filters.push({
         id: "search",
@@ -118,184 +86,116 @@ export function ListViewControls({
         color: "primary",
       });
     }
-
-    // Add other mock filters based on filtersActive
-    if (typeof filtersActive === "number" && filtersActive > 0) {
-      for (let i = 0; i < Math.min(filtersActive, 3); i++) {
-        filters.push({
-          id: `filter-${i}`,
-          label:
-            ["Status: Active", "Type: Consultation", "Date: This week"][i] ||
-            `Filter ${i + 1}`,
-          value: true,
-          color: ["success", "primary", "secondary"][i] as FilterPill["color"],
-        });
-      }
-    }
-
     return filters;
-  }, [searchValue, filtersActive]);
+  }, [searchValue]);
 
-  const handleRecentSearch = (search: string) => {
-    const updated = [
-      search,
-      ...recentSearches.filter((s) => s !== search),
-    ].slice(0, 5);
-    setRecentSearches(updated);
+  // 4. Track recent searches
+  const addRecentSearch = (search: string) => {
+    if (search.trim() && search.length >= searchMinLength) {
+      const updated = [
+        search,
+        ...recentSearches.filter((s) => s !== search),
+      ].slice(0, 5);
+      setRecentSearches(updated);
+    }
   };
 
-  // Handle search input changes
-  const handleSearchInputChange = (value: string) => {
-    setLocalSearchValue(value);
+  // 1. Handle input change
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
 
     if (showSearchButton) {
-      onSearchChange(value);
-      setPendingSearch("");
-    } else {
-      // Without search button: direct search with validation
-      // Apply minimum length validation
-      if (value === "" || value.length >= searchMinLength) {
+      if (value === "") {
         onSearchChange(value);
-        setPendingSearch("");
-      } else {
-        setPendingSearch(value);
       }
-    }
 
-    // Always update recent searches for valid searches
-    if (value.trim() && value.length >= searchMinLength) {
-      handleRecentSearch(value);
-    }
-  };
-
-  const handleSearchButtonClick = () => {
-    const trimmedValue = localSearchValue.trim();
-
-    // Validate minimum length (except for empty search which is reset)
-    if (trimmedValue !== "" && trimmedValue.length < searchMinLength) {
-      setPendingSearch(trimmedValue);
       return;
     }
 
-    // Trigger search
-    onSearchChange(trimmedValue);
-    setPendingSearch("");
-
-    // Add to recent searches
-    if (trimmedValue) {
-      handleRecentSearch(trimmedValue);
+    // Auto-search: trigger immediately if no button OR if empty (reset)
+    if (value === "" || value.length >= searchMinLength) {
+      onSearchChange(value);
     }
 
-    // Call optional callback
-    onSearchButtonClick?.();
+    // Track recent searches for valid searches
+    if (value.trim() && value.length >= searchMinLength) {
+      addRecentSearch(value);
+    }
   };
 
+  // 2. Handle button click
+  const handleButtonClick = () => {
+    if (inputValue === "" || inputValue.length >= searchMinLength) {
+      onSearchChange(inputValue);
+      if (inputValue.trim()) {
+        addRecentSearch(inputValue);
+      }
+    }
+  };
+
+  // 3. Handle Enter key
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // First call the external handler if provided (from usePatientList)
-    if (onSearchKeyDown) {
-      onSearchKeyDown(event);
-    }
-
-    // Handle the internal search button functionality (if not handled externally)
-    if (!event.defaultPrevented && event.key === "Enter" && showSearchButton) {
-      event.preventDefault();
-      handleSearchButtonClick();
-    }
-  };
-
-  const handleSearchChange = (value: string) => {
-    onSearchChange(value);
-    if (value.trim()) {
-      handleRecentSearch(value);
+    if (event.key === "Enter" && showSearchButton) {
+      handleButtonClick();
     }
   };
 
   const handleRemoveFilter = (filterId: string) => {
     if (filterId === "search") {
-      setLocalSearchValue("");
+      setInputValue("");
       onSearchChange("");
-      setPendingSearch("");
     }
-    // Handle other filter removal logic here
   };
 
   const handleClearAllFilters = () => {
-    setLocalSearchValue("");
+    setInputValue("");
     onSearchChange("");
-    setPendingSearch("");
-    // Clear other filters
   };
 
-  // Mock filter sections for advanced panel
-  const filterSections: FilterSection[] = [
-    {
-      id: "status",
-      title: "Status & Type",
-      children: (
-        <div className="space-y-3">
-          <div className="text-sm text-muted-foreground">
-            Filter by status, type, or priority
-          </div>
-          {/* Filter controls would go here */}
-        </div>
-      ),
-    },
-    {
-      id: "dates",
-      title: "Date Range",
-      children: (
-        <div className="space-y-3">
-          <div className="text-sm text-muted-foreground">
-            Filter by date range
-          </div>
-          {/* Date range picker would go here */}
-        </div>
-      ),
-    },
-  ];
-
-  // Search validation message
-  const showSearchValidation =
-    pendingSearch && pendingSearch.length < searchMinLength;
+  // 5. Show validation message
+  const showValidation =
+    showSearchButton && inputValue && inputValue.length < searchMinLength;
 
   return (
     <>
       <Card>
         <CardContent className="p-6">
           <div className="space-y-4">
-            {/* Enhanced Search Bar */}
+            {/* Search Bar */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <div className="relative">
-                  <SmartSearchInput
-                    value={localSearchValue}
-                    onChange={handleSearchInputChange}
-                    onKeyDown={handleKeyDown}
-                    placeholder={searchPlaceholder}
-                    suggestions={searchSuggestions}
-                    recentSearches={recentSearches}
-                    onRecentSearch={handleRecentSearch}
-                    fuzzySearch={true}
-                    className={showSearchButton ? "pr-16" : ""}
-                  />
+                <div className="flex gap-2">
+                  {/* Search Input */}
+                  <div className="flex-1">
+                    <SmartSearchInput
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
+                      placeholder={searchPlaceholder}
+                      suggestions={searchSuggestions}
+                      recentSearches={recentSearches}
+                      onRecentSearch={addRecentSearch}
+                      fuzzySearch={true}
+                    />
+                  </div>
 
-                  {/* Search Button */}
+                  {/* Search Button (external) */}
                   {showSearchButton && (
                     <ButtonComponent
                       variant="outline"
                       size="sm"
-                      onClick={handleSearchButtonClick}
+                      onClick={handleButtonClick}
                       disabled={isLoading}
-                      className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2"
+                      className="px-3 shrink-0"
                     >
                       <Search className="h-4 w-4" />
                     </ButtonComponent>
                   )}
                 </div>
 
-                {/* Search Validation Message */}
-                {showSearchValidation && (
-                  <div className="text-xs text-muted-foreground mt-1 animate-fade-in">
+                {/* Validation Message */}
+                {showValidation && (
+                  <div className="text-xs text-muted-foreground mt-1">
                     Enter at least {searchMinLength} characters to search
                   </div>
                 )}
@@ -348,15 +248,7 @@ export function ListViewControls({
                   </ButtonComponent>
                 )}
 
-                <ButtonComponent
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowAdvancedFilters(true)}
-                  disabled={isLoading}
-                >
-                  <Settings className="h-4 w-4" />
-                </ButtonComponent>
-
+                {/* Refresh Button */}
                 <ButtonComponent
                   variant="outline"
                   size="sm"
@@ -385,25 +277,6 @@ export function ListViewControls({
           </div>
         </CardContent>
       </Card>
-
-      {/* Advanced Filter Panel */}
-      <AdvancedFilterPanel
-        isOpen={showAdvancedFilters}
-        onClose={() => setShowAdvancedFilters(false)}
-        sections={filterSections}
-        presets={filterPresets}
-        onSavePreset={(name, filters) => {
-          const newPreset = { id: Date.now().toString(), name, filters };
-          setFilterPresets([...filterPresets, newPreset]);
-        }}
-        onLoadPreset={(preset) => {
-          // Load preset logic here
-          console.log("Loading preset:", preset);
-        }}
-        onDeletePreset={(presetId) => {
-          setFilterPresets(filterPresets.filter((p) => p.id !== presetId));
-        }}
-      />
     </>
   );
 }

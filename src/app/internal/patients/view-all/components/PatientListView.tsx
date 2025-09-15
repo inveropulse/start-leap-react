@@ -23,7 +23,6 @@ export function PatientListView({
 }: PatientListViewProps) {
   const {
     searchParams,
-    pendingSearch,
     viewMode,
     deletePatientId,
     editPatientId,
@@ -32,8 +31,6 @@ export function PatientListView({
     isError,
     isFetching,
     handleSearchChange,
-    handleSearchButtonClick,
-    handleSearchKeyDown,
     handlePageChange,
     handlePageSizeChange,
     handleRefresh,
@@ -78,18 +75,14 @@ export function PatientListView({
       <ListViewStats stats={stats} isLoading={isLoading || isStatsLoading} />
 
       <ListViewControls
-        searchValue={
-          enableSearchButton ? pendingSearch : searchParams.search || ""
-        }
+        searchValue={searchParams.search}
         onSearchChange={handleSearchChange}
-        onSearchKeyDown={handleSearchKeyDown}
         searchPlaceholder="Search patients..."
         viewMode={viewMode}
         onViewModeToggle={toggleViewMode}
         onRefresh={handleRefresh}
         isLoading={isFetching}
         showSearchButton={enableSearchButton}
-        onSearchButtonClick={handleSearchButtonClick}
         searchMinLength={searchMinLength}
       />
 
