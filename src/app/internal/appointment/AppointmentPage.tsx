@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Plus, RefreshCw, Calendar } from 'lucide-react';
+import { useState, useMemo } from "react";
+import { Plus, RefreshCw, Calendar } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -8,35 +8,42 @@ import {
 } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { CalendarDays, Clock, Users, MapPin } from "lucide-react";
-import { mockAppointments } from './data/mockData';
-import { AppointmentFilters } from './components/AppointmentFilters';
-import { AppointmentsTable } from './components/AppointmentsTable';
-import { AppointmentManagementModal } from './components/AppointmentManagementModal';
-import { AddAvailabilityModal } from './components/AddAvailabilityModal';
-import { CancelAppointmentModal } from './components/CancelAppointmentModal';
-import { BookAppointmentWizard } from './components/wizard/BookAppointmentWizard';
-import { AppointmentPagination } from './components/AppointmentPagination';
-import { Appointment, AppointmentFilters as FilterType, PaginationState, AppointmentStatus } from './types';
-import { useNotifications } from '@/shared/providers/NotificationProvider';
+import { mockAppointments } from "./data/mockData";
+import { AppointmentFilters } from "./components/AppointmentFilters";
+import { AppointmentsTable } from "./components/AppointmentsTable";
+import { AppointmentManagementModal } from "./components/AppointmentManagementModal";
+import { AddAvailabilityModal } from "./components/AddAvailabilityModal";
+import { CancelAppointmentModal } from "./components/CancelAppointmentModal";
+import { BookAppointmentWizard } from "./components/wizard/BookAppointmentWizard";
+import { AppointmentPagination } from "./components/AppointmentPagination";
+import {
+  Appointment,
+  AppointmentSearchParams as FilterType,
+  PaginationState,
+  AppointmentStatus,
+} from "./types";
+import { useNotifications } from "@/shared/providers/NotificationProvider";
 
 export default function AppointmentPage() {
   const { showSuccess } = useNotifications();
   const [appointments] = useState<Appointment[]>(mockAppointments);
   const [filters, setFilters] = useState<FilterType>({
-    search: '',
+    search: "",
     status: [],
     dateFrom: undefined,
     dateTo: undefined,
   });
   const [pagination, setPagination] = useState<PaginationState>({
-    page: 1,
+    pageNo: 1,
     pageSize: 25,
-    total: 0,
+    totalPages: 0,
   });
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [addAvailabilityModalOpen, setAddAvailabilityModalOpen] = useState(false);
+  const [addAvailabilityModalOpen, setAddAvailabilityModalOpen] =
+    useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [bookModalOpen, setBookModalOpen] = useState(false);
 
@@ -47,24 +54,31 @@ export default function AppointmentPage() {
     // Search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(apt =>
-        `${apt.patient.firstName} ${apt.patient.lastName}`.toLowerCase().includes(searchLower) ||
-        apt.reference.toLowerCase().includes(searchLower) ||
-        apt.procedure.toLowerCase().includes(searchLower)
+      filtered = filtered.filter(
+        (apt) =>
+          `${apt.patient.firstName} ${apt.patient.lastName}`
+            .toLowerCase()
+            .includes(searchLower) ||
+          apt.reference.toLowerCase().includes(searchLower) ||
+          apt.procedure.toLowerCase().includes(searchLower)
       );
     }
 
     // Status filter
     if (filters.status.length > 0) {
-      filtered = filtered.filter(apt => filters.status.includes(apt.status));
+      filtered = filtered.filter((apt) => filters.status.includes(apt.status));
     }
 
     // Date range filter
     if (filters.dateFrom) {
-      filtered = filtered.filter(apt => apt.appointmentDate >= filters.dateFrom!);
+      filtered = filtered.filter(
+        (apt) => apt.appointmentDate >= filters.dateFrom!
+      );
     }
     if (filters.dateTo) {
-      filtered = filtered.filter(apt => apt.appointmentDate <= filters.dateTo!);
+      filtered = filtered.filter(
+        (apt) => apt.appointmentDate <= filters.dateTo!
+      );
     }
 
     return filtered;
@@ -72,23 +86,30 @@ export default function AppointmentPage() {
 
   // Update pagination total
   useMemo(() => {
-    setPagination(prev => ({ ...prev, total: filteredAppointments.length }));
+    setPagination((prev) => ({ ...prev, total: filteredAppointments.length }));
   }, [filteredAppointments.length]);
 
   // Paginated appointments
   const paginatedAppointments = useMemo(() => {
-    const startIndex = (pagination.page - 1) * pagination.pageSize;
+    const startIndex = (pagination.pageNo - 1) * pagination.pageSize;
     const endIndex = startIndex + pagination.pageSize;
     return filteredAppointments.slice(startIndex, endIndex);
-  }, [filteredAppointments, pagination.page, pagination.pageSize]);
+  }, [filteredAppointments, pagination.pageNo, pagination.pageSize]);
 
   // Calculate stats
   const stats = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
-    const todayScheduled = appointments.filter(apt => apt.appointmentDate === today).length;
-    const pending = appointments.filter(apt => apt.status === AppointmentStatus.SCHEDULED).length;
-    const completed = appointments.filter(apt => apt.status === AppointmentStatus.COMPLETED).length;
-    const activeClinics = new Set(appointments.map(apt => apt.clinic.id)).size;
+    const today = new Date().toISOString().split("T")[0];
+    const todayScheduled = appointments.filter(
+      (apt) => apt.appointmentDate === today
+    ).length;
+    const pending = appointments.filter(
+      (apt) => apt.status === AppointmentStatus.SCHEDULED
+    ).length;
+    const completed = appointments.filter(
+      (apt) => apt.status === AppointmentStatus.COMPLETED
+    ).length;
+    const activeClinics = new Set(appointments.map((apt) => apt.clinic.id))
+      .size;
 
     return { todayScheduled, pending, completed, activeClinics };
   }, [appointments]);
@@ -105,30 +126,32 @@ export default function AppointmentPage() {
 
   const handleSaveAppointment = (appointment: Appointment) => {
     // In a real app, this would update the appointment via API
-    console.log('Saving appointment:', appointment);
+    console.log("Saving appointment:", appointment);
   };
 
   const handleRefresh = async () => {
     // Simulate refresh with loading state
-    const refreshBtn = document.querySelector('[data-refresh-btn]') as HTMLButtonElement;
+    const refreshBtn = document.querySelector(
+      "[data-refresh-btn]"
+    ) as HTMLButtonElement;
     if (refreshBtn) {
       refreshBtn.disabled = true;
     }
-    
+
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
     // Reset filters to show "refreshed" data
     setFilters({
-      search: '',
+      search: "",
       status: [],
       dateFrom: undefined,
       dateTo: undefined,
     });
-    setPagination(prev => ({ ...prev, page: 1 }));
-    
+    setPagination((prev) => ({ ...prev, page: 1 }));
+
     showSuccess("Appointments refreshed successfully");
-    
+
     if (refreshBtn) {
       refreshBtn.disabled = false;
     }
@@ -158,7 +181,12 @@ export default function AppointmentPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleRefresh} data-refresh-btn>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            data-refresh-btn
+          >
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
@@ -263,7 +291,8 @@ export default function AppointmentPage() {
                 Appointments Coming Soon
               </h3>
               <p className="text-muted-foreground max-w-md mx-auto">
-                No appointments match your current filters. Try adjusting your search criteria or check back later.
+                No appointments match your current filters. Try adjusting your
+                search criteria or check back later.
               </p>
             </div>
           )}
@@ -274,8 +303,10 @@ export default function AppointmentPage() {
       {filteredAppointments.length > 0 && (
         <AppointmentPagination
           pagination={pagination}
-          onPageChange={(page) => setPagination(prev => ({ ...prev, page }))}
-          onPageSizeChange={(pageSize) => setPagination(prev => ({ ...prev, pageSize, page: 1 }))}
+          onPageChange={(page) => setPagination((prev) => ({ ...prev, page }))}
+          onPageSizeChange={(pageSize) =>
+            setPagination((prev) => ({ ...prev, pageSize, page: 1 }))
+          }
         />
       )}
 
