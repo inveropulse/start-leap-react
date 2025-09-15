@@ -23,9 +23,11 @@ const UsersPage = lazy(() => import("@/app/internal/users/UsersPage"));
 const DashboardPage = lazy(
   () => import("@/app/internal/dashboard/DashboardPage")
 );
-const PatientPage = lazy(() => import("@/app/internal/patient/PatientPage"));
+const PatientPage = lazy(
+  () => import("@/app/internal/patients/view-all/ViewAllPatientsPage")
+);
 const PatientDetailPage = lazy(
-  () => import("@/app/internal/patient/PatientDetailPage")
+  () => import("@/app/internal/patients/view-detail/ViewPatientDetailPage")
 );
 const CalendarPage = lazy(() => import("@/app/internal/calendar/CalendarPage"));
 const AppointmentPage = lazy(

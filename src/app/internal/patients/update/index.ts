@@ -1,0 +1,1 @@
+export { UpdatePatientModal } from "./UpdatePatientModal";

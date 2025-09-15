@@ -1,8 +1,7 @@
-// Cross-domain shared concepts
 export interface PaginationState {
-  page: number;
+  pageNo: number;
   pageSize: number;
-  total: number;
+  totalPages: number;
 }
 
 export interface PaginationResponse<T> {
@@ -13,12 +12,16 @@ export interface PaginationResponse<T> {
   totalPages: number;
 }
 
+export enum SortOrder {
+  ASC = "asc",
+  DESC = "desc",
+}
 export interface SearchParams {
   search?: string;
-  page?: number;
+  pageNo?: number;
   pageSize?: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: SortOrder;
 }
 
 export interface ApiResponse<T> {

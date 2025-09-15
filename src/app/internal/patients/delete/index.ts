@@ -1,0 +1,1 @@
+export { DeletePatientDialog } from "./DeletePatientDialog";

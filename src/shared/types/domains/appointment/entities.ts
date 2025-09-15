@@ -1,7 +1,13 @@
-import { AppointmentStatus, AppointmentType, DocumentType, DocumentStatus, ActivityType } from './enums';
-import { PaymentMethod, PaymentStatus } from '../payment/enums';
-import { Patient } from '../patient/entities';
-import { ClinicDoctor, Clinic } from '../clinic/entities';
+import {
+  AppointmentStatus,
+  AppointmentType,
+  DocumentType,
+  DocumentStatus,
+  ActivityType,
+} from "./enums";
+import { PaymentMethod, PaymentStatus } from "../payment/enums";
+import { Patient } from "../patient/entities";
+import { ClinicDoctor, Clinic } from "../clinic/entities";
 
 // Core appointment entity
 export interface Appointment {

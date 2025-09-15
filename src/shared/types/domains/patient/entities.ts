@@ -1,48 +1,11 @@
-import { PatientTitle, PatientSex, PatientSmokingStatus, PatientAlcoholStatus } from './enums';
+import {
+  PatientTitle,
+  PatientSex,
+  PatientSmokingStatus,
+  PatientAlcoholStatus,
+} from "./enums";
 
-// Core patient entity
-export interface Patient {
-  id?: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  fullName?: string | null;
-  bmi?: number;
-  title?: PatientTitle;
-  dateOfBirth?: string;
-  sex?: PatientSex;
-  age?: number;
-  address?: string | null;
-  town?: string | null;
-  country?: string | null;
-  postCode?: string | null;
-  phoneNumber?: string | null;
-  phone?: string | null; // Alias for phoneNumber for compatibility
-  alternativePhoneNumber?: string | null;
-  businessName?: string | null;
-  email?: string | null;
-  medicalHistory?: string | null;
-  allergies?: string | null;
-  medications?: string | null;
-  anestheticHistory?: string | null;
-  asaClassification?: number;
-  smokingStatus?: PatientSmokingStatus;
-  alcoholStatus?: PatientAlcoholStatus;
-  lastMealAgoInHours?: number | null;
-  lastFluidAgoInHours?: number | null;
-  occupation?: string | null;
-  heightFormat?: string | null;
-  height?: number;
-  weightFormat?: string | null;
-  weight?: number;
-  ticketId?: string | null;
-  notes?: string | null;
-  createdDateTime?: string | null;
-  smokingNote?: string | null;
-  alcoholNote?: string | null;
-  avatar?: string;
-}
-
-export interface CreatePatientRequest {
+type BasePatientFields = {
   firstName: string;
   lastName: string;
   title?: PatientTitle;
@@ -73,8 +36,24 @@ export interface CreatePatientRequest {
   notes?: string;
   smokingNote?: string;
   alcoholNote?: string;
-}
+};
 
-export interface UpdatePatientRequest extends Partial<CreatePatientRequest> {
+export type Patient = Partial<BasePatientFields> & {
+  id?: string;
+  fullName?: string | null;
+  bmi?: number;
+  age?: number;
+  ticketId?: string | null;
+  createdDateTime?: string | null;
+  avatar?: string;
+};
+
+export type CreatePatientRequest = Pick<
+  BasePatientFields,
+  "firstName" | "lastName"
+> &
+  Partial<Omit<BasePatientFields, "firstName" | "lastName">>;
+
+export type UpdatePatientRequest = Partial<BasePatientFields> & {
   id: string;
-}
+};
