@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
 import { CreatePatientModal } from "../create";
-import { PatientListView } from "../shared/components";
+import { PatientListView } from "./components";
 import { useQuickAction } from "@/shared/hooks/useQuickAction";
 import { InternalQuickActionKey } from "@/routes/internal_routes";
 
 export default function ViewAllPatientsPage() {
   const [openAddPatient, setOpenAddPatient] = useState(false);
 
-  const handleQA = useCallback((qa: string) => {
+  const handleQuickAction = useCallback((qa: string) => {
     switch (qa) {
       case InternalQuickActionKey.ADD_PATIENT:
         setOpenAddPatient(true);
@@ -16,7 +16,7 @@ export default function ViewAllPatientsPage() {
     }
   }, []);
 
-  useQuickAction(handleQA);
+  useQuickAction(handleQuickAction);
 
   return (
     <div className="space-y-6 p-6">
