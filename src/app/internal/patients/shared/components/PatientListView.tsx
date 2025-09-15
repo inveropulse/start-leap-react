@@ -251,6 +251,9 @@ export function PatientListView({ onAddPatient }: PatientListViewProps) {
       <DeletePatientDialog
         patientId={deletePatientId}
         onClose={() => setDeletePatientId(null)}
+        onSuccess={() => {
+          setDeletePatientId(null);
+        }}
       />
 
       <UpdatePatientModal

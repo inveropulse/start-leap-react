@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
+import { CreatePatientModal } from "../create";
+import { PatientListView } from "../shared/components";
 import { useQuickAction } from "@/shared/hooks/useQuickAction";
 import { InternalQuickActionKey } from "@/routes/internal_routes";
-import { PatientListView } from "../shared/components";
-import { CreatePatientModal } from "../create";
 
 export default function ViewAllPatientsPage() {
   const [openAddPatient, setOpenAddPatient] = useState(false);
