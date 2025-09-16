@@ -21,8 +21,11 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 import { useToast } from "@/shared/hooks/use-toast";
-import { useCreateClinicRequest } from "../hooks/useClinicRequests";
-import { ClinicStatus, ClinicType } from "../types/clinic.types";
+import { useCreateClinicRequest } from "../../../../api/clinics";
+import {
+  ClinicStatus,
+  ClinicType,
+} from "../../../../shared/types/domains/clinic/enums";
 
 const createClinicSchema = z.object({
   name: z.string().min(1, "Clinic name is required"),
@@ -45,7 +48,10 @@ interface CreateClinicModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function CreateClinicModal({ open, onOpenChange }: CreateClinicModalProps) {
+export function CreateClinicModal({
+  open,
+  onOpenChange,
+}: CreateClinicModalProps) {
   const { toast } = useToast();
   const createClinicMutation = useCreateClinicRequest();
 
@@ -68,17 +74,22 @@ export function CreateClinicModal({ open, onOpenChange }: CreateClinicModalProps
 
   const onSubmit = async (data: CreateClinicFormData) => {
     try {
-      await createClinicMutation.mutateAsync(data);
-      toast({
-        title: "Success",
-        description: "Clinic created successfully",
-      });
-      form.reset();
-      onOpenChange(false);
+      const response = await createClinicMutation.mutateAsync(data);
+      if (response.successful) {
+        toast({
+          title: "Success",
+          description: response.message || "Clinic created successfully",
+        });
+        form.reset();
+        onOpenChange(false);
+      } else {
+        throw new Error(response.message || "Failed to create clinic");
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create clinic",
+        description:
+          error instanceof Error ? error.message : "Failed to create clinic",
         variant: "destructive",
       });
     }
@@ -98,7 +109,7 @@ export function CreateClinicModal({ open, onOpenChange }: CreateClinicModalProps
           {/* Basic Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Basic Information</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Clinic Name *</Label>
@@ -134,7 +145,9 @@ export function CreateClinicModal({ open, onOpenChange }: CreateClinicModalProps
                 <Label htmlFor="type">Clinic Type</Label>
                 <Select
                   value={form.watch("type")}
-                  onValueChange={(value) => form.setValue("type", value as ClinicType)}
+                  onValueChange={(value) =>
+                    form.setValue("type", value as ClinicType)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select clinic type" />
@@ -153,7 +166,9 @@ export function CreateClinicModal({ open, onOpenChange }: CreateClinicModalProps
                 <Label htmlFor="status">Status</Label>
                 <Select
                   value={form.watch("status")}
-                  onValueChange={(value) => form.setValue("status", value as ClinicStatus)}
+                  onValueChange={(value) =>
+                    form.setValue("status", value as ClinicStatus)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
@@ -173,7 +188,7 @@ export function CreateClinicModal({ open, onOpenChange }: CreateClinicModalProps
           {/* Address Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Address Information</h3>
-            
+
             <div className="space-y-2">
               <Label htmlFor="physicalAddress">Physical Address *</Label>
               <Input
@@ -222,7 +237,7 @@ export function CreateClinicModal({ open, onOpenChange }: CreateClinicModalProps
           {/* Contact Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Contact Information</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="phoneNumber">Phone Number *</Label>
@@ -267,7 +282,7 @@ export function CreateClinicModal({ open, onOpenChange }: CreateClinicModalProps
           {/* Additional Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Additional Information</h3>
-            
+
             <div className="space-y-2">
               <Label htmlFor="comments">Comments</Label>
               <Textarea
@@ -289,10 +304,7 @@ export function CreateClinicModal({ open, onOpenChange }: CreateClinicModalProps
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={createClinicMutation.isPending}
-            >
+            <Button type="submit" disabled={createClinicMutation.isPending}>
               {createClinicMutation.isPending ? "Creating..." : "Create Clinic"}
             </Button>
           </div>

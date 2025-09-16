@@ -1,22 +1,30 @@
-import { useState, useMemo } from 'react';
-import { UserCheck, Users, Award, Calendar, Grid, List, RefreshCw } from "lucide-react";
+import { useState, useMemo } from "react";
+import {
+  UserCheck,
+  Users,
+  Award,
+  Calendar,
+  Grid,
+  List,
+  RefreshCw,
+} from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent } from "@/shared/components/ui/card";
-import { SedationistFilters } from './SedationistFilters';
-import { SedationistCard } from './SedationistCard';
-import { useSedationistsRequest } from '../hooks/useSedationistsRequest';
-import { 
-  SedationistFilters as FilterType, 
-  PaginationState, 
+import { SedationistFilters } from "./SedationistFilters";
+import { SedationistCard } from "./SedationistCard";
+import { useSedationistsRequest } from "../hooks/useSedationistsRequest";
+import {
+  SedationistFilters as FilterType,
+  PaginationState,
   SedationistStatus,
   SedationistSpecialty,
-  CertificationStatus
-} from '../types';
+  CertificationStatus,
+} from "../types";
 import {
   ListViewHeader,
   ListViewStats,
   ListViewContent,
-  ListViewPagination
+  ListViewPagination,
 } from "../../shared";
 
 interface SedationistsListViewProps {
@@ -24,100 +32,114 @@ interface SedationistsListViewProps {
   onViewSedationist: (sedationistId: string) => void;
 }
 
-export function SedationistsListView({ onAddSedationist, onViewSedationist }: SedationistsListViewProps) {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+export function SedationistsListView({
+  onAddSedationist,
+  onViewSedationist,
+}: SedationistsListViewProps) {
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<FilterType>({
-    search: '',
+    search: "",
     status: [],
     specialties: [],
     certificationStatus: [],
     availableOnly: false,
   });
   const [pagination, setPagination] = useState<PaginationState>({
-    page: 1,
+    pageNo: 1,
     pageSize: 25,
-    total: 0,
+    totalPages: 0,
   });
 
-  const searchParams = useMemo(() => ({
-    search: filters.search,
-    status: filters.status,
-    specialties: filters.specialties,
-    certificationStatus: filters.certificationStatus,
-    availableOnly: filters.availableOnly,
-    pageNo: pagination.page,
-    pageSize: pagination.pageSize,
-  }), [filters, pagination.page, pagination.pageSize]);
+  const searchParams = useMemo(
+    () => ({
+      search: filters.search,
+      status: filters.status,
+      specialties: filters.specialties,
+      certificationStatus: filters.certificationStatus,
+      availableOnly: filters.availableOnly,
+      pageNo: pagination.pageNo,
+      pageSize: pagination.pageSize,
+    }),
+    [filters, pagination.pageNo, pagination.pageSize]
+  );
 
-  const { data, isLoading, error, refetch } = useSedationistsRequest(searchParams);
+  const { data, isLoading, error, refetch } =
+    useSedationistsRequest(searchParams);
 
   // Update pagination total when data changes
   useMemo(() => {
     if (data) {
-      setPagination(prev => ({ ...prev, total: data.totalCount }));
+      setPagination((prev) => ({ ...prev, total: data.totalCount }));
     }
   }, [data?.totalCount]);
 
   // Reset to page 1 when filters change
   const handleFiltersChange = (newFilters: FilterType) => {
     setFilters(newFilters);
-    setPagination(prev => ({ ...prev, page: 1 }));
+    setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
   const handlePageChange = (page: number) => {
-    setPagination(prev => ({ ...prev, page }));
+    setPagination((prev) => ({ ...prev, page }));
   };
 
   const handlePageSizeChange = (pageSize: number) => {
-    setPagination(prev => ({ ...prev, pageSize, page: 1 }));
+    setPagination((prev) => ({ ...prev, pageSize, page: 1 }));
   };
 
   // Calculate stats
   const stats = useMemo(() => {
     if (!data) return [];
-    
-    const active = data.items.filter(s => s.status === SedationistStatus.ACTIVE).length;
-    const available = data.items.filter(s => 
-      s.status === SedationistStatus.ACTIVE && s.availability.length > 0
+
+    const active = data.items.filter(
+      (s) => s.status === SedationistStatus.ACTIVE
     ).length;
-    const certExpiring = data.items.filter(s =>
-      s.certifications.some(cert => cert.status === CertificationStatus.EXPIRING_SOON)
+    const available = data.items.filter(
+      (s) => s.status === SedationistStatus.ACTIVE && s.availability.length > 0
     ).length;
-    const totalCases = data.items.reduce((sum, s) => sum + s.totalProcedures, 0);
+    const certExpiring = data.items.filter((s) =>
+      s.certifications.some(
+        (cert) => cert.status === CertificationStatus.EXPIRING_SOON
+      )
+    ).length;
+    const totalCases = data.items.reduce(
+      (sum, s) => sum + s.totalProcedures,
+      0
+    );
 
     return [
       {
-        id: 'active',
-        label: 'Active Sedationists',
+        id: "active",
+        label: "Active Sedationists",
         value: active,
         icon: UserCheck,
-        color: 'success' as const,
-        description: 'Currently practicing'
+        color: "success" as const,
+        description: "Currently practicing",
       },
       {
-        id: 'available',
-        label: 'Available Today',
+        id: "available",
+        label: "Available Today",
         value: available,
         icon: Calendar,
-        color: 'primary' as const,
-        description: 'Available for procedures'
+        color: "primary" as const,
+        description: "Available for procedures",
       },
       {
-        id: 'certExpiring',
-        label: 'Certs Expiring',
+        id: "certExpiring",
+        label: "Certs Expiring",
         value: certExpiring,
         icon: Award,
-        color: 'warning' as const,
-        description: 'Need renewal soon'
+        color: "warning" as const,
+        description: "Need renewal soon",
       },
       {
-        id: 'totalCases',
-        label: 'Total Cases',
+        id: "totalCases",
+        label: "Total Cases",
         value: totalCases,
         icon: Users,
-        color: 'default' as const,
-        description: 'All-time procedures'
-      }
+        color: "default" as const,
+        description: "All-time procedures",
+      },
     ];
   }, [data]);
 
@@ -130,7 +152,7 @@ export function SedationistsListView({ onAddSedationist, onViewSedationist }: Se
           onAdd={onAddSedationist}
           addButtonText="Add Sedationist"
         />
-        
+
         <ListViewContent
           viewMode={viewMode}
           error="Error loading sedationists"
@@ -158,9 +180,9 @@ export function SedationistsListView({ onAddSedationist, onViewSedationist }: Se
         onAdd={onAddSedationist}
         addButtonText="Add Sedationist"
       />
-      
+
       <ListViewStats stats={stats} isLoading={isLoading} />
-      
+
       {/* Custom Controls Card for Sedationists */}
       <Card>
         <CardContent className="p-6">
@@ -169,33 +191,35 @@ export function SedationistsListView({ onAddSedationist, onViewSedationist }: Se
             <div className="flex justify-end">
               <div className="flex border rounded-md">
                 <Button
-                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setViewMode('grid')}
+                  onClick={() => setViewMode("grid")}
                   disabled={isLoading}
                   className="rounded-r-none border-r-0"
                 >
                   <Grid className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  variant={viewMode === "list" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setViewMode('list')}
+                  onClick={() => setViewMode("list")}
                   disabled={isLoading}
                   className="rounded-l-none"
                 >
                   <List className="h-4 w-4" />
                 </Button>
               </div>
-              
+
               <Button
                 variant="outline"
-                size="sm" 
+                size="sm"
                 onClick={() => refetch()}
                 disabled={isLoading}
                 className="ml-2"
               >
-                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+                />
               </Button>
             </div>
 
@@ -217,10 +241,14 @@ export function SedationistsListView({ onAddSedationist, onViewSedationist }: Se
             ? "Try adjusting your search or filters"
             : "Get started by adding your first sedationist"
         }
-        emptyAction={(filters.search === '' && getActiveFiltersCount() === 0) ? {
-          label: "Add Sedationist",
-          onClick: onAddSedationist
-        } : undefined}
+        emptyAction={
+          filters.search === "" && getActiveFiltersCount() === 0
+            ? {
+                label: "Add Sedationist",
+                onClick: onAddSedationist,
+              }
+            : undefined
+        }
       >
         {data?.items.map((sedationist) => (
           <SedationistCard
@@ -234,10 +262,10 @@ export function SedationistsListView({ onAddSedationist, onViewSedationist }: Se
 
       {data && data.totalCount > 0 && (
         <ListViewPagination
-          currentPage={pagination.page}
-          totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+          currentPage={pagination.pageNo}
+          totalPages={Math.ceil(pagination.totalPages / pagination.pageSize)}
           pageSize={pagination.pageSize}
-          totalCount={pagination.total}
+          totalCount={pagination.totalPages}
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
         />

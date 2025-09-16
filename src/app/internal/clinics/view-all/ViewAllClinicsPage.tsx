@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 import { useQuickAction } from "@/shared/hooks/useQuickAction";
 import { InternalQuickActionKey } from "@/routes/internal_routes";
-import { ClinicsListView } from "./components/ClinicsListView";
-import { CreateClinicModal } from "./components/CreateClinicModal";
-import { ClinicManagementModal } from "./components/ClinicManagementModal";
+import { ClinicsListView } from "./ClinicsListView";
+import { CreateClinicModal } from "../create/CreateClinicModal";
+import { ClinicManagementModal } from "../manage/ClinicManagementModal";
 
-export default function ClinicsPage() {
+export default function ViewAllClinicsPage() {
   const [openAddClinic, setOpenAddClinic] = useState(false);
   const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
 
@@ -30,15 +30,12 @@ export default function ClinicsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <ClinicsListView 
+      <ClinicsListView
         onAddClinic={() => setOpenAddClinic(true)}
         onViewClinic={handleViewClinic}
       />
-      
-      <CreateClinicModal 
-        open={openAddClinic}
-        onOpenChange={setOpenAddClinic}
-      />
+
+      <CreateClinicModal open={openAddClinic} onOpenChange={setOpenAddClinic} />
 
       <ClinicManagementModal
         clinicId={selectedClinicId}

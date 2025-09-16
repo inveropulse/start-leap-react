@@ -1,4 +1,4 @@
-import { ClinicStatus, ClinicType } from './enums';
+import { ClinicStatus, ClinicType } from "./enums";
 
 // Core clinic entities
 export interface Clinic {
@@ -33,13 +33,37 @@ export interface ClinicDoctor {
   specialization?: string;
   phoneNumber?: string;
   email?: string;
-  status: 'Active' | 'Inactive';
+  status: "Active" | "Inactive";
   joinedDate?: string;
   experience?: number;
   rating?: number;
   avatar?: string;
   credentials?: string[];
   clinicId?: string;
+}
+
+export interface ClinicUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  status: "Active" | "Inactive" | "Pending";
+  lastLogin?: string;
+}
+
+export interface ClinicActivity {
+  id: string;
+  type:
+    | "Created"
+    | "Updated"
+    | "Doctor Added"
+    | "Doctor Removed"
+    | "Status Changed";
+  description: string;
+  performedBy: string;
+  timestamp: string;
+  details?: Record<string, any>;
 }
 
 export interface CreateClinicRequest {
@@ -59,4 +83,11 @@ export interface CreateClinicRequest {
 
 export interface UpdateClinicRequest extends Partial<CreateClinicRequest> {
   id: string;
+}
+
+export interface ClinicManagementData {
+  clinic: Clinic;
+  doctors: ClinicDoctor[];
+  users: ClinicUser[];
+  activities: ClinicActivity[];
 }

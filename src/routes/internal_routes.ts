@@ -15,7 +15,9 @@ import React from "react";
 import { AppRoute, PortalConfig } from "./types";
 import { PortalType, UserRole } from "@/shared/types";
 
-const ClinicsPage = lazy(() => import("@/app/internal/clinics/ClinicsPage"));
+const ClinicsPage = lazy(
+  () => import("@/app/internal/clinics/view-all/ViewAllClinicsPage")
+);
 const SedationistsPage = lazy(
   () => import("@/app/internal/sedationists/SedationistsPage")
 );

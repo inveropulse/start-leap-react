@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { Activity } from "lucide-react";
-import { ClinicActivity } from "../../types/clinic.types";
+import { ClinicActivity } from "@/shared/types/domains/clinic";
 import { format } from "date-fns";
 
 interface ClinicActivityTabProps {
@@ -9,7 +9,10 @@ interface ClinicActivityTabProps {
   isLoading: boolean;
 }
 
-export function ClinicActivityTab({ activities, isLoading }: ClinicActivityTabProps) {
+export function ClinicActivityTab({
+  activities,
+  isLoading,
+}: ClinicActivityTabProps) {
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -24,7 +27,9 @@ export function ClinicActivityTab({ activities, isLoading }: ClinicActivityTabPr
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Activity className="h-5 w-5" />
-        <h3 className="text-lg font-semibold">Recent Activities ({activities.length})</h3>
+        <h3 className="text-lg font-semibold">
+          Recent Activities ({activities.length})
+        </h3>
       </div>
 
       <div className="space-y-4">

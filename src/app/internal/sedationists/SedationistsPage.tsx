@@ -7,7 +7,9 @@ import { SedationistManagementModal } from "./components/SedationistManagementMo
 
 export default function SedationistsPage() {
   const [openAddSedationist, setOpenAddSedationist] = useState(false);
-  const [selectedSedationistId, setSelectedSedationistId] = useState<string | null>(null);
+  const [selectedSedationistId, setSelectedSedationistId] = useState<
+    string | null
+  >(null);
 
   const handleQA = useCallback((qa: string) => {
     switch (qa) {
@@ -30,12 +32,12 @@ export default function SedationistsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <SedationistsListView 
+      <SedationistsListView
         onAddSedationist={() => setOpenAddSedationist(true)}
         onViewSedationist={handleViewSedationist}
       />
-      
-      <CreateSedationistModal 
+
+      <CreateSedationistModal
         open={openAddSedationist}
         onOpenChange={setOpenAddSedationist}
       />

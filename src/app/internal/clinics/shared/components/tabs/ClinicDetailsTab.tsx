@@ -2,7 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -15,9 +20,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { Building2, MapPin, Phone, Mail, Globe, Edit, Save, X } from "lucide-react";
-import { Clinic, ClinicStatus, ClinicType } from "../../types/clinic.types";
-import { useUpdateClinicRequest } from "../../hooks/useClinicRequests";
+import {
+  Building2,
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Edit,
+  Save,
+  X,
+} from "lucide-react";
+import { Clinic } from "@/shared/types/domains/clinic/entities";
+import { ClinicStatus, ClinicType } from "@/shared/types/domains/clinic/enums";
+import { useUpdateClinicRequest } from "@/api/clinics";
 import { useToast } from "@/shared/hooks/use-toast";
 import { cn } from "@/shared/utils/cn";
 
@@ -43,7 +58,11 @@ interface ClinicDetailsTabProps {
   onUpdate: () => void;
 }
 
-export function ClinicDetailsTab({ clinic, isLoading, onUpdate }: ClinicDetailsTabProps) {
+export function ClinicDetailsTab({
+  clinic,
+  isLoading,
+  onUpdate,
+}: ClinicDetailsTabProps) {
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
   const updateClinicMutation = useUpdateClinicRequest();
@@ -129,7 +148,11 @@ export function ClinicDetailsTab({ clinic, isLoading, onUpdate }: ClinicDetailsT
   }
 
   if (!clinic) {
-    return <div className="text-center text-muted-foreground py-8">No clinic data available</div>;
+    return (
+      <div className="text-center text-muted-foreground py-8">
+        No clinic data available
+      </div>
+    );
   }
 
   return (
@@ -137,23 +160,27 @@ export function ClinicDetailsTab({ clinic, isLoading, onUpdate }: ClinicDetailsT
       {/* Edit Controls */}
       <div className="flex justify-end gap-2">
         {!isEditing ? (
-          <Button onClick={() => setIsEditing(true)} variant="outline" size="sm">
+          <Button
+            onClick={() => setIsEditing(true)}
+            variant="outline"
+            size="sm"
+          >
             <Edit className="h-4 w-4 mr-2" />
             Edit Clinic
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button 
-              onClick={handleCancel} 
-              variant="outline" 
+            <Button
+              onClick={handleCancel}
+              variant="outline"
               size="sm"
               disabled={updateClinicMutation.isPending}
             >
               <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            <Button 
-              onClick={form.handleSubmit(onSubmit)} 
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
               size="sm"
               disabled={updateClinicMutation.isPending}
             >
@@ -201,7 +228,9 @@ export function ClinicDetailsTab({ clinic, isLoading, onUpdate }: ClinicDetailsT
                   {isEditing ? (
                     <Select
                       value={form.watch("status")}
-                      onValueChange={(value) => form.setValue("status", value as ClinicStatus)}
+                      onValueChange={(value) =>
+                        form.setValue("status", value as ClinicStatus)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
@@ -216,7 +245,10 @@ export function ClinicDetailsTab({ clinic, isLoading, onUpdate }: ClinicDetailsT
                     </Select>
                   ) : (
                     <div className="mt-1">
-                      <Badge variant="outline" className={cn("text-xs", getStatusColor(clinic.status))}>
+                      <Badge
+                        variant="outline"
+                        className={cn("text-xs", getStatusColor(clinic.status))}
+                      >
                         {clinic.status}
                       </Badge>
                     </div>
@@ -248,7 +280,9 @@ export function ClinicDetailsTab({ clinic, isLoading, onUpdate }: ClinicDetailsT
                   {isEditing ? (
                     <Select
                       value={form.watch("type")}
-                      onValueChange={(value) => form.setValue("type", value as ClinicType)}
+                      onValueChange={(value) =>
+                        form.setValue("type", value as ClinicType)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select clinic type" />
@@ -350,7 +384,10 @@ export function ClinicDetailsTab({ clinic, isLoading, onUpdate }: ClinicDetailsT
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="phoneNumber" className="flex items-center gap-2">
+                  <Label
+                    htmlFor="phoneNumber"
+                    className="flex items-center gap-2"
+                  >
                     <Phone className="h-4 w-4 text-muted-foreground" />
                     Phone *
                   </Label>
@@ -373,7 +410,10 @@ export function ClinicDetailsTab({ clinic, isLoading, onUpdate }: ClinicDetailsT
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="emailAddress" className="flex items-center gap-2">
+                  <Label
+                    htmlFor="emailAddress"
+                    className="flex items-center gap-2"
+                  >
                     <Mail className="h-4 w-4 text-muted-foreground" />
                     Email *
                   </Label>
@@ -424,7 +464,9 @@ export function ClinicDetailsTab({ clinic, isLoading, onUpdate }: ClinicDetailsT
                       rows={3}
                     />
                   ) : (
-                    <p className="text-sm">{clinic.comments || "No additional comments"}</p>
+                    <p className="text-sm">
+                      {clinic.comments || "No additional comments"}
+                    </p>
                   )}
                 </div>
               )}

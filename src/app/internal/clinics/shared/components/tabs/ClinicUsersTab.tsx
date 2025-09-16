@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { UserCheck, Plus, Mail } from "lucide-react";
-import { ClinicUser } from "../../types/clinic.types";
+import { ClinicUser } from "@/shared/types/domains/clinic";
 
 interface ClinicUsersTabProps {
   users: ClinicUser[];
@@ -11,7 +11,12 @@ interface ClinicUsersTabProps {
   onUpdate: () => void;
 }
 
-export function ClinicUsersTab({ users, clinicId, isLoading, onUpdate }: ClinicUsersTabProps) {
+export function ClinicUsersTab({
+  users,
+  clinicId,
+  isLoading,
+  onUpdate,
+}: ClinicUsersTabProps) {
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -45,12 +50,16 @@ export function ClinicUsersTab({ users, clinicId, isLoading, onUpdate }: ClinicU
                     <UserCheck className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold">{user.firstName} {user.lastName}</h4>
+                    <h4 className="font-semibold">
+                      {user.firstName} {user.lastName}
+                    </h4>
                     <p className="text-sm text-muted-foreground">{user.role}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Badge variant={user.status === 'Active' ? 'default' : 'secondary'}>
+                  <Badge
+                    variant={user.status === "Active" ? "default" : "secondary"}
+                  >
                     {user.status}
                   </Badge>
                   <Button variant="ghost" size="sm">

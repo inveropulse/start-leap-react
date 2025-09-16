@@ -1,17 +1,33 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
 import { Button } from "@/shared/components/ui/button";
 import { X } from "lucide-react";
-import { ClinicSearchParams, ClinicStatus, ClinicType } from "../types/clinic.types";
+import { ClinicSearchParams } from "../../../../shared/types/shared-kernel/filters";
+import {
+  ClinicStatus,
+  ClinicType,
+} from "../../../../shared/types/domains/clinic/enums";
 
 interface ClinicFiltersProps {
   filters: Partial<ClinicSearchParams>;
   onFiltersChange: (filters: Partial<ClinicSearchParams>) => void;
 }
 
-export function ClinicFilters({ filters, onFiltersChange }: ClinicFiltersProps) {
+export function ClinicFilters({
+  filters,
+  onFiltersChange,
+}: ClinicFiltersProps) {
   const hasFilters = filters.status || filters.type || filters.city;
 
-  const updateFilter = (key: keyof ClinicSearchParams, value: string | undefined) => {
+  const updateFilter = (
+    key: keyof ClinicSearchParams,
+    value: string | undefined
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value === "all" ? undefined : value,

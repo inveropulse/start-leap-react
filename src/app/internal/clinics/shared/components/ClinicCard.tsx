@@ -1,4 +1,15 @@
-import { Building2, MapPin, Phone, Mail, Users, Calendar, Globe, MoreVertical, Edit, Trash2 } from "lucide-react";
+import {
+  Building2,
+  MapPin,
+  Phone,
+  Mail,
+  Users,
+  Calendar,
+  Globe,
+  MoreVertical,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
@@ -10,7 +21,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { Clinic, ClinicStatus } from "../types/clinic.types";
+import { Clinic } from "../../../../../shared/types/domains/clinic/entities";
+import { ClinicStatus } from "../../../../../shared/types/domains/clinic/enums";
 import { cn } from "@/shared/utils/cn";
 
 interface ClinicCardProps {
@@ -21,7 +33,13 @@ interface ClinicCardProps {
   onDelete?: () => void;
 }
 
-export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: ClinicCardProps) {
+export function ClinicCard({
+  clinic,
+  viewMode,
+  onView,
+  onEdit,
+  onDelete,
+}: ClinicCardProps) {
   const isMobile = useIsMobile();
   const getStatusColor = (status?: ClinicStatus) => {
     switch (status) {
@@ -40,7 +58,7 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
     e?.preventDefault();
     e?.stopPropagation();
     if (url) {
-      window.open(url.startsWith('http') ? url : `https://${url}`, '_blank');
+      window.open(url.startsWith("http") ? url : `https://${url}`, "_blank");
     }
   };
 
@@ -48,7 +66,7 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
     e?.preventDefault();
     e?.stopPropagation();
     if (email) {
-      window.open(`mailto:${email}`, '_blank');
+      window.open(`mailto:${email}`, "_blank");
     }
   };
 
@@ -56,31 +74,44 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
     e?.preventDefault();
     e?.stopPropagation();
     if (phone) {
-      window.open(`tel:${phone}`, '_blank');
+      window.open(`tel:${phone}`, "_blank");
     }
   };
 
   // Define swipe actions for mobile
-  const swipeActions = isMobile ? [
-    ...(onEdit ? [{
-      id: 'edit',
-      label: 'Edit',
-      icon: Edit,
-      color: 'primary' as const,
-      onAction: onEdit,
-    }] : []),
-    ...(onDelete ? [{
-      id: 'delete',
-      label: 'Delete',
-      icon: Trash2,
-      color: 'destructive' as const,
-      onAction: onDelete,
-    }] : []),
-  ] : [];
+  const swipeActions = isMobile
+    ? [
+        ...(onEdit
+          ? [
+              {
+                id: "edit",
+                label: "Edit",
+                icon: Edit,
+                color: "primary" as const,
+                onAction: onEdit,
+              },
+            ]
+          : []),
+        ...(onDelete
+          ? [
+              {
+                id: "delete",
+                label: "Delete",
+                icon: Trash2,
+                color: "destructive" as const,
+                onAction: onDelete,
+              },
+            ]
+          : []),
+      ]
+    : [];
 
   if (viewMode === "list") {
     const cardContent = (
-      <Card className="interactive cursor-pointer group hover:shadow-lg transition-all duration-200" onClick={onView}>
+      <Card
+        className="interactive cursor-pointer group hover:shadow-lg transition-all duration-200"
+        onClick={onView}
+      >
         <CardContent className="p-4 min-h-[80px] flex items-center">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 flex-1">
@@ -89,15 +120,20 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
                   <Building2 className="h-6 w-6 text-primary" />
                 </div>
               </div>
-              
+
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-lg truncate">{clinic.name}</h3>
-                  <Badge variant="outline" className={cn("text-xs", getStatusColor(clinic.status))}>
+                  <h3 className="font-semibold text-lg truncate">
+                    {clinic.name}
+                  </h3>
+                  <Badge
+                    variant="outline"
+                    className={cn("text-xs", getStatusColor(clinic.status))}
+                  >
                     {clinic.status}
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   {clinic.physicalAddress && (
                     <div className="flex items-center gap-1">
@@ -123,35 +159,55 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
                   <span>{clinic.activeAppointmentCount || 0}</span>
                 </div>
               </div>
-              
+
               <DropdownMenu>
-                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <DropdownMenuTrigger
+                  asChild
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <Button variant="ghost" size="icon">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onView(); }}>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onView();
+                    }}
+                  >
                     View Details
                   </DropdownMenuItem>
                   {onEdit && (
-                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(); }}>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit();
+                      }}
+                    >
                       Edit Clinic
                     </DropdownMenuItem>
                   )}
                   {clinic.emailAddress && (
-                    <DropdownMenuItem onClick={(e) => handleEmail(clinic.emailAddress, e)}>
+                    <DropdownMenuItem
+                      onClick={(e) => handleEmail(clinic.emailAddress, e)}
+                    >
                       Send Email
                     </DropdownMenuItem>
                   )}
                   {clinic.phoneNumber && (
-                    <DropdownMenuItem onClick={(e) => handlePhone(clinic.phoneNumber, e)}>
+                    <DropdownMenuItem
+                      onClick={(e) => handlePhone(clinic.phoneNumber, e)}
+                    >
                       Call Clinic
                     </DropdownMenuItem>
                   )}
                   {onDelete && (
-                    <DropdownMenuItem 
-                      onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete();
+                      }}
                       className="text-destructive"
                     >
                       Delete Clinic
@@ -166,14 +222,17 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
     );
 
     return isMobile ? (
-      <SwipeableCard rightActions={swipeActions}>
-        {cardContent}
-      </SwipeableCard>
-    ) : cardContent;
+      <SwipeableCard rightActions={swipeActions}>{cardContent}</SwipeableCard>
+    ) : (
+      cardContent
+    );
   }
 
   const gridCardContent = (
-    <Card className="interactive cursor-pointer group hover:shadow-lg hover:-translate-y-1 transition-all duration-200" onClick={onView}>
+    <Card
+      className="interactive cursor-pointer group hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
+      onClick={onView}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -185,9 +244,12 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
               <p className="text-sm text-muted-foreground">{clinic.type}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-xs", getStatusColor(clinic.status))}>
+            <Badge
+              variant="outline"
+              className={cn("text-xs", getStatusColor(clinic.status))}
+            >
               {clinic.status}
             </Badge>
             <DropdownMenu>
@@ -197,27 +259,44 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onView(); }}>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onView();
+                  }}
+                >
                   View Details
                 </DropdownMenuItem>
                 {onEdit && (
-                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(); }}>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit();
+                    }}
+                  >
                     Edit Clinic
                   </DropdownMenuItem>
                 )}
                 {clinic.emailAddress && (
-                  <DropdownMenuItem onClick={(e) => handleEmail(clinic.emailAddress, e)}>
+                  <DropdownMenuItem
+                    onClick={(e) => handleEmail(clinic.emailAddress, e)}
+                  >
                     Send Email
                   </DropdownMenuItem>
                 )}
                 {clinic.phoneNumber && (
-                  <DropdownMenuItem onClick={(e) => handlePhone(clinic.phoneNumber, e)}>
+                  <DropdownMenuItem
+                    onClick={(e) => handlePhone(clinic.phoneNumber, e)}
+                  >
                     Call Clinic
                   </DropdownMenuItem>
                 )}
                 {onDelete && (
-                  <DropdownMenuItem 
-                    onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete();
+                    }}
                     className="text-destructive"
                   >
                     Delete Clinic
@@ -245,7 +324,9 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
             <div>
               <p className="text-foreground">{clinic.physicalAddress}</p>
               {clinic.city && (
-                <p className="text-muted-foreground">{clinic.city} {clinic.postalCode}</p>
+                <p className="text-muted-foreground">
+                  {clinic.city} {clinic.postalCode}
+                </p>
               )}
             </div>
           </div>
@@ -254,7 +335,7 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
         {/* Contact Information */}
         <div className="space-y-2">
           {clinic.phoneNumber && (
-            <div 
+            <div
               className="flex items-center gap-2 text-sm cursor-pointer hover:text-primary"
               onClick={(e) => handlePhone(clinic.phoneNumber, e)}
             >
@@ -262,9 +343,9 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
               <span>{clinic.phoneNumber}</span>
             </div>
           )}
-          
+
           {clinic.emailAddress && (
-            <div 
+            <div
               className="flex items-center gap-2 text-sm cursor-pointer hover:text-primary"
               onClick={(e) => handleEmail(clinic.emailAddress, e)}
             >
@@ -272,9 +353,9 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
               <span className="truncate">{clinic.emailAddress}</span>
             </div>
           )}
-          
+
           {clinic.website && (
-            <div 
+            <div
               className="flex items-center gap-2 text-sm cursor-pointer hover:text-primary"
               onClick={(e) => handleExternalLink(clinic.website, e)}
             >
@@ -300,8 +381,8 @@ export function ClinicCard({ clinic, viewMode, onView, onEdit, onDelete }: Clini
   );
 
   return isMobile ? (
-    <SwipeableCard rightActions={swipeActions}>
-      {gridCardContent}
-    </SwipeableCard>
-  ) : gridCardContent;
+    <SwipeableCard rightActions={swipeActions}>{gridCardContent}</SwipeableCard>
+  ) : (
+    gridCardContent
+  );
 }

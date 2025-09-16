@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 import { useToast } from "@/shared/hooks/use-toast";
-import { ClinicDoctor } from "../types/clinic.types";
+import { ClinicDoctor } from "@/shared/types/domains/clinic";
 
 const editDoctorSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -28,7 +28,7 @@ const editDoctorSchema = z.object({
   specialization: z.string().min(1, "Specialization is required"),
   phoneNumber: z.string().min(1, "Phone number is required"),
   email: z.string().email("Valid email is required"),
-  status: z.enum(['Active', 'Inactive']),
+  status: z.enum(["Active", "Inactive"]),
 });
 
 type EditDoctorFormData = z.infer<typeof editDoctorSchema>;
@@ -41,19 +41,24 @@ interface EditDoctorModalProps {
 }
 
 const specializations = [
-  'Cardiology',
-  'Neurology', 
-  'Orthopedics',
-  'Pediatrics',
-  'Dermatology',
-  'General Practice',
-  'Surgery',
-  'Radiology',
-  'Anesthesiology',
-  'Emergency Medicine',
+  "Cardiology",
+  "Neurology",
+  "Orthopedics",
+  "Pediatrics",
+  "Dermatology",
+  "General Practice",
+  "Surgery",
+  "Radiology",
+  "Anesthesiology",
+  "Emergency Medicine",
 ];
 
-export function EditDoctorModal({ open, onOpenChange, doctor, onUpdate }: EditDoctorModalProps) {
+export function EditDoctorModal({
+  open,
+  onOpenChange,
+  doctor,
+  onUpdate,
+}: EditDoctorModalProps) {
   const { toast } = useToast();
 
   const form = useForm<EditDoctorFormData>({
@@ -64,7 +69,7 @@ export function EditDoctorModal({ open, onOpenChange, doctor, onUpdate }: EditDo
       specialization: doctor?.specialization || "",
       phoneNumber: doctor?.phoneNumber || "",
       email: doctor?.email || "",
-      status: doctor?.status || 'Active',
+      status: doctor?.status || "Active",
     },
   });
 
@@ -87,13 +92,13 @@ export function EditDoctorModal({ open, onOpenChange, doctor, onUpdate }: EditDo
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast({
         title: "Success",
         description: `Dr. ${data.firstName} ${data.lastName} has been updated`,
       });
-      
+
       onOpenChange(false);
       onUpdate();
     } catch (error) {
@@ -121,7 +126,7 @@ export function EditDoctorModal({ open, onOpenChange, doctor, onUpdate }: EditDo
           {/* Personal Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Personal Information</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name *</Label>
@@ -157,7 +162,9 @@ export function EditDoctorModal({ open, onOpenChange, doctor, onUpdate }: EditDo
                 <Label htmlFor="specialization">Specialization *</Label>
                 <Select
                   value={form.watch("specialization")}
-                  onValueChange={(value) => form.setValue("specialization", value)}
+                  onValueChange={(value) =>
+                    form.setValue("specialization", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select specialization" />
@@ -181,7 +188,9 @@ export function EditDoctorModal({ open, onOpenChange, doctor, onUpdate }: EditDo
                 <Label htmlFor="status">Status</Label>
                 <Select
                   value={form.watch("status")}
-                  onValueChange={(value) => form.setValue("status", value as 'Active' | 'Inactive')}
+                  onValueChange={(value) =>
+                    form.setValue("status", value as "Active" | "Inactive")
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
@@ -198,7 +207,7 @@ export function EditDoctorModal({ open, onOpenChange, doctor, onUpdate }: EditDo
           {/* Contact Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Contact Information</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="phoneNumber">Phone Number *</Label>
@@ -241,10 +250,7 @@ export function EditDoctorModal({ open, onOpenChange, doctor, onUpdate }: EditDo
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={form.formState.isSubmitting}
-            >
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? "Updating..." : "Update Doctor"}
             </Button>
           </div>

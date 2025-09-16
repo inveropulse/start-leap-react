@@ -1,14 +1,24 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/shared/components/ui/dialog";
 import { Button } from "@/shared/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 import { Badge } from "@/shared/components/ui/badge";
 import { Building2, X, RefreshCw } from "lucide-react";
-import { useClinicManagementRequest } from "../hooks/useClinicRequests";
-import { ClinicDetailsTab } from "./tabs/ClinicDetailsTab";
-import { ClinicDoctorsTab } from "./tabs/ClinicDoctorsTab";
-import { ClinicUsersTab } from "./tabs/ClinicUsersTab";
-import { ClinicActivityTab } from "./tabs/ClinicActivityTab";
-import { ClinicStatus } from "../types/clinic.types";
+import { useClinicManagement } from "./useClinicManagement";
+import { ClinicDetailsTab } from "../shared/components/tabs/ClinicDetailsTab";
+import { ClinicDoctorsTab } from "../shared/components/tabs/ClinicDoctorsTab";
+import { ClinicUsersTab } from "../shared/components/tabs/ClinicUsersTab";
+import { ClinicActivityTab } from "../shared/components/tabs/ClinicActivityTab";
+import { ClinicStatus } from "../../../../shared/types/domains/clinic/enums";
 import { cn } from "@/shared/utils/cn";
 
 interface ClinicManagementModalProps {
@@ -17,8 +27,27 @@ interface ClinicManagementModalProps {
   onClose: () => void;
 }
 
-export function ClinicManagementModal({ clinicId, isOpen, onClose }: ClinicManagementModalProps) {
-  const { data: managementData, isLoading, error, refetch } = useClinicManagementRequest(clinicId || undefined);
+export function ClinicManagementModal({
+  clinicId,
+  isOpen,
+  onClose,
+}: ClinicManagementModalProps) {
+  const {
+    // Data
+    clinic,
+    doctors,
+    users,
+    activities,
+
+    // Loading states
+    isLoading,
+    error,
+
+    // Actions
+    handleRefresh,
+  } = useClinicManagement({
+    clinicId,
+  });
 
   const getStatusColor = (status?: ClinicStatus) => {
     switch (status) {
@@ -48,30 +77,35 @@ export function ClinicManagementModal({ clinicId, isOpen, onClose }: ClinicManag
               ) : (
                 <div className="flex items-center gap-3">
                   <Building2 className="h-6 w-6 text-primary" />
-                  <span>{managementData?.clinic?.name || "Clinic Details"}</span>
-                  {managementData?.clinic?.status && (
-                    <Badge variant="outline" className={cn("text-xs", getStatusColor(managementData.clinic.status))}>
-                      {managementData.clinic.status}
+                  <span>{clinic?.name || "Clinic Details"}</span>
+                  {clinic?.status && (
+                    <Badge
+                      variant="outline"
+                      className={cn("text-xs", getStatusColor(clinic.status))}
+                    >
+                      {clinic.status}
                     </Badge>
                   )}
                 </div>
               )}
             </DialogTitle>
-            {managementData?.clinic?.contactPersonName && (
+            {clinic?.contactPersonName && (
               <p className="text-sm text-muted-foreground mt-1">
-                Contact: {managementData.clinic.contactPersonName}
+                Contact: {clinic.contactPersonName}
               </p>
             )}
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="icon"
-              onClick={() => refetch()}
+              onClick={handleRefresh}
               disabled={isLoading}
             >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+              />
             </Button>
             <Button variant="outline" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />
@@ -81,57 +115,55 @@ export function ClinicManagementModal({ clinicId, isOpen, onClose }: ClinicManag
 
         {error && (
           <div className="text-center py-8">
-            <p className="text-destructive mb-4">Failed to load clinic data</p>
-            <Button onClick={() => refetch()} variant="outline">
+            <p className="text-destructive mb-4">{error}</p>
+            <Button onClick={handleRefresh} variant="outline">
               Try Again
             </Button>
           </div>
         )}
 
-        {(isLoading || managementData) && (
+        {(isLoading || clinic) && (
           <div className="flex-1 overflow-hidden">
             <Tabs defaultValue="details" className="h-full flex flex-col">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="details">DETAILS</TabsTrigger>
                 <TabsTrigger value="doctors">
-                  DOCTORS ({managementData?.doctors?.length || 0})
+                  DOCTORS ({doctors.length})
                 </TabsTrigger>
-                <TabsTrigger value="users">
-                  USERS ({managementData?.users?.length || 0})
-                </TabsTrigger>
+                <TabsTrigger value="users">USERS ({users.length})</TabsTrigger>
                 <TabsTrigger value="activity">ACTIVITY</TabsTrigger>
               </TabsList>
 
               <div className="flex-1 overflow-auto mt-4 px-1">
                 <TabsContent value="details" className="mt-0 h-auto">
                   <ClinicDetailsTab
-                    clinic={managementData?.clinic}
+                    clinic={clinic}
                     isLoading={isLoading}
-                    onUpdate={() => refetch()}
+                    onUpdate={handleRefresh}
                   />
                 </TabsContent>
 
                 <TabsContent value="doctors" className="mt-0 h-auto">
                   <ClinicDoctorsTab
-                    doctors={managementData?.doctors || []}
+                    doctors={doctors}
                     clinicId={clinicId}
                     isLoading={isLoading}
-                    onUpdate={() => refetch()}
+                    onUpdate={handleRefresh}
                   />
                 </TabsContent>
 
                 <TabsContent value="users" className="mt-0 h-auto">
                   <ClinicUsersTab
-                    users={managementData?.users || []}
+                    users={users}
                     clinicId={clinicId}
                     isLoading={isLoading}
-                    onUpdate={() => refetch()}
+                    onUpdate={handleRefresh}
                   />
                 </TabsContent>
 
                 <TabsContent value="activity" className="mt-0 h-auto">
                   <ClinicActivityTab
-                    activities={managementData?.activities || []}
+                    activities={activities}
                     isLoading={isLoading}
                   />
                 </TabsContent>
