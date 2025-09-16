@@ -1,4 +1,8 @@
-import { CertificationStatus } from './enums';
+import {
+  CertificationStatus,
+  SedationistStatus,
+  SedationistSpecialty,
+} from "./enums";
 
 // Sedation domain value objects
 export interface SedationistCertification {
@@ -30,4 +34,15 @@ export interface SedationistCase {
   patientName: string;
   outcome: string;
   notes?: string;
+}
+
+// Search and filter types
+export interface SedationistFilters {
+  search: string;
+  status: SedationistStatus[];
+  specialty: SedationistSpecialty[];
+  location: string;
+  certificationStatus: CertificationStatus[];
+  availableToday: boolean;
+  showInactive: boolean;
 }

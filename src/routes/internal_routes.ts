@@ -19,7 +19,7 @@ const ClinicsPage = lazy(
   () => import("@/app/internal/clinics/view-all/ViewAllClinicsPage")
 );
 const SedationistsPage = lazy(
-  () => import("@/app/internal/sedationists/SedationistsPage")
+  () => import("@/app/internal/sedationists/view-all/ViewAllSedationistsPage")
 );
 const UsersPage = lazy(() => import("@/app/internal/users/UsersPage"));
 const DashboardPage = lazy(

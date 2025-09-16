@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import { useQuickAction } from "@/shared/hooks/useQuickAction";
-import { InternalQuickActionKey } from "@/routes/internal_routes";
 import { ClinicsListView } from "./ClinicsListView";
+import { useQuickAction } from "@/shared/hooks/useQuickAction";
 import { CreateClinicModal } from "../create/CreateClinicModal";
+import { InternalQuickActionKey } from "@/routes/internal_routes";
 import { ClinicManagementModal } from "../manage/ClinicManagementModal";
 
 export default function ViewAllClinicsPage() {

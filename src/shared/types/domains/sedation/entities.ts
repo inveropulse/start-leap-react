@@ -1,5 +1,13 @@
-import { SedationistStatus, SedationistSpecialty, CertificationStatus } from './enums';
-import { SedationistCertification, SedationistAvailability, SedationistCase } from './value-objects';
+import {
+  SedationistStatus,
+  SedationistSpecialty,
+  CertificationStatus,
+} from "./enums";
+import {
+  SedationistCertification,
+  SedationistAvailability,
+  SedationistCase,
+} from "./value-objects";
 
 // Core sedationist entity
 export interface Sedationist {
@@ -9,7 +17,7 @@ export interface Sedationist {
   email: string;
   phone?: string;
   licenseNumber: string;
-  status: SedationistStatus;  
+  status: SedationistStatus;
   specialties: SedationistSpecialty[];
   certifications: SedationistCertification[];
   availability: SedationistAvailability[];
@@ -22,6 +30,7 @@ export interface Sedationist {
   notes?: string;
   profileImageUrl?: string;
   experience?: number;
+  yearsOfExperience?: number;
   rating?: number;
   avatar?: string;
   currentCaseload?: number;
@@ -32,18 +41,23 @@ export interface CreateSedationistData {
   lastName: string;
   email: string;
   phone?: string;
+  specialty?: SedationistSpecialty;
+  specialties?: SedationistSpecialty[];
   licenseNumber: string;
-  specialties: SedationistSpecialty[];
-  certifications: Omit<SedationistCertification, 'id' | 'status'>[];
+  hospitalAffiliation?: string;
+  experience?: number;
+  biography?: string;
+  profilePicture?: string;
+  certifications?: SedationistCertification[];
+  emergencyContact?: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
 }
 
-export interface UpdateSedationistData {
+export interface UpdateSedationistData extends Partial<CreateSedationistData> {
   id: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  licenseNumber?: string;
   status?: SedationistStatus;
   specialties?: SedationistSpecialty[];
   notes?: string;
