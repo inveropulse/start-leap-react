@@ -1,14 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  ClinicSearchParams,
-  ClinicPaginationResponse,
-  ClinicListApiResponse,
-} from "./types";
+import { ClinicSearchParams, FindAllClinicsResponse } from "./types";
 import { Clinic } from "../../shared/types/domains/clinic/entities";
 import {
   ClinicStatus,
   ClinicType,
 } from "../../shared/types/domains/clinic/enums";
+
+// React Query hook
+export const useFindAllClinicsRequest = (params: ClinicSearchParams = {}) => {
+  return useQuery({
+    queryKey: ["clinics", "findAll", params],
+    queryFn: () => fetchClinics(params),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
 
 // Mock data generation functions (moved from clinicService.ts)
 const generateMockClinic = (id: number): Clinic => {
@@ -78,11 +83,11 @@ const generateMockClinic = (id: number): Clinic => {
     id: `clinic-${id}`,
     name: clinicNames[id % clinicNames.length],
     contactPersonName: contactPersons[id % contactPersons.length],
-    physicalAddress: addresses[id % addresses.length],
+    address: addresses[id % addresses.length],
     phoneNumber: `+44 ${Math.floor(Math.random() * 9000) + 1000} ${
       Math.floor(Math.random() * 900) + 100
     } ${Math.floor(Math.random() * 900) + 100}`,
-    postalCode: `${String.fromCharCode(
+    postCode: `${String.fromCharCode(
       65 + Math.floor(Math.random() * 26)
     )}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${Math.floor(
       Math.random() * 10
@@ -93,11 +98,11 @@ const generateMockClinic = (id: number): Clinic => {
       .toLowerCase()
       .replace(/\s+/g, "")
       .replace(/[^\w]/g, "")}.co.uk`,
-    emailAddress: `info@${clinicNames[id % clinicNames.length]
+    email: `info@${clinicNames[id % clinicNames.length]
       .toLowerCase()
       .replace(/\s+/g, "")
       .replace(/[^\w]/g, "")}.co.uk`,
-    comments:
+    notes:
       Math.random() > 0.7
         ? "Specialized in emergency care and diagnostics"
         : null,
@@ -105,12 +110,12 @@ const generateMockClinic = (id: number): Clinic => {
     type: types[id % types.length],
     city: cities[id % cities.length],
     country: "United Kingdom",
-    doctorCount: Math.floor(Math.random() * 15) + 2,
-    activeAppointmentCount: Math.floor(Math.random() * 50) + 5,
+    totalDoctors: Math.floor(Math.random() * 15) + 2,
+    activeAppointmentsCount: Math.floor(Math.random() * 50) + 5,
     createdDateTime: new Date(
       Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000
     ).toISOString(),
-    lastUpdatedDateTime: new Date(
+    updatedDateTime: new Date(
       Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
     ).toISOString(),
   };
@@ -130,7 +135,7 @@ const delay = (ms: number = 800) =>
 // API function
 const fetchClinics = async (
   params: ClinicSearchParams = {}
-): Promise<ClinicListApiResponse> => {
+): Promise<FindAllClinicsResponse> => {
   await delay();
 
   try {
@@ -143,7 +148,7 @@ const fetchClinics = async (
         (clinic) =>
           clinic.name?.toLowerCase().includes(searchLower) ||
           clinic.contactPersonName?.toLowerCase().includes(searchLower) ||
-          clinic.physicalAddress?.toLowerCase().includes(searchLower) ||
+          clinic.address?.toLowerCase().includes(searchLower) ||
           clinic.city?.toLowerCase().includes(searchLower)
       );
     }
@@ -162,12 +167,12 @@ const fetchClinics = async (
       );
     }
 
-    // Apply city filter
-    if (params.city) {
-      filteredClinics = filteredClinics.filter(
-        (clinic) => clinic.city === params.city
-      );
-    }
+    // // Apply city filter
+    // if (params.city) {
+    //   filteredClinics = filteredClinics.filter(
+    //     (clinic) => clinic.city === params.city
+    //   );
+    // }
 
     // Apply sorting
     if (params.sortBy) {
@@ -186,35 +191,20 @@ const fetchClinics = async (
     const endIndex = startIndex + pageSize;
     const paginatedClinics = filteredClinics.slice(startIndex, endIndex);
 
-    const paginationResponse: ClinicPaginationResponse = {
+    return {
       data: paginatedClinics,
-      totalCount: filteredClinics.length,
+      totalItems: filteredClinics.length,
       totalPages: Math.ceil(filteredClinics.length / pageSize),
       pageNo,
       pageSize,
     };
-
-    return {
-      data: paginationResponse,
-      successful: true,
-      message: null,
-      statusCode: 200,
-    };
   } catch (error) {
     return {
-      successful: false,
-      message:
-        error instanceof Error ? error.message : "Failed to fetch clinics",
-      statusCode: 500,
+      data: [],
+      totalItems: 0,
+      totalPages: 0,
+      pageNo: 1,
+      pageSize: 12,
     };
   }
-};
-
-// React Query hook
-export const useFindAllClinicsRequest = (params: ClinicSearchParams = {}) => {
-  return useQuery({
-    queryKey: ["clinics", "findAll", params],
-    queryFn: () => fetchClinics(params),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
 };

@@ -7,14 +7,14 @@ import type {
   Clinic,
   BaseClinicFields,
 } from "@/shared/types/domains/clinic/entities";
-import { ClinicAppointment } from "@/shared/types";
+import { ClinicAppointment, ClinicType } from "@/shared/types";
 
 export const CLINICS_REQUEST_BASE_QUERY_KEY = ["clinics"];
 
 export type ClinicSearchParams = Omit<SearchParams, "sortBy"> & {
   sortBy?: keyof Clinic;
   status?: string;
-  facilityType?: string;
+  type?: ClinicType;
   specialty?: string;
   hasActiveAppointments?: boolean;
 };

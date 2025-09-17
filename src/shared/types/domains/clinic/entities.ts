@@ -5,9 +5,11 @@ export type BaseClinicFields = {
   address?: string;
   town?: string;
   country?: string;
+  city?: string;
   postCode?: string;
   phoneNumber?: string;
   email?: string;
+  website?: string;
   contactPersonName?: string;
   contactPersonEmail?: string;
   contactPersonPhone?: string;
@@ -21,7 +23,7 @@ export type BaseClinicFields = {
     saturday?: string;
     sunday?: string;
   };
-  facilityType?: ClinicType;
+  type?: ClinicType;
   accreditations?: string[];
   notes?: string;
 };
@@ -29,6 +31,7 @@ export type BaseClinicFields = {
 export type Clinic = Partial<BaseClinicFields> & {
   id?: string;
   status?: ClinicStatus;
+  totalDoctors?: number;
   totalPatients?: number;
   totalAppointments?: number;
   activeAppointmentsCount?: number;

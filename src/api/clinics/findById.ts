@@ -69,7 +69,7 @@ const fetchFakeClinic = async (id: string): Promise<FindByIdClinicResponse> => {
       MedicalSpecialty.INTERNAL_MEDICINE,
       MedicalSpecialty.CARDIOLOGY,
     ],
-    facilityType: ClinicType.HOSPITAL,
+    type: ClinicType.HOSPITAL,
     accreditations: ["CQC Registered", "NHS Foundation Trust"],
     notes: "Leading healthcare provider in the downtown area",
     totalPatients: 150,
