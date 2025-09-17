@@ -10,7 +10,7 @@ import {
   ListViewStats,
   ListViewControls,
   ListViewContent,
-  ListViewPagination
+  ListViewPagination,
 } from "../../shared";
 
 interface UsersListViewProps {
@@ -34,8 +34,12 @@ export function UsersListView({ onAddUser }: UsersListViewProps) {
     search: filters.search || undefined,
     status: filters.status.length > 0 ? filters.status : undefined,
     roles: filters.roles.length > 0 ? filters.roles : undefined,
-    departments: filters.departments.length > 0 ? filters.departments : undefined,
-    permissionLevels: filters.permissionLevels.length > 0 ? filters.permissionLevels : undefined,
+    departments:
+      filters.departments.length > 0 ? filters.departments : undefined,
+    permissionLevels:
+      filters.permissionLevels.length > 0
+        ? filters.permissionLevels
+        : undefined,
     pageNo: currentPage,
     pageSize: 25,
   };
@@ -43,12 +47,12 @@ export function UsersListView({ onAddUser }: UsersListViewProps) {
   const { data: usersData, isLoading, error } = useUsersRequest(searchParams);
 
   const handleSearchChange = (value: string) => {
-    setFilters(prev => ({ ...prev, search: value }));
+    setFilters((prev) => ({ ...prev, search: value }));
     setCurrentPage(1); // Reset to first page on search
   };
 
   const handleFiltersChange = (newFilters: Partial<UserFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
     setCurrentPage(1); // Reset to first page on filter change
   };
 
@@ -76,45 +80,51 @@ export function UsersListView({ onAddUser }: UsersListViewProps) {
 
   const getStatsData = () => {
     if (!usersData) return [];
-    
+
     const total = usersData.totalCount;
-    const active = usersData.items.filter(user => user.status === UserStatus.ACTIVE).length;
-    const pending = usersData.items.filter(user => user.status === UserStatus.PENDING_ACTIVATION).length;
-    const admins = usersData.items.filter(user => user.role === UserRole.ADMIN).length;
+    const active = usersData.data.filter(
+      (user) => user.status === UserStatus.ACTIVE
+    ).length;
+    const pending = usersData.data.filter(
+      (user) => user.status === UserStatus.PENDING_ACTIVATION
+    ).length;
+    const admins = usersData.data.filter(
+      (user) => user.role === UserRole.ADMIN
+    ).length;
 
     return [
       {
-        id: 'total',
-        label: 'Total Users',
+        id: "total",
+        label: "Total Users",
         value: total,
         icon: Users,
-        color: 'default' as const,
-        description: 'All registered users'
+        color: "default" as const,
+        description: "All registered users",
       },
       {
-        id: 'active',
-        label: 'Active Users',
+        id: "active",
+        label: "Active Users",
         value: active,
         icon: UserCheck,
-        color: 'success' as const,
-        description: 'Currently active'
+        color: "success" as const,
+        description: "Currently active",
       },
       {
-        id: 'pending',
-        label: 'Pending Activation',
+        id: "pending",
+        label: "Pending Activation",
         value: pending,
         icon: Clock,
-        color: 'warning' as const,
-        description: 'Awaiting activation'
+        color: "warning" as const,
+        description: "Awaiting activation",
       },
       {
-        id: 'admins',
-        label: 'Administrators',
+        id: "admins",
+        label: "Administrators",
         value: admins,
         icon: Shield,
-        color: 'primary' as const,
-        description: 'Admin privileges'
-      }
+        color: "primary" as const,
+        description: "Admin privileges",
+      },
     ];
   };
 
@@ -129,7 +139,7 @@ export function UsersListView({ onAddUser }: UsersListViewProps) {
           onAdd={onAddUser}
           addButtonText="Add User"
         />
-        
+
         <ListViewContent
           viewMode={viewMode}
           error="Error loading users. Please try again later."
@@ -150,15 +160,17 @@ export function UsersListView({ onAddUser }: UsersListViewProps) {
         onAdd={onAddUser}
         addButtonText="Add User"
       />
-      
+
       <ListViewStats stats={stats} isLoading={isLoading} />
-      
+
       <ListViewControls
         searchValue={filters.search}
         onSearchChange={handleSearchChange}
         searchPlaceholder="Search users by name, email, or role..."
         viewMode={viewMode}
-        onViewModeToggle={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+        onViewModeToggle={() =>
+          setViewMode(viewMode === "grid" ? "list" : "grid")
+        }
         onRefresh={handleRefresh}
         isLoading={isLoading}
         showFilters={true}
@@ -177,18 +189,22 @@ export function UsersListView({ onAddUser }: UsersListViewProps) {
       <ListViewContent
         viewMode={viewMode}
         isLoading={isLoading}
-        isEmpty={usersData?.items.length === 0}
+        isEmpty={usersData?.data.length === 0}
         emptyMessage={
           filters.search || getActiveFiltersCount() > 0
             ? "Try adjusting your search or filters"
             : "Get started by adding your first user"
         }
-        emptyAction={(!filters.search && getActiveFiltersCount() === 0) ? {
-          label: "Add User",
-          onClick: onAddUser
-        } : undefined}
+        emptyAction={
+          !filters.search && getActiveFiltersCount() === 0
+            ? {
+                label: "Add User",
+                onClick: onAddUser,
+              }
+            : undefined
+        }
       >
-        {usersData?.items.map((user) => (
+        {usersData?.data.map((user) => (
           <UserCard key={user.id} user={user} />
         ))}
       </ListViewContent>

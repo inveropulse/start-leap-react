@@ -4,7 +4,7 @@ import SedationistCard from "./SedationistCard";
 import {
   Sedationist,
   SedationistFilters as FilterType,
-} from "@/shared/types/domains/sedation";
+} from "@/shared/types/domains/sedationist";
 import {
   ListViewHeader,
   ListViewStats,

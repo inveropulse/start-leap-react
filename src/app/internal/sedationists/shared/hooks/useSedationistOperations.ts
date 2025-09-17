@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/shared/hooks/use-toast";
-import { Sedationist } from "@/shared/types/domains/sedation";
+import { Sedationist } from "@/shared/types/domains/sedationist";
 import { sedationistUtils } from "../utils";
 
 /**

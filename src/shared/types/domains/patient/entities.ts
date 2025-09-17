@@ -1,11 +1,11 @@
 import {
-  PatientTitle,
   PatientSex,
+  PatientTitle,
   PatientSmokingStatus,
   PatientAlcoholStatus,
 } from "./enums";
 
-type BasePatientFields = {
+export type BasePatientFields = {
   firstName: string;
   lastName: string;
   title?: PatientTitle;
@@ -46,14 +46,4 @@ export type Patient = Partial<BasePatientFields> & {
   ticketId?: string | null;
   createdDateTime?: string | null;
   avatar?: string;
-};
-
-export type CreatePatientRequest = Pick<
-  BasePatientFields,
-  "firstName" | "lastName"
-> &
-  Partial<Omit<BasePatientFields, "firstName" | "lastName">>;
-
-export type UpdatePatientRequest = Partial<BasePatientFields> & {
-  id: string;
 };

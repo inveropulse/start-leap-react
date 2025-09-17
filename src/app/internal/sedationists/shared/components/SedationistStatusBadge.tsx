@@ -1,5 +1,5 @@
 import { Badge } from "@/shared/components/ui/badge";
-import { SedationistStatus } from "@/shared/types/domains/sedation";
+import { SedationistStatus } from "@/shared/types/domains/sedationist";
 import { sedationistUtils } from "../utils";
 
 interface SedationistStatusBadgeProps {

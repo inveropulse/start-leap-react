@@ -1,5 +1,5 @@
-import { patientsRequestBaseQueryKey } from ".";
 import { BooleanResponse } from "@/shared/types";
+import { PATIENTS_REQUEST_BASE_QUERY_KEY } from "./types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
 
@@ -8,9 +8,12 @@ export const useDeletePatientRequest = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: [...PATIENTS_REQUEST_BASE_QUERY_KEY, "delete"],
     mutationFn: deletePatient,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: patientsRequestBaseQueryKey });
+      queryClient.invalidateQueries({
+        queryKey: PATIENTS_REQUEST_BASE_QUERY_KEY,
+      });
     },
   });
 };

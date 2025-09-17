@@ -17,7 +17,7 @@ import {
 } from "@/shared/components/ui/tabs";
 import { Badge } from "@/shared/components/ui/badge";
 import { X, Plus } from "lucide-react";
-import { SedationistSpecialty } from "@/shared/types/domains/sedation";
+import { SedationistSpecialty } from "@/shared/types/domains/sedationist";
 import { useCreateSedationistForm } from "../hooks/useCreateSedationistForm";
 
 export interface CreateSedationistFormProps {

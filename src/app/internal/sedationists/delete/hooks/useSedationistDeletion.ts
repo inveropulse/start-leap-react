@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSedationistRequest } from "@/api/sedationists";
 import { useDeleteSedationistRequest } from "@/api/sedationists";
 import { useNotifications } from "@/shared/providers/NotificationProvider";
-import { type Sedationist } from "@/shared/types/domains/sedation";
+import { type Sedationist } from "@/shared/types/domains/sedationist";
 
 export interface SedationistDeletionState {
   // Data

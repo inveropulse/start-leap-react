@@ -1,28 +1,30 @@
+import { useQuery } from "@tanstack/react-query";
+import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
 import {
-  Patient,
+  FindByIdPatientResponse,
+  PATIENTS_REQUEST_BASE_QUERY_KEY,
+} from "./types";
+import type { Patient } from "@/shared/types/domains/patient/entities";
+import {
   PatientSex,
-  ApiResponse,
   PatientTitle,
   PatientAlcoholStatus,
   PatientSmokingStatus,
-} from "@/shared/types";
-import { patientsRequestBaseQueryKey } from ".";
-import { useQuery } from "@tanstack/react-query";
-import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
+} from "@/shared/types/domains/patient/enums";
 
-export const usePatientRequest = (id: string) => {
+export const useFindByIdPatientRequest = (patientId: string) => {
   const { apiClient } = useAxiosClient();
   return useQuery({
-    queryKey: [...patientsRequestBaseQueryKey, id],
-    queryFn: () => fetchPatient(id),
-    enabled: !!id,
+    queryKey: [...PATIENTS_REQUEST_BASE_QUERY_KEY, patientId],
+    queryFn: () => fetchFakePatient(patientId),
+    enabled: !!patientId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
-const fetchPatient = async (
+const fetchFakePatient = async (
   id: string
-): Promise<ApiResponse<Patient> | null> => {
+): Promise<FindByIdPatientResponse> => {
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 200));
 

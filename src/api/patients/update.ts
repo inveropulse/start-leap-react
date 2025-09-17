@@ -1,20 +1,22 @@
-import { patientsRequestBaseQueryKey } from ".";
-import { Patient, UpdatePatientRequest } from "@/shared/types";
+import {
+  UpdatePatientRequest,
+  UpdatePatientResponse,
+  PATIENTS_REQUEST_BASE_QUERY_KEY,
+} from "./types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
 import { calculateAgeInYears, calculateBMI } from "@/app/internal/patients";
-
-export interface UpdatePatientResponse extends Patient {}
 
 export const useUpdatePatientRequest = () => {
   const { apiClient } = useAxiosClient();
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: [...PATIENTS_REQUEST_BASE_QUERY_KEY, "update"],
     mutationFn: updatePatient,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: [...patientsRequestBaseQueryKey, variables.id],
+        queryKey: [...PATIENTS_REQUEST_BASE_QUERY_KEY, variables.id],
       });
     },
   });
@@ -29,7 +31,7 @@ const updatePatient = async (
   if (!data.id) throw new Error("Patient ID is required");
 
   // Mock existing patient for update simulation
-  const mockExistingPatient: UpdatePatientResponse = {
+  const mockExistingPatient: UpdatePatientResponse["data"] = {
     id: data.id,
     firstName: "John",
     lastName: "Doe",
@@ -40,7 +42,7 @@ const updatePatient = async (
     createdDateTime: "2023-01-15T10:30:00Z",
   };
 
-  const updatedPatient: UpdatePatientResponse = {
+  const updatedPatient: UpdatePatientResponse["data"] = {
     ...mockExistingPatient,
     ...data,
     fullName: `${data.firstName || mockExistingPatient.firstName} ${
@@ -50,5 +52,10 @@ const updatePatient = async (
     bmi: calculateBMI(data.height, data.weight) || mockExistingPatient.bmi,
   };
 
-  return updatedPatient;
+  return {
+    data: updatedPatient,
+    statusCode: 200,
+    successful: true,
+    message: "Patient updated successfully",
+  };
 };

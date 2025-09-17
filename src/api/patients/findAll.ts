@@ -1,26 +1,25 @@
-import { useQuery } from "@tanstack/react-query";
-
 import {
-  PaginationResponse,
-  Patient,
-  PatientAlcoholStatus,
   PatientSearchParams,
-  PatientSex,
-  PatientSmokingStatus,
-  PatientTitle,
+  FindAllPatientsResponse,
+  PATIENTS_REQUEST_BASE_QUERY_KEY,
+} from "./types";
+import {
+  Patient,
   SortOrder,
+  PatientSex,
+  PatientTitle,
+  PatientAlcoholStatus,
+  PatientSmokingStatus,
 } from "@/shared/types";
-import { patientsRequestBaseQueryKey } from ".";
+import { useQuery } from "@tanstack/react-query";
 import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
-
-export interface PatientsResponse extends PaginationResponse<Patient> {}
 
 const mockPatients = generateMockPatients();
 
-export const usePatientsRequest = (params: PatientSearchParams) => {
+export const useFindAllPatientsRequest = (params: PatientSearchParams) => {
   const { apiClient } = useAxiosClient();
   return useQuery({
-    queryKey: [...patientsRequestBaseQueryKey, params],
+    queryKey: [...PATIENTS_REQUEST_BASE_QUERY_KEY, params],
     queryFn: () => fetchPatients(params),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -28,7 +27,7 @@ export const usePatientsRequest = (params: PatientSearchParams) => {
 
 const fetchPatients = async (
   params: PatientSearchParams
-): Promise<PatientsResponse> => {
+): Promise<FindAllPatientsResponse> => {
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 300));
 
@@ -71,11 +70,11 @@ const fetchPatients = async (
   const paginatedPatients = filteredPatients.slice(startIndex, endIndex);
 
   return {
-    items: paginatedPatients,
-    totalCount: filteredPatients.length,
-    totalPages: Math.ceil(filteredPatients.length / pageSize),
     pageNo: page,
     pageSize: pageSize,
+    data: paginatedPatients,
+    totalItems: filteredPatients.length,
+    totalPages: Math.ceil(filteredPatients.length / pageSize),
   };
 };
 

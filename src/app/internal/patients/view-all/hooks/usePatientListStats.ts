@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { User, Activity, Calendar } from "lucide-react";
 import { usePatientStatsRequest } from "@/api/patients/stats";
-import type { PatientsResponse } from "@/api/patients/findAll";
+import type { FindAllPatientsResponse } from "@/api/patients/findAll";
 
-export function usePatientListStats(data: PatientsResponse | undefined) {
+export function usePatientListStats(data: FindAllPatientsResponse | undefined) {
   // Use the existing API hook for stats
   const { data: statsData, isLoading: isStatsLoading } =
     usePatientStatsRequest();
@@ -20,7 +20,7 @@ export function usePatientListStats(data: PatientsResponse | undefined) {
         value: statsData.total,
         icon: User,
         color: "default" as const,
-        description: `${data.items.length} on this page`,
+        description: `${data.data.length} on this page`,
         tooltip: "Total number of patients in the system",
         trend: {
           value: 12.5, // This could come from API in the future

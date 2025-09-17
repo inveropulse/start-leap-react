@@ -3,7 +3,7 @@ import {
   SedationistStatus,
   SedationistSpecialty,
   CertificationStatus,
-} from "@/shared/types/domains/sedation";
+} from "@/shared/types/domains/sedationist";
 
 // Common validation schemas used across sedationist forms
 export const sedationistValidationSchemas = {

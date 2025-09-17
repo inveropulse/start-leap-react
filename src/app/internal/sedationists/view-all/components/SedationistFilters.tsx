@@ -15,7 +15,7 @@ import {
   SedationistSpecialty,
   CertificationStatus,
   SedationistFilters as FilterType,
-} from "@/shared/types/domains/sedation";
+} from "@/shared/types/domains/sedationist";
 import { sedationistUtils } from "../../shared";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { TouchButton } from "@/shared/components/ui";

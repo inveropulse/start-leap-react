@@ -1,19 +1,23 @@
-import { patientsRequestBaseQueryKey } from ".";
-import { CreatePatientRequest, Patient } from "@/shared/types";
+import {
+  CreatePatientRequest,
+  CreatePatientResponse,
+  PATIENTS_REQUEST_BASE_QUERY_KEY,
+} from "./types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
 import { calculateAgeInYears, calculateBMI } from "@/app/internal/patients";
-
-export type CreatePatientResponse = Patient;
 
 export const useCreatePatientRequest = () => {
   const { apiClient } = useAxiosClient();
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: [...PATIENTS_REQUEST_BASE_QUERY_KEY, "create"],
     mutationFn: createFakePatient,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: patientsRequestBaseQueryKey });
+      queryClient.invalidateQueries({
+        queryKey: PATIENTS_REQUEST_BASE_QUERY_KEY,
+      });
     },
   });
 };
@@ -21,10 +25,9 @@ export const useCreatePatientRequest = () => {
 const createFakePatient = async (
   data: CreatePatientRequest
 ): Promise<CreatePatientResponse> => {
-  // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 400));
 
-  const newPatient: CreatePatientResponse = {
+  const newPatient: CreatePatientResponse["data"] = {
     ...data,
     id: `patient-${Date.now()}`,
     fullName: `${data.firstName} ${data.lastName}`,
@@ -33,5 +36,10 @@ const createFakePatient = async (
     createdDateTime: new Date().toISOString(),
   };
 
-  return newPatient;
+  return {
+    data: newPatient,
+    statusCode: 201,
+    successful: true,
+    message: "Patient created successfully",
+  };
 };

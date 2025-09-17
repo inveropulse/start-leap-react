@@ -1,48 +1,95 @@
 // Core appointment domain enums
 export enum AppointmentStatus {
-  SCHEDULED = 'scheduled',
-  CONFIRMED = 'confirmed', 
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-  NO_SHOW = 'no_show',
-  RESCHEDULED = 'rescheduled'
+  PENDING = "Pending",
+  SCHEDULED = "Scheduled",
+  CONFIRMED = "Confirmed",
+  IN_PROGRESS = "In Progress",
+  COMPLETED = "Completed",
+  CANCELLED = "Cancelled",
+  NO_SHOW = "No Show",
+  RESCHEDULED = "Rescheduled",
 }
 
 export enum AppointmentType {
-  CONSULTATION = 'consultation',
-  FOLLOW_UP = 'follow_up',
-  PROCEDURE = 'procedure',
-  EMERGENCY = 'emergency',
-  ROUTINE_CHECK = 'routine_check'
+  CONSULTATION = "Consultation",
+  FOLLOW_UP = "Follow Up",
+  PROCEDURE = "Procedure",
+  EMERGENCY = "Emergency",
+  ROUTINE_CHECK = "Routine Check",
+}
+
+export enum AppointmentPriority {
+  LOW = "Low",
+  NORMAL = "Normal",
+  HIGH = "High",
+  URGENT = "Urgent",
 }
 
 export enum DocumentType {
-  PATIENT_PACK = 'patient_pack',
-  CLINIC_DOCUMENT = 'clinic_document', 
-  SEDATION_RECORD = 'sedation_record',
-  CONSENT_FORM = 'consent_form',
-  MEDICAL_HISTORY = 'medical_history',
-  OTHER = 'other'
+  PATIENT_PACK = "Patient Pack",
+  CLINIC_DOCUMENT = "Clinic Document",
+  SEDATION_RECORD = "Sedation Record",
+  CONSENT_FORM = "Consent Form",
+  MEDICAL_HISTORY = "Medical History",
+  OTHER = "Other",
 }
 
 export enum DocumentStatus {
-  PENDING = 'pending',
-  UPLOADED = 'uploaded',
-  SIGNED = 'signed',
-  COMPLETED = 'completed',
-  REJECTED = 'rejected'
+  UPLOADED = "Uploaded",
+  GENERATED = "Generated",
+}
+
+export enum FileType {
+  PDF = "PDF",
+  CSV = "CSV",
+  XML = "XML",
+  EXCEL = "Excel",
+  IMAGE = "Image",
+  WORD = "Word Document",
+}
+
+export enum PayerType {
+  INSURANCE = "Insurance",
+  SELF_PAY = "Self Pay",
+  CLINIC = "Clinic",
+}
+
+export enum PaymentMethod {
+  NOT_SET = "Not Set",
+  CREDIT_CARD = "Credit Card",
+  CARD = "Card",
+  BANK_TRANSFER = "Bank Transfer",
+  CHEQUE = "Cheque",
+  INSURANCE_DIRECT = "Insurance Direct",
+  MEDICAL_AID = "Medical Aid",
+  OTHER = "Other",
+}
+
+export enum Currency {
+  GBP = "GBP",
+  USD = "USD",
+  EUR = "EUR",
+}
+
+export enum PaymentStatus {
+  PENDING = "Pending",
+  PARTIAL = "Partial",
+  PAID = "Paid",
+  OVERDUE = "Overdue",
+  REFUNDED = "Refunded",
+  FAILED = "failed",
 }
 
 export enum ActivityType {
-  STATUS_CHANGE = 'status_change',
-  PATIENT_NOTIFICATION = 'patient_notification',
-  CLINIC_NOTIFICATION = 'clinic_notification', 
-  DOCUMENT_UPLOADED = 'document_uploaded',
-  DOCUMENT_SIGNED = 'document_signed',
-  PAYMENT_RECEIVED = 'payment_received',
-  APPOINTMENT_CREATED = 'appointment_created',
-  APPOINTMENT_UPDATED = 'appointment_updated',
-  SEDATION_COMPLETED = 'sedation_completed',
-  NOTES_ADDED = 'notes_added'
+  STATUS_CHANGE = "Status Change",
+  PATIENT_NOTIFICATION = "Patient Notification",
+  CLINIC_NOTIFICATION = "Clinic Notification",
+  DOCUMENT_UPLOADED = "Document Uploaded",
+  DOCUMENT_SIGNED = "Document Signed",
+  PAYMENT_RECEIVED = "Payment Received",
+  APPOINTMENT_CREATED = "Appointment Created",
+  APPOINTMENT_UPDATED = "Appointment Updated",
+  SEDATION_COMPLETED = "Sedation Completed",
+  NOTES_ADDED = "Notes Added",
+  MANUAL_NOTE = "Manual Note",
 }

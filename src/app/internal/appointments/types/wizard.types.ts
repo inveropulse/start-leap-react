@@ -1,7 +1,7 @@
 import { AppointmentType } from "@/shared/types/domains/appointment/enums";
 import { Patient } from "@/shared/types/domains/patient/entities";
 import { Clinic, ClinicDoctor } from "@/shared/types/domains/clinic/entities";
-import { Sedationist } from "@/shared/types/domains/sedation/entities";
+import { Sedationist } from "@/shared/types/domains/sedationist/entities";
 import { AppointmentDetails } from "@/shared/types/domains/appointment/entities";
 
 // Re-export shared types for backward compatibility

@@ -47,7 +47,7 @@ import {
   SedationistStatus,
   CertificationStatus,
   SedationistSpecialty,
-} from "@/shared/types/domains/sedation";
+} from "@/shared/types/domains/sedationist";
 
 export interface SedationistManagementFormProps {
   sedationistId: string | null;

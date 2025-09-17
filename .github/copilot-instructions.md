@@ -16,6 +16,43 @@ This is a **multi-portal React application** for sedation services management wi
 - **Domain-driven types**: Organized in `src/shared/types/domains/` by business domain (patient, clinic, sedation, etc.)
 - **Generated API client**: Auto-generated from OpenAPI spec using `npm run generate:api`
 
+### Business Process Context
+
+**Sedation Solutions Appointment Workflow**: Understanding the core business process is essential for domain modeling:
+
+**The Booking Flow**:
+
+1. **Clinic Contact** (receptionist/doctor assistant/clinic doctor) calls Sedation Solutions office
+2. **Existing Clinic** - Caller represents a clinic already registered in our database/records
+3. **Appointment Request** - Request booking for their **patient** to undergo a sedation procedure
+4. **Doctor Recommendation** - Patient's **doctor** (at clinic) may have made the procedure recommendation
+5. **Internal Booking** - Sedation Solutions team creates the appointment in our system
+6. **Sedationist Assignment** - **Critical step** - assign available sedationist to the appointment
+
+**Entity Relationships in Process**:
+
+- **Clinics** = Our **clients/customers** who book appointments for their patients
+- **Patients** = Belong to **clinics** (have patient files/records at the clinic)
+- **Sedationists** = **Internal Sedation Solutions staff** who perform procedures
+- **Appointments** = Central booking entity connecting all parties
+
+**Key Business Rules**:
+
+- **Sedationist-Appointment**: 1:many (one sedationist handles multiple appointments)
+- **Appointment-Sedationist**: 1:1 (each appointment gets exactly one assigned sedationist)
+- **Specialty Matching**: Ideally match sedationist specialties to procedure types, but **flexible assignment** allowed for operational needs
+- **Availability System**: Critical for preventing double-booking and calendar integration
+- **Assignment Workflow**: Used to find available sedationists for specific appointment time slots
+
+**Availability Management**:
+Sedationist availability tracks when staff are **unavailable** for appointments due to:
+
+- Meetings, sick leave, holidays, workshops, personal reasons
+- Shows on calendar alongside appointments
+- Prevents scheduling conflicts during assignment process
+
+This workflow directly influences domain design patterns, relation entities, and API requirements across patient/clinic/sedationist/appointment domains.
+
 ## Critical Developer Workflows
 
 ### API Code Generation
@@ -109,6 +146,84 @@ const { isAuthenticated, hasRole, switchPortal } = useAuth();
 - **Local types**: Feature-specific types live where they're used (1-2 locations only)
 - **Domain entities**: Always live in global types even if used in 1-2 places (e.g., `Patient`, `Clinic`)
 - **Domain structure**: Each domain may have `entities/`, `enums/`, `value-objects/` subdirectories as needed
+
+### Domain-Driven Design Patterns
+
+**Entity Structure Pattern**: Every domain follows consistent Base + Extended pattern:
+
+```tsx
+// Base fields - core business data only
+export type BasePatientFields = {
+  firstName: string;
+  lastName: string;
+  // ... core business fields
+};
+
+// Extended entity with computed/system fields
+export type Patient = Partial<BasePatientFields> & {
+  id?: string;
+  fullName?: string; // Computed fields
+  createdDateTime?: string; // System fields
+};
+```
+
+**Relation Entity Pattern**: Use Option B (minimal display data) to avoid circular dependencies:
+
+```tsx
+export type PatientAppointment = {
+  patientId: string;
+  appointmentId: string;
+  // Minimal display data to avoid extra API calls
+  patientFullName?: string;
+  appointmentDateTime?: string;
+  clinicName?: string;
+  status: "scheduled" | "confirmed" | "completed";
+};
+```
+
+**Enum Conventions**:
+
+- **Human-readable values**: All enum values must be UI-ready strings for direct display
+- **No magic numbers/strings**: Always use proper enums instead of magic values
+- **Consistent formatting**: Apply same pattern across all domains
+
+```tsx
+// ✅ CORRECT - Direct UI display
+export enum PatientStatus {
+  ACTIVE = "Active",
+  INACTIVE = "Inactive",
+  ON_LEAVE = "On Leave",
+}
+
+// ❌ WRONG - Requires transformation
+export enum PatientStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  ON_LEAVE = "on_leave",
+}
+
+// ❌ WRONG - Magic number
+dayOfWeek: number; // 0 = Sunday, 1 = Monday
+
+// ✅ CORRECT - Proper enum
+dayOfWeek: DayOfWeek;
+export enum DayOfWeek {
+  SUNDAY = "Sunday",
+  MONDAY = "Monday",
+}
+```
+
+**Cross-Domain Consistency**: When updating patterns in one domain (patient/clinic/sedationist), apply consistently to all domains for maintainability.
+
+**Enum Utilities**: Use centralized enum utilities for UI integration:
+
+```tsx
+import { enumToOptions } from "@/shared/utils/enum-utils";
+
+// Convert any enum to dropdown options
+const statusOptions = enumToOptions(PatientStatus);
+// Returns: [{ label: "Active", value: "Active" }, ...]
+```
 
 ### TypeScript Conventions
 

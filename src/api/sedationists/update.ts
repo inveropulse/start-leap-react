@@ -3,7 +3,7 @@ import { ApiResponse } from "@/shared/types/shared-kernel/common";
 import {
   Sedationist,
   UpdateSedationistData,
-} from "@/shared/types/domains/sedation";
+} from "@/shared/types/domains/sedationist";
 import {
   SEDATIONISTS_QUERY_KEY,
   getSedationistsData,

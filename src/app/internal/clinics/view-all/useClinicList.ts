@@ -73,7 +73,7 @@ export const useClinicList = () => {
   }, []);
 
   const hasActiveFilters = Object.keys(filters).length > 0;
-  const isEmpty = data && data.items.length === 0;
+  const isEmpty = data && data.data.length === 0;
 
   const emptyMessage = useMemo(() => {
     if (searchText || hasActiveFilters) {
@@ -84,7 +84,7 @@ export const useClinicList = () => {
 
   return {
     // Data
-    clinics: data?.items || [],
+    clinics: data?.data || [],
     totalCount: data?.totalCount || 0,
     currentPage: data?.pageNo || currentPage,
     totalPages: data?.totalPages || 1,

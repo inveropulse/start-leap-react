@@ -4,7 +4,7 @@ import { SedationistSearchParams } from "@/shared/types/shared-kernel/filters";
 import {
   Sedationist,
   SedationistStatus,
-} from "@/shared/types/domains/sedation";
+} from "@/shared/types/domains/sedationist";
 
 export function useSedationistList() {
   // Search and pagination state

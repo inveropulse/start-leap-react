@@ -1,4 +1,4 @@
-import { Currency } from "@/shared/types";
+import { Currency } from "./types";
 
 export enum Environment {
   Development = "development",

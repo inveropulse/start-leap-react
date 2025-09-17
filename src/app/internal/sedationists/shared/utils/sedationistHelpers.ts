@@ -2,7 +2,7 @@ import {
   SedationistStatus,
   SedationistSpecialty,
   CertificationStatus,
-} from "@/shared/types/domains/sedation";
+} from "@/shared/types/domains/sedationist";
 
 // Status configuration for consistent display across use-cases
 export const statusConfig = {

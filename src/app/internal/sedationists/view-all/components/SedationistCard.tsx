@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Phone, Mail, MapPin, Star, Calendar, Eye, Trash2 } from "lucide-react";
-import { Sedationist } from "@/shared/types/domains/sedation";
+import { Sedationist } from "@/shared/types/domains/sedationist";
 import {
   SedationistAvatar,
   SedationistStatusBadge,

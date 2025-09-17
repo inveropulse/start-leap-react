@@ -6,8 +6,8 @@ import {
   SedationistStatus,
   SedationistSpecialty,
   type Sedationist,
-} from "@/shared/types/domains/sedation";
-import { type UpdateSedationistData } from "@/shared/types/domains/sedation/entities";
+} from "@/shared/types/domains/sedationist";
+import { type UpdateSedationistData } from "@/shared/types/domains/sedationist/entities";
 
 export interface SedationistManagementState {
   // Data

@@ -1,12 +1,17 @@
-import { 
-  AppointmentDocument, 
-  AppointmentActivity, 
-  AppointmentPayment
-} from "@/shared/types/domains/appointment/value-objects";
-import { Appointment } from "@/shared/types/domains/appointment/entities";
+import {
+  Appointment,
+  AppointmentActivity,
+  AppointmentDocument,
+  AppointmentPayment,
+} from "@/shared/types/domains/appointment/entities";
 import { PatientTitle } from "@/shared/types/domains/patient/enums";
-import { DocumentType, DocumentStatus, ActivityType } from "@/shared/types/domains/appointment/enums";
-import { PaymentMethod, PaymentStatus } from "@/shared/types/domains/payment/enums";
+import {
+  DocumentType,
+  DocumentStatus,
+  ActivityType,
+  PaymentMethod,
+  PaymentStatus,
+} from "@/shared/types/domains/appointment/enums";
 
 // Feature-specific management aggregate
 export interface AppointmentManagement {
@@ -17,16 +22,12 @@ export interface AppointmentManagement {
 }
 
 // Re-export shared types for backward compatibility
-export { 
+export {
   PatientTitle,
   DocumentType,
   DocumentStatus,
   ActivityType,
   PaymentMethod,
-  PaymentStatus
+  PaymentStatus,
 };
-export type { 
-  AppointmentDocument,
-  AppointmentActivity,
-  AppointmentPayment
-};
+export type { AppointmentDocument, AppointmentActivity, AppointmentPayment };

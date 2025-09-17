@@ -1,48 +1,35 @@
-import { DocumentType, DocumentStatus, ActivityType } from './enums';
-import { PaymentMethod, PaymentStatus } from '../payment/enums';
+import { DocumentType, PaymentStatus } from "./enums";
 
 // Value objects for appointment domain
-export interface AppointmentDocument {
-  id: string;
-  appointmentId: string;
-  type: DocumentType;
-  name: string;
-  fileName: string;
-  fileSize: number;
-  mimeType: string;
-  uploadedBy: string;
-  uploadedAt: string;
-  status: DocumentStatus;
-  url?: string;
-  notes?: string;
-}
 
-export interface AppointmentActivity {
-  id: string;
-  appointmentId: string;
-  type: ActivityType;
-  status: string;
-  title: string;
-  description: string;
-  notes?: string;
-  createdBy: string;
-  createdAt: string;
-  metadata?: Record<string, any>;
-}
+// Time slot value object for scheduling
+export type TimeSlot = {
+  startTime: string; // ISO 8601 string
+  endTime: string; // ISO 8601 string
+  duration: number; // Duration in minutes
+  isAvailable: boolean;
+  sedationistId?: string;
+};
 
-export interface AppointmentPayment {
-  id: string;
-  appointmentId: string;
-  amount: number;
+// Payment summary value object
+export type PaymentSummary = {
+  totalAmount: number;
+  paidAmount: number;
+  outstandingAmount: number;
   currency: string;
-  method: PaymentMethod;
-  status: PaymentStatus;
-  reference?: string;
-  notes?: string;
-  paidBy?: string;
-  paidAt?: string;
-  confirmedBy?: string;
-  confirmedAt?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+  payerType: string;
+  insuranceCoverage?: number;
+  patientResponsibility?: number;
+  paymentStatus: PaymentStatus;
+  lastPaymentDate?: string; // ISO 8601 string
+};
+
+// Document summary value object
+export type DocumentSummary = {
+  totalDocuments: number;
+  uploadedCount: number;
+  generatedCount: number;
+  pendingDocuments: DocumentType[];
+  lastUploadDate?: string; // ISO 8601 string
+  completionPercentage: number;
+};

@@ -187,7 +187,7 @@ const fetchClinics = async (
     const paginatedClinics = filteredClinics.slice(startIndex, endIndex);
 
     const paginationResponse: ClinicPaginationResponse = {
-      items: paginatedClinics,
+      data: paginatedClinics,
       totalCount: filteredClinics.length,
       totalPages: Math.ceil(filteredClinics.length / pageSize),
       pageNo,

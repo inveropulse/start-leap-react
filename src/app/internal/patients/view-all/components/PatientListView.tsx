@@ -89,7 +89,7 @@ export function PatientListView({
       <ListViewContent
         viewMode={viewMode}
         isLoading={isLoading}
-        isEmpty={data?.items.length === 0}
+        isEmpty={data?.data.length === 0}
         emptyMessage={
           searchParams.search
             ? `No patients match "${searchParams.search}". Try adjusting your search.`
@@ -104,7 +104,7 @@ export function PatientListView({
             : undefined
         }
       >
-        {data?.items.map((patient) => (
+        {data?.data.map((patient) => (
           <PatientCard
             key={patient.id}
             patient={patient}

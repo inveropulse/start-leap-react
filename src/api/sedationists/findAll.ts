@@ -5,7 +5,7 @@ import {
   SedationistStatus,
   SedationistSpecialty,
   CertificationStatus,
-} from "@/shared/types/domains/sedation";
+} from "@/shared/types/domains/sedationist";
 
 export const SEDATIONISTS_QUERY_KEY = "sedationists";
 

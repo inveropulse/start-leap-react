@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ApiResponse } from "@/shared/types/shared-kernel/common";
-import { Sedationist } from "@/shared/types/domains/sedation";
+import { Sedationist } from "@/shared/types/domains/sedationist";
 import { getSedationistsData } from "./findAll";
 
 export const SEDATIONIST_QUERY_KEY = "sedationist";

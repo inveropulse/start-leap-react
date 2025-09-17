@@ -6,7 +6,7 @@ import {
   SedationistSpecialty,
   CertificationStatus,
   SedationistCertification,
-} from "@/shared/types/domains/sedation";
+} from "@/shared/types/domains/sedationist";
 import { useCreateSedationistRequest } from "@/api/sedationists";
 import { useNotifications } from "@/shared/providers/NotificationProvider";
 
