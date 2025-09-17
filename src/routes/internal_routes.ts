@@ -33,7 +33,7 @@ const PatientDetailPage = lazy(
 );
 const CalendarPage = lazy(() => import("@/app/internal/calendar/CalendarPage"));
 const AppointmentPage = lazy(
-  () => import("@/app/internal/appointment/AppointmentPage")
+  () => import("@/app/internal/appointments/AppointmentPage")
 );
 
 // Placeholder components for routes not yet implemented
