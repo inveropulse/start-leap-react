@@ -1,7 +1,7 @@
 import type {
   SearchParams,
   ApiResponse,
-  PaginationResponse,
+  ApiPaginationResponse,
 } from "@/shared/types/shared-kernel";
 import type {
   Patient,
@@ -22,7 +22,7 @@ export type CreatePatientRequest = Partial<BasePatientFields>;
 
 export type CreatePatientResponse = ApiResponse<Patient>;
 
-export type FindAllPatientsResponse = PaginationResponse<Patient>;
+export type FindAllPatientsResponse = ApiPaginationResponse<Patient>;
 
 export type FindByIdPatientResponse = ApiResponse<Patient>;
 
@@ -44,7 +44,7 @@ export type PatientStatsResponse = ApiResponse<{
 }>;
 
 export type FindPatientAppointmentsResponse =
-  PaginationResponse<PatientAppointment>;
+  ApiPaginationResponse<PatientAppointment>;
 
 export type PatientAppointmentsResponse = ApiResponse<{
   upcoming: PatientAppointment[];

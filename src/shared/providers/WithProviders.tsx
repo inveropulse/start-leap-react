@@ -5,7 +5,12 @@ import AxiosClientProvider from "./AxiosClientProvider";
 import NotificationProvider from "./NotificationProvider";
 import { ErrorBoundary } from "@/shared/components/error/ErrorBoundary";
 import { GlobalApiLoadingIndicator } from "@/shared/components/GlobalApiLoadingIndicator";
-import { AccessibilityMenu, FocusIndicator, SkipToContent, AccessibilityWrapper } from "@/shared/components/ui";
+import {
+  AccessibilityMenu,
+  FocusIndicator,
+  SkipToContent,
+  AccessibilityWrapper,
+} from "@/shared/components/ui";
 
 export default function WithProviders(props: PropsWithChildren) {
   return (
@@ -17,7 +22,8 @@ export default function WithProviders(props: PropsWithChildren) {
               <AccessibilityWrapper>
                 <FocusIndicator />
                 <SkipToContent />
-                <AccessibilityMenu />
+                {/* COME BACK TO THIS */}
+                {/* <AccessibilityMenu /> */}
                 {props.children}
                 <GlobalApiLoadingIndicator />
               </AccessibilityWrapper>

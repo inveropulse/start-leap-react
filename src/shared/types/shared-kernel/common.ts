@@ -5,7 +5,7 @@ export type PaginationState = {
   totalItems: number;
 };
 
-export type PaginationResponse<T> = PaginationState & {
+export type ApiPaginationResponse<T> = PaginationState & {
   data: T[];
 };
 
@@ -16,7 +16,7 @@ export type ApiResponse<T> = {
   message?: string | null;
 };
 
-export type BooleanResponse = ApiResponse<boolean> & {};
+export type ApiBooleanResponse = ApiResponse<boolean> & {};
 
 export enum SortOrder {
   ASC = "asc",

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BooleanResponse } from "../../shared/types/shared-kernel/common";
+import { ApiBooleanResponse } from "../../shared/types/shared-kernel/common";
 import { mockClinics } from "./findAll";
 
 // Simulate network delay
@@ -7,7 +7,7 @@ const delay = (ms: number = 500) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 // API function
-const deleteClinic = async (id: string): Promise<BooleanResponse> => {
+const deleteClinic = async (id: string): Promise<ApiBooleanResponse> => {
   await delay();
 
   try {

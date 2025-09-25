@@ -1,6 +1,12 @@
 import { LoginResponseDto } from "../generated";
 import { useMutation } from "@tanstack/react-query";
-import { PortalType, UserRole } from "@/shared/types";
+import {
+  Department,
+  PermissionLevel,
+  PortalType,
+  UserRole,
+  UserStatus,
+} from "@/shared/types";
 import { AuthState, AuthErrorCode } from "@/shared/services/auth/types";
 import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
 
@@ -121,6 +127,15 @@ const createAuthState = (loginDto: LoginResponseDto): AuthState => {
       role: userRole,
       avatar: undefined,
       portalAccess: portalAccess,
+      status: UserStatus.ACTIVE,
+      department: Department.MANAGEMENT,
+      permissionLevel: PermissionLevel.FULL_ACCESS,
+      phone: loginDto.userProfile?.phoneNumber ?? undefined,
+      notes: "",
+      createdAt: Date.now().toString(),
+      updatedAt: Date.now().toString(),
+      lastLoginDate: Date.now().toString(),
+      lastPasswordChangeDate: Date.now().toString(),
     },
     isAuthenticated: isAuthenticated,
     isLoading: false,

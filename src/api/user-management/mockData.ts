@@ -1,0 +1,170 @@
+import {
+  UserRole,
+  UserStatus,
+  Department,
+  UserSession,
+  UserActivity,
+  PermissionLevel,
+} from "@/shared/types";
+import { FindAllUsersResponse } from "./types";
+
+export const FAKE_MANAGEABLE_USERS: FindAllUsersResponse["data"] = [
+  {
+    id: "user-1",
+    firstName: "Sarah",
+    lastName: "Johnson",
+    fullName: "Sarah Johnson",
+    email: "sarah.johnson@company.com",
+    phone: "+1-555-0101",
+    status: UserStatus.ACTIVE,
+    role: UserRole.ADMIN,
+    department: Department.ADMINISTRATION,
+    permissionLevel: PermissionLevel.FULL_ACCESS,
+    lastLoginDate: "2024-01-15T09:30:00Z",
+    lastPasswordChangeDate: "2023-11-20T14:22:00Z",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150",
+    notes: "Senior administrator with full system access",
+    createdAt: "2023-01-15T10:00:00Z",
+    updatedAt: "2024-01-15T09:30:00Z",
+  },
+  {
+    id: "user-2",
+    firstName: "Michael",
+    lastName: "Chen",
+    fullName: "Michael Chen",
+    email: "michael.chen@company.com",
+    phone: "+1-555-0102",
+    status: UserStatus.ACTIVE,
+    role: UserRole.BOOKING_COORDINATOR,
+    department: Department.BOOKING,
+    permissionLevel: PermissionLevel.LIMITED_ACCESS,
+    lastLoginDate: "2024-01-14T16:45:00Z",
+    lastPasswordChangeDate: "2023-12-01T11:15:00Z",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
+    notes: "Lead booking coordinator for eastern region",
+    createdAt: "2023-03-20T14:30:00Z",
+    updatedAt: "2024-01-14T16:45:00Z",
+  },
+  {
+    id: "user-3",
+    firstName: "Emily",
+    lastName: "Rodriguez",
+    fullName: "Emily Rodriguez",
+    email: "emily.rodriguez@company.com",
+    phone: "+1-555-0103",
+    status: UserStatus.ACTIVE,
+    role: UserRole.BOOKING_COORDINATOR,
+    department: Department.BOOKING,
+    permissionLevel: PermissionLevel.LIMITED_ACCESS,
+    lastLoginDate: "2024-01-15T08:15:00Z",
+    lastPasswordChangeDate: "2023-10-15T13:45:00Z",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
+    notes: "Booking coordinator specializing in complex cases",
+    createdAt: "2023-06-10T12:00:00Z",
+    updatedAt: "2024-01-15T08:15:00Z",
+  },
+  {
+    id: "user-4",
+    firstName: "James",
+    lastName: "Wilson",
+    fullName: "James Wilson",
+    email: "james.wilson@company.com",
+    phone: "+1-555-0104",
+    status: UserStatus.INACTIVE,
+    role: UserRole.ADMIN,
+    department: Department.IT,
+    permissionLevel: PermissionLevel.FULL_ACCESS,
+    lastLoginDate: "2023-12-22T17:30:00Z",
+    lastPasswordChangeDate: "2023-08-10T09:20:00Z",
+    notes: "IT Administrator - Currently on extended leave",
+    createdAt: "2022-11-05T10:00:00Z",
+    updatedAt: "2023-12-22T17:30:00Z",
+  },
+  {
+    id: "user-5",
+    firstName: "Lisa",
+    lastName: "Anderson",
+    fullName: "Lisa Anderson",
+    email: "lisa.anderson@company.com",
+    phone: "+1-555-0105",
+    status: UserStatus.PENDING_ACTIVATION,
+    role: UserRole.BOOKING_COORDINATOR,
+    department: Department.BOOKING,
+    permissionLevel: PermissionLevel.READ_ONLY,
+    notes: "New hire - Awaiting security clearance",
+    createdAt: "2024-01-12T14:00:00Z",
+    updatedAt: "2024-01-12T14:00:00Z",
+  },
+  {
+    id: "user-6",
+    firstName: "David",
+    lastName: "Thompson",
+    fullName: "David Thompson",
+    email: "david.thompson@company.com",
+    phone: "+1-555-0106",
+    status: UserStatus.SUSPENDED,
+    role: UserRole.BOOKING_COORDINATOR,
+    department: Department.OPERATIONS,
+    permissionLevel: PermissionLevel.LIMITED_ACCESS,
+    lastLoginDate: "2024-01-10T12:00:00Z",
+    lastPasswordChangeDate: "2023-12-05T10:30:00Z",
+    notes: "Account suspended pending investigation",
+    createdAt: "2023-09-15T11:00:00Z",
+    updatedAt: "2024-01-10T12:00:00Z",
+  },
+];
+
+export const FAKE_USER_ACTIVITIES: UserActivity[] = [
+  {
+    id: "activity-1",
+    userId: "user-1",
+    action: "LOGIN",
+    description: "User logged in successfully",
+    timestamp: "2024-01-15T09:30:00Z",
+    ipAddress: "192.168.1.100",
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+  },
+  {
+    id: "activity-2",
+    userId: "user-1",
+    action: "USER_CREATED",
+    description: "Created new user: Lisa Anderson",
+    timestamp: "2024-01-12T14:00:00Z",
+    ipAddress: "192.168.1.100",
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+  },
+];
+
+export const FAKE_USER_SESSIONS: UserSession[] = [
+  {
+    id: "session-1",
+    userId: "user-1",
+    device: "Chrome on Windows",
+    location: "New York, NY",
+    lastActive: "2024-01-15T09:30:00Z",
+    isActive: true,
+  },
+  {
+    id: "session-2",
+    userId: "user-2",
+    device: "Safari on iPhone",
+    location: "Los Angeles, CA",
+    lastActive: "2024-01-14T16:45:00Z",
+    isActive: false,
+  },
+];
+
+export const FAKE_USER_STATS = {
+  total: FAKE_MANAGEABLE_USERS.length,
+  active: FAKE_MANAGEABLE_USERS.filter(
+    (user) => user.status === UserStatus.ACTIVE
+  ).length,
+  pending: FAKE_MANAGEABLE_USERS.filter(
+    (user) => user.status === UserStatus.PENDING_ACTIVATION
+  ).length,
+  admins: FAKE_MANAGEABLE_USERS.filter((user) => user.role === UserRole.ADMIN)
+    .length,
+};

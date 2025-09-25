@@ -12,7 +12,7 @@ export enum UserRole {
   PATIENT = "patient",
   SEDATIONIST = "sedationist",
   BOOKING_COORDINATOR = "booking_coordinator",
-  
+
   // TODO - NOT NEEDED NOW BUT CAN BE USEFUL LATER
   // MANAGER = "manager",
   // USER = "user",
@@ -21,28 +21,30 @@ export enum UserRole {
 }
 
 export enum UserStatus {
-  ACTIVE = "active",
-  INACTIVE = "inactive",
-  SUSPENDED = "suspended",
-  PENDING_ACTIVATION = "pending_activation",
+  ACTIVE = "Active",
+  INACTIVE = "Inactive",
+  SUSPENDED = "Suspended",
+  PENDING_ACTIVATION = "Pending Activation",
 }
 
 export enum Department {
-  ADMINISTRATION = "administration",
-  BOOKING = "booking", 
-  OPERATIONS = "operations",
-  IT = "it",
-  MANAGEMENT = "management",
+  UNASSIGNED = "Unassigned",
+  ADMINISTRATION = "Administration",
+  BOOKING = "Booking",
+  OPERATIONS = "Operations",
+  IT = "IT",
+  MANAGEMENT = "Management",
 }
 
 export enum PermissionLevel {
-  FULL_ACCESS = "full_access",
-  LIMITED_ACCESS = "limited_access", 
-  READ_ONLY = "read_only",
-  CUSTOM = "custom",
+  UNASSIGNED = "Unassigned",
+  FULL_ACCESS = "Full Access",
+  LIMITED_ACCESS = "Limited Access",
+  READ_ONLY = "Read Only",
+  CUSTOM = "Custom",
 }
 
 export enum RoleType {
-  EDITOR = 'Editor',
-  ADMIN = 'Admin',
+  EDITOR = "Editor",
+  ADMIN = "Admin",
 }

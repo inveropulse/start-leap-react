@@ -1,4 +1,4 @@
-import { UserRole, PortalType } from "@/shared/types";
+import { PortalType, AuthenticatedUser } from "@/shared/types";
 
 export enum AuthErrorCode {
   INVALID_CREDENTIALS = "INVALID_CREDENTIALS",
@@ -21,25 +21,8 @@ export enum AuthErrorCode {
   INVALID_USER_ID = "INVALID_USER_ID",
 }
 
-// Core Types
-export type User = {
-  readonly id: string;
-  readonly email: string;
-  readonly fullName: string;
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly role: UserRole;
-  readonly avatar?: string;
-  readonly portalAccess: {
-    [PortalType.CLINIC]: boolean;
-    [PortalType.INTERNAL]: boolean;
-    [PortalType.PATIENT]: boolean;
-    [PortalType.SEDATIONIST]: boolean;
-  };
-};
-
 export type AuthState = {
-  readonly user: User | null;
+  readonly user: AuthenticatedUser | null;
   readonly isAuthenticated: boolean;
   readonly isLoading: boolean;
   readonly error: string | null;

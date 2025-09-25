@@ -2,7 +2,7 @@
 import type {
   SearchParams,
   ApiResponse,
-  PaginationResponse,
+  ApiPaginationResponse,
 } from "@/shared/types/shared-kernel";
 import type {
   Sedationist,
@@ -28,7 +28,7 @@ export type CreateSedationistRequest = Partial<BaseSedationistFields>;
 
 export type CreateSedationistResponse = ApiResponse<Sedationist>;
 
-export type FindAllSedationistsResponse = PaginationResponse<Sedationist>;
+export type FindAllSedationistsResponse = ApiPaginationResponse<Sedationist>;
 
 export type FindByIdSedationistResponse = ApiResponse<Sedationist>;
 
@@ -59,7 +59,7 @@ export type SedationistWithAppointmentsResponse = ApiResponse<{
 }>;
 
 export type FindSedationistAppointmentsResponse =
-  PaginationResponse<SedationistAppointment>;
+  ApiPaginationResponse<SedationistAppointment>;
 
 export type SedationistAvailabilityResponse = ApiResponse<
   SedationistAvailability[]

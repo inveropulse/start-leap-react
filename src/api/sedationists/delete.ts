@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BooleanResponse } from "@/shared/types/shared-kernel/common";
+import { ApiBooleanResponse } from "@/shared/types/shared-kernel/common";
 import {
   SEDATIONISTS_QUERY_KEY,
   getSedationistsData,
@@ -8,7 +8,7 @@ import {
 import { SEDATIONIST_QUERY_KEY } from "./findById";
 
 // API function with inline mock logic
-async function deleteSedationist(id: string): Promise<BooleanResponse> {
+async function deleteSedationist(id: string): Promise<ApiBooleanResponse> {
   try {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 100));

@@ -20,7 +20,7 @@ import {
   DocumentSummary,
 } from "@/shared/types/domains/appointment/value-objects";
 import {
-  PaginationResponse,
+  ApiPaginationResponse,
   ApiResponse,
   SearchParams,
 } from "@/shared/types/shared-kernel/common";
@@ -39,7 +39,7 @@ export type AppointmentSearchParams = Omit<SearchParams, "sortBy"> & {
   sortBy?: keyof Appointment;
 };
 
-export type AppointmentSearchResponse = PaginationResponse<Appointment>;
+export type AppointmentSearchResponse = ApiPaginationResponse<Appointment>;
 
 export type CreateAppointmentRequest = BaseAppointmentFields;
 
@@ -112,7 +112,7 @@ export type GetAppointmentActivitiesRequest = {
 };
 
 export type GetAppointmentActivitiesResponse =
-  PaginationResponse<AppointmentActivity>;
+  ApiPaginationResponse<AppointmentActivity>;
 
 export type AddManualActivityRequest = {
   appointmentId: string;

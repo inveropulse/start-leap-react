@@ -1,4 +1,4 @@
-import { BooleanResponse } from "@/shared/types";
+import { ApiBooleanResponse } from "@/shared/types";
 import { PATIENTS_REQUEST_BASE_QUERY_KEY } from "./types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosClient } from "@/shared/providers/AxiosClientProvider";
@@ -18,7 +18,7 @@ export const useDeletePatientRequest = () => {
   });
 };
 
-const deletePatient = async (id: string): Promise<BooleanResponse> => {
+const deletePatient = async (id: string): Promise<ApiBooleanResponse> => {
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 300));
 

@@ -1,10 +1,8 @@
 import { useState, useMemo, useCallback } from "react";
-import { useFindAllClinicsRequest } from "../../../../api/clinics";
-import { ClinicSearchParams } from "../../../../shared/types/shared-kernel/filters";
 import {
-  ClinicStatus,
-  ClinicType,
-} from "../../../../shared/types/domains/clinic/enums";
+  ClinicSearchParams,
+  useFindAllClinicsRequest,
+} from "../../../../api/clinics";
 
 export const useClinicList = () => {
   const [searchText, setSearchText] = useState("");
@@ -73,7 +71,7 @@ export const useClinicList = () => {
   }, []);
 
   const hasActiveFilters = Object.keys(filters).length > 0;
-  const isEmpty = data && data.data.length === 0;
+  const isEmpty = data && data?.length === 0;
 
   const emptyMessage = useMemo(() => {
     if (searchText || hasActiveFilters) {
@@ -84,11 +82,11 @@ export const useClinicList = () => {
 
   return {
     // Data
-    clinics: data?.data || [],
-    totalCount: data?.totalCount || 0,
-    currentPage: data?.pageNo || currentPage,
-    totalPages: data?.totalPages || 1,
-    pageSize,
+    clinics: data || [],
+    totalCount: response?.totalItems || 0,
+    currentPage: response?.pageNo || currentPage,
+    totalPages: response?.totalPages || 1,
+    pageSize: response?.pageSize || pageSize,
 
     // Search and filters
     searchText,

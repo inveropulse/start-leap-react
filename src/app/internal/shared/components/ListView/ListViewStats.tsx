@@ -1,9 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { EnhancedStatCard } from "@/shared/components/ui/EnhancedStatCard";
 import { AnimatedList } from "@/shared/components/ui/AnimatedList";
 import { useListViewTheme } from "../../hooks/useListViewTheme";
-import { ListViewStatsProps, ListViewStat } from "@/shared/types/ui/listView.types";
+import { ListViewStat } from "@/shared/types/ui/listView.types";
 
 // Convert ListViewStat to EnhancedStatCard props
 const convertStatToEnhanced = (stat: ListViewStat) => {
@@ -17,6 +22,11 @@ const convertStatToEnhanced = (stat: ListViewStat) => {
     animated: true,
   };
 };
+
+export interface ListViewStatsProps {
+  stats: ListViewStat[];
+  isLoading: boolean;
+}
 
 export function ListViewStats({ stats, isLoading }: ListViewStatsProps) {
   const theme = useListViewTheme();
@@ -43,16 +53,13 @@ export function ListViewStats({ stats, isLoading }: ListViewStatsProps) {
   }
 
   return (
-    <AnimatedList 
-      animation="stagger" 
+    <AnimatedList
+      animation="stagger"
       staggerDelay={75}
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
     >
       {stats.map((stat) => (
-        <EnhancedStatCard
-          key={stat.id}
-          {...convertStatToEnhanced(stat)}
-        />
+        <EnhancedStatCard key={stat.id} {...convertStatToEnhanced(stat)} />
       ))}
     </AnimatedList>
   );

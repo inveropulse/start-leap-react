@@ -28,11 +28,6 @@ export interface ListViewStat {
   tooltip?: string;
 }
 
-export interface ListViewStatsProps {
-  stats: ListViewStat[];
-  isLoading?: boolean;
-}
-
 export interface ListViewControlsProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
